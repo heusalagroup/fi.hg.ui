@@ -1,12 +1,12 @@
 # @sendanor/ui
 
-For now this repository is only for [issue tracking](https://github.com/sendanor/ui/issues).
+For now this repository is only for [issue tracking](https://github.com/sendanor/ui/issues) and demo purposes.
 
-Demo is available at [lomake.app](https://www.lomake.app/builder).
+We will possibly release our UI components as a library later -- once we have a first stable release.
 
-We will possibly release our UI components as a library once we have a first stable release. 
+Builder demo available at [lomake.app](https://www.lomake.app/builder).
 
-### The iframe usage
+### The iframe demo
 
 Here's a iframe POC how to use the frame:
 
