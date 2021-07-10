@@ -65,6 +65,20 @@ The model for `iframe.setModel()` can be created using [lomake.app/builder](http
 
 This example is also available at [./examples/test-iframe.html](https://github.com/sendanor/ui/blob/main/examples/test-iframe.html) as well as online at [lomake.app/test-iframe.html](https://www.lomake.app/test-iframe.html).
 
+### React component
+
+We also have a react component to render the form -- but it has not been released yet. Our builder's preview uses it.
+
+```jsx
+<Form
+    model={formModel}
+    value={valueModel}
+    change={(value) => {}}
+    submit={() => {}}
+    cancel={() => {}}
+/>
+```
+
 ### Commercial release
 
 For commercial interests like *tailored commercial release*, you may contact [our sales](mailto:info@sendanor.fi).
