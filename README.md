@@ -59,6 +59,8 @@ Here's a iframe POC how to use the frame:
 
 Although it may already work, **this is just a POC**. We may change the API any time!
 
+This example is available [lomake.app/test-iframe.html](https://www.lomake.app/test-iframe.html).
+
 ### Commercial release
 
 For commercial interests like *tailored commercial release*, you may contact [our sales](mailto:info@sendanor.fi).
