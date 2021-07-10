@@ -11,6 +11,8 @@ We will possibly release our UI components as a library once we have a first sta
 Here's a iframe POC how to use the frame:
 
 ```html
+<div id="iframe-container"></div>
+
 <script src="https://www.lomake.app/libs/nor-ui-frame.min.js"></script>
 
 <script>
