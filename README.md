@@ -8,7 +8,7 @@ Builder demo available at [lomake.app](https://www.lomake.app/builder).
 
 ### The iframe demo
 
-Here's a iframe POC how to use the form model on outside website:
+Here's an iframe POC how to use the form model on outside website:
 
 ```html
 <div id="iframe-container"></div>
@@ -59,7 +59,7 @@ Here's a iframe POC how to use the form model on outside website:
 
 ```
 
-Although it may already work, ***this is just a POC***. We may change the API any time!
+Although it may already partially work, ***this is just a POC***. We may change the API at any moment!
 
 The model for `iframe.setModel()` can be created using [lomake.app/builder](https://www.lomake.app/builder).
 
