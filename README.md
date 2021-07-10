@@ -8,7 +8,7 @@ Builder demo available at [lomake.app](https://www.lomake.app/builder).
 
 ### The iframe demo
 
-Here's a iframe POC how to use the frame:
+Here's a iframe POC how to use the form model on outside website:
 
 ```html
 <div id="iframe-container"></div>
