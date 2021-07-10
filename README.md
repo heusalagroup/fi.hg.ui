@@ -6,7 +6,7 @@ Demo is available at [lomake.app](https://www.lomake.app/builder).
 
 We will possibly release our UI components as a library once we have a first stable release. 
 
-### iframe demo
+### The iframe usage
 
 Here's a iframe POC how to use the frame:
 
@@ -59,9 +59,11 @@ Here's a iframe POC how to use the frame:
 
 ```
 
-Although it may already work, **this is just a POC**. We may change the API any time!
+Although it may already work, ***this is just a POC***. We may change the API any time!
 
-This example is available [lomake.app/test-iframe.html](https://www.lomake.app/test-iframe.html).
+The model for `iframe.setModel()` can be created using [lomake.app/builder](https://www.lomake.app/builder).
+
+This example is also available at [lomake.app/test-iframe.html](https://www.lomake.app/test-iframe.html).
 
 ### Commercial release
 
