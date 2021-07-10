@@ -63,7 +63,7 @@ Although it may already partially work, ***this is just a POC***. We may change 
 
 The model for `iframe.setModel()` can be created using [lomake.app/builder](https://www.lomake.app/builder).
 
-This example is also available at ./examples/test-iframe.html as well as online at [lomake.app/test-iframe.html](https://www.lomake.app/test-iframe.html).
+This example is also available at [./examples/test-iframe.html](https://github.com/sendanor/ui/blob/main/examples/test-iframe.html) as well as online at [lomake.app/test-iframe.html](https://www.lomake.app/test-iframe.html).
 
 ### Commercial release
 
