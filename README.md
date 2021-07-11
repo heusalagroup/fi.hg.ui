@@ -81,4 +81,6 @@ We also have a react component to render the form -- but it has not been release
 
 ### Commercial release
 
-For *tailored commercial release*, you may contact [our sales](mailto:info@sendanor.fi). General rule for pricing is 500 € (or $600) / issue.
+For *tailored commercial release*, you may contact [our sales](mailto:info@sendanor.fi). 
+
+General rule for pricing is 500 € (or $600) / [issue](https://github.com/sendanor/ui/issues).
