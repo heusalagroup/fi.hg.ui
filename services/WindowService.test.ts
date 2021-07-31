@@ -69,6 +69,8 @@ describe('parseWindowColorScheme', () => {
 describe('WindowService', () => {
 
     let callback : SpyInstance | undefined;
+    let windowAddListener : SpyInstance | undefined;
+    let windowRemoveListener : SpyInstance | undefined;
     let listener : WindowServiceDestructor | undefined;
 
     let windowMatchMediaMock = jest.fn().mockImplementation(query => ({
@@ -90,6 +92,9 @@ describe('WindowService', () => {
             writable: true,
             value: windowMatchMediaMock
         });
+
+        windowAddListener = jest.spyOn(window, 'addEventListener');
+        windowRemoveListener = jest.spyOn(window, 'removeEventListener');
 
     });
 
@@ -200,7 +205,7 @@ describe('WindowService', () => {
 
         });
 
-        test('can uninstall listener from window object', () => {
+        test('can uninstall COLOR_SCHEME_CHANGED listener from window object', () => {
 
             expect(listener).toBe(undefined);
 
@@ -235,6 +240,87 @@ describe('WindowService', () => {
             expect( matchMediaResultSpy.removeEventListener ).toHaveBeenCalledTimes(1);
             expect( matchMediaResultSpy.removeEventListener.mock.calls[0][0] ).toBe('change');
             expect( matchMediaResultSpy.removeEventListener.mock.calls[0][1] ).toStrictEqual(eventCallback);
+
+        });
+
+        test('can listen STORAGE_CHANGED events', () => {
+
+            expect(listener).toBe(undefined);
+
+            callback = jest.fn();
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: 'hello',
+                oldValue: 'world',
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            listener = WindowService.on(WindowServiceEvent.STORAGE_CHANGED, callback as unknown as WindowServiceDestructor);
+
+            expect( windowAddListener ).toHaveBeenCalledTimes(1);
+            // @ts-ignore
+            expect( windowAddListener.mock.calls[0][0] ).toBe('storage');
+
+            // @ts-ignore
+            const eventCallback = windowAddListener.mock.calls[0][1];
+            expect( isFunction(eventCallback) ).toBe(true);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(storageEventMock);
+
+            expect( callback ).toHaveBeenCalledTimes(1);
+            expect( callback.mock.calls[0][0] ).toBe(WindowServiceEvent.STORAGE_CHANGED);
+            expect( callback.mock.calls[0][1] ).toStrictEqual(storageEventMock);
+
+        });
+
+        test('can uninstall STORAGE_CHANGED listener from window object', () => {
+
+            expect(listener).toBe(undefined);
+
+            callback = jest.fn();
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: 'hello',
+                oldValue: 'world',
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            listener = WindowService.on(WindowServiceEvent.STORAGE_CHANGED, callback as unknown as WindowServiceDestructor);
+
+            expect( windowAddListener ).toHaveBeenCalledTimes(1);
+            // @ts-ignore
+            expect( windowAddListener.mock.calls[0][0] ).toBe('storage');
+
+            // @ts-ignore
+            const eventCallback = windowAddListener.mock.calls[0][1];
+            expect( isFunction(eventCallback) ).toBe(true);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(storageEventMock);
+
+            expect( callback ).toHaveBeenCalledTimes(1);
+            expect( callback.mock.calls[0][0] ).toBe(WindowServiceEvent.STORAGE_CHANGED);
+            expect( callback.mock.calls[0][1] ).toStrictEqual(storageEventMock);
+
+            // @ts-ignore
+            expect( windowRemoveListener ).not.toHaveBeenCalled();
+
+            listener();
+            listener = undefined;
+
+            // @ts-ignore
+            expect( windowRemoveListener ).toHaveBeenCalledTimes(1);
+            // @ts-ignore
+            expect( windowRemoveListener.mock.calls[0][0] ).toBe('storage');
+            // @ts-ignore
+            expect( windowRemoveListener.mock.calls[0][1] ).toStrictEqual(eventCallback);
 
         });
 

@@ -50,7 +50,9 @@ export function stringifyWindowColorScheme (value: WindowColorScheme) : string {
 
 export enum WindowServiceEvent {
 
-    COLOR_SCHEME_CHANGED = "WindowServiceEvent:colorScheme"
+    COLOR_SCHEME_CHANGED = "WindowServiceEvent:colorScheme",
+
+    STORAGE_CHANGED = "WindowServiceEvent:storage"
 
 }
 
@@ -66,6 +68,10 @@ interface MediaQueryListChangeCallback {
 
 export const DARK_COLOR_SCHEME_QUERY = '(prefers-color-scheme: dark)';
 
+export interface StorageCallback {
+    (event: StorageEvent): void;
+}
+
 export class WindowService {
 
     private static _observer : Observer<WindowServiceEvent> = new Observer<WindowServiceEvent>("WindowService");
@@ -73,6 +79,7 @@ export class WindowService {
     private static _watchMediaLightScheme : MediaQueryList | undefined;
     private static _colorScheme           : WindowColorScheme | undefined;
     private static _darkColorSchemeChangeCallback  : MediaQueryListChangeCallback | undefined;
+    private static _storageCallback                : StorageCallback | undefined;
 
 
     public static Event = WindowServiceEvent;
@@ -111,39 +118,98 @@ export class WindowService {
 
     }
 
-    public static on (name : WindowServiceEvent, callback: ObserverCallback<WindowServiceEvent>) : WindowServiceDestructor {
+    public static on (
+        name : WindowServiceEvent,
+        callback: ObserverCallback<WindowServiceEvent>
+    ) : WindowServiceDestructor {
 
         if (name === WindowServiceEvent.COLOR_SCHEME_CHANGED) {
 
             if (!this._isWatchingMediaScheme()) {
-                this._initializeListeners();
+                this._initializeMediaSchemeListeners();
             }
 
-            const destructor = this._observer.listenEvent(name, callback);
+            let destructor : any = this._observer.listenEvent(name, callback);
 
             return () => {
                 try {
                     destructor();
+                    destructor = undefined;
                 } finally {
                     if (!this._observer.hasCallbacks(WindowServiceEvent.COLOR_SCHEME_CHANGED)) {
-                        this._unInitializeListeners();
+                        this._unInitializeMediaSchemeListeners();
+                    }
+                }
+            };
+
+        } else if (name === WindowServiceEvent.STORAGE_CHANGED) {
+
+            if (!this._isWatchingStorageEvent()) {
+                this._initializeStorageListener();
+            }
+
+            let destructor: any = this._observer.listenEvent(name, callback);
+
+            return () => {
+                try {
+                    destructor();
+                    destructor = undefined;
+                } finally {
+                    if (!this._observer.hasCallbacks(WindowServiceEvent.STORAGE_CHANGED)) {
+                        this._unInitializeStorageListener();
                     }
                 }
             };
 
         } else {
-
-            return this._observer.listenEvent(name, callback);
-
+            throw new TypeError(`WindowService: Unsupported event name: ${name}`);
         }
 
     }
 
     public static destroy () {
 
-        this._unInitializeListeners();
-
+        this._unInitializeMediaSchemeListeners();
+        this._unInitializeStorageListener();
         this._colorScheme = undefined;
+
+    }
+
+
+    private static _isWatchingStorageEvent () : boolean {
+        return this._storageCallback !== undefined;
+    }
+
+    private static _initializeStorageListener () {
+
+        if (this._storageCallback) {
+            this._unInitializeStorageListener();
+        }
+
+        this._storageCallback = this._onStorageEvent.bind(this);
+
+        window.addEventListener('storage', this._storageCallback);
+
+    }
+
+    private static _unInitializeStorageListener () {
+
+        if (this._storageCallback) {
+            window.removeEventListener('storage', this._storageCallback);
+            this._storageCallback = undefined;
+        }
+
+    }
+
+    private static _onStorageEvent (event: StorageEvent) {
+
+        // const key         : string | null = event?.key;
+        // const newValue    : string | null = event?.newValue;
+        // const oldValue    : string | null = event?.oldValue;
+        // const storageArea : Storage | null = event?.storageArea;
+        // const url         : string = event?.url;
+
+        this._observer.triggerEvent(WindowServiceEvent.STORAGE_CHANGED, event);
 
     }
 
@@ -160,10 +226,10 @@ export class WindowService {
         return !!this._watchMediaDarkScheme && !!this._watchMediaLightScheme;
     }
 
-    private static _initializeListeners () {
+    private static _initializeMediaSchemeListeners () {
 
         if ( this._watchMediaDarkScheme || this._watchMediaLightScheme ) {
-            this._unInitializeListeners();
+            this._unInitializeMediaSchemeListeners();
         }
 
         const darkCallback = this._darkColorSchemeChangeCallback = this._onDarkColorSchemeChange.bind(this);
@@ -180,7 +246,7 @@ export class WindowService {
 
     }
 
-    private static _unInitializeListeners () {
+    private static _unInitializeMediaSchemeListeners () {
 
         const darkCallback = this._darkColorSchemeChangeCallback;
         if ( this._watchMediaDarkScheme !== undefined && darkCallback !== undefined ) {

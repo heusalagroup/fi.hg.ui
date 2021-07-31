@@ -3,11 +3,28 @@
 //import LogService from "../../ts/LogService";
 import JsonAny from "../../ts/Json";
 
-import LocalStorageService from "./LocalStorageService";
+import LocalStorageService, {LocalStorageServiceDestructor} from "./LocalStorageService";
+import {StorageServiceEvent} from "./AbtractStorageService";
+import {ObserverCallback} from "../../ts/Observer";
 
 //const LOG = LogService.createLogger('JsonLocalStorageService');
 
 export class JsonLocalStorageService {
+
+    public static Event = LocalStorageService.Event;
+
+    /**
+     * This is just a wrapper for LocalStorageService.on(name, callback)
+     *
+     * @param name
+     * @param callback
+     */
+    public static on (
+        name     : StorageServiceEvent,
+        callback : ObserverCallback<StorageServiceEvent>
+    ) : LocalStorageServiceDestructor {
+        return LocalStorageService.on(name, callback);
+    }
 
     public static hasItem (key : string) : boolean {
         return LocalStorageService.hasItem(key);

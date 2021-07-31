@@ -1,10 +1,12 @@
 import JsonLocalStorageService from "./JsonLocalStorageService";
 import LocalStorageService from "./LocalStorageService";
 import SpyInstance = jest.SpyInstance;
+import {StorageServiceEvent} from "./AbtractStorageService";
 
 describe('JsonLocalStorageService', () => {
 
     let storeMock : {
+        on             : SpyInstance,
         hasItem        : SpyInstance,
         getItem        : SpyInstance,
         removeItem     : SpyInstance,
@@ -15,6 +17,7 @@ describe('JsonLocalStorageService', () => {
     beforeAll(() => {
 
         storeMock = {
+            on             : jest.spyOn(LocalStorageService, 'on'),
             hasItem        : jest.spyOn(LocalStorageService, 'hasItem'),
             getItem        : jest.spyOn(LocalStorageService, 'getItem'),
             removeItem     : jest.spyOn(LocalStorageService, 'removeItem'),
@@ -101,5 +104,28 @@ describe('JsonLocalStorageService', () => {
         });
 
     });
+
+    describe('.Event', () => {
+        test('is StorageServiceEvent', () => {
+            expect( JsonLocalStorageService.Event ).toBe(StorageServiceEvent);
+        });
+    });
+
+    describe('.on', () => {
+
+        test('is wrapper for LocalStorageService.on()', () => {
+
+            expect(storeMock.on).not.toHaveBeenCalled();
+
+            const callback = jest.fn();
+
+            JsonLocalStorageService.on(JsonLocalStorageService.Event.PROPERTY_DELETED, callback);
+
+            expect(storeMock.on).toHaveBeenCalledTimes(1);
+            expect(storeMock.on).toHaveBeenCalledWith(JsonLocalStorageService.Event.PROPERTY_DELETED, callback);
+
+        });
+
+    })
 
 });

@@ -1,10 +1,12 @@
 import JsonSessionStorageService from "./JsonSessionStorageService";
 import SessionStorageService from "./SessionStorageService";
 import SpyInstance = jest.SpyInstance;
+import {StorageServiceEvent} from "./AbtractStorageService";
 
 describe('JsonSessionStorageService', () => {
 
     let storeMock : {
+        on             : SpyInstance,
         hasItem        : SpyInstance,
         getItem        : SpyInstance,
         removeItem     : SpyInstance,
@@ -15,6 +17,7 @@ describe('JsonSessionStorageService', () => {
     beforeAll(() => {
 
         storeMock = {
+            on             : jest.spyOn(SessionStorageService, 'on'),
             hasItem        : jest.spyOn(SessionStorageService, 'hasItem'),
             getItem        : jest.spyOn(SessionStorageService, 'getItem'),
             removeItem     : jest.spyOn(SessionStorageService, 'removeItem'),
@@ -101,5 +104,28 @@ describe('JsonSessionStorageService', () => {
         });
 
     });
+
+    describe('.Event', () => {
+        test('is StorageServiceEvent', () => {
+            expect( JsonSessionStorageService.Event ).toBe(StorageServiceEvent);
+        });
+    });
+
+    describe('.on', () => {
+
+        test('is wrapper for SessionStorageService.on()', () => {
+
+            expect(storeMock.on).not.toHaveBeenCalled();
+
+            const callback = jest.fn();
+
+            JsonSessionStorageService.on(JsonSessionStorageService.Event.PROPERTY_DELETED, callback);
+
+            expect(storeMock.on).toHaveBeenCalledTimes(1);
+            expect(storeMock.on).toHaveBeenCalledWith(JsonSessionStorageService.Event.PROPERTY_DELETED, callback);
+
+        });
+
+    })
 
 });

@@ -1,12 +1,19 @@
 // Copyright (c) 2020, 2021 Sendanor. All rights reserved.
 
-import LocalStorageService from "./LocalStorageService";
+import LocalStorageService, {LocalStorageServiceDestructor} from "./LocalStorageService";
+import WindowService, {WindowServiceEvent} from "./WindowService";
+import {isFunction} from "../../ts/modules/lodash";
+import {StorageServiceEvent} from "./AbtractStorageService";
 
 describe('LocalStorageService', () => {
 
     let storeMock : any;
+    let windowServiceOnSpy : any;
+    let listener : LocalStorageServiceDestructor | undefined;
 
     beforeAll(() => {
+
+        windowServiceOnSpy = jest.spyOn(WindowService, 'on');
 
         storeMock = {
             getItem: jest.fn(),
@@ -20,7 +27,14 @@ describe('LocalStorageService', () => {
     });
 
     afterEach(() => {
+
+        if (listener) {
+            listener();
+            listener = undefined;
+        }
+
         jest.clearAllMocks();
+
     });
 
     describe('.hasItem', () => {
@@ -94,6 +108,481 @@ describe('LocalStorageService', () => {
         test('returns itself for chaining', () => {
             expect( LocalStorageService.removeAllItems() ).toBe(LocalStorageService);
         });
+
+    });
+
+    describe('.Event', () => {
+        test('is StorageServiceEvent', () => {
+            expect( LocalStorageService.Event ).toBe(StorageServiceEvent);
+        });
+    });
+
+    describe('.on', () => {
+
+
+        test('can listen PROPERTY_CHANGED event when property is modified', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: 'hello',
+                oldValue: 'world',
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_CHANGED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).toHaveBeenCalledTimes(1);
+            expect( callback.mock.calls[0][0] ).toBe(LocalStorageService.Event.PROPERTY_CHANGED);
+            expect( callback.mock.calls[0][1] ).toBe('foo');
+
+        });
+
+        test('can listen PROPERTY_CHANGED event when property is created', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: 'hello',
+                oldValue: null,
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_CHANGED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).toHaveBeenCalledTimes(1);
+            expect( callback.mock.calls[0][0] ).toBe(LocalStorageService.Event.PROPERTY_CHANGED);
+            expect( callback.mock.calls[0][1] ).toBe('foo');
+
+        });
+
+        test('can listen PROPERTY_CHANGED event when property is deleted', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: null,
+                oldValue: 'hello',
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_CHANGED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).toHaveBeenCalledTimes(1);
+            expect( callback.mock.calls[0][0] ).toBe(LocalStorageService.Event.PROPERTY_CHANGED);
+            expect( callback.mock.calls[0][1] ).toBe('foo');
+
+        });
+
+        test('cannot listen PROPERTY_CHANGED event when all properties are cleared', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: null,
+                newValue: null,
+                oldValue: null,
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_CHANGED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+        });
+
+
+        test('can listen PROPERTY_MODIFIED event when property is modified', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: 'hello',
+                oldValue: 'world',
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_MODIFIED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).toHaveBeenCalledTimes(1);
+            expect( callback.mock.calls[0][0] ).toBe(LocalStorageService.Event.PROPERTY_MODIFIED);
+            expect( callback.mock.calls[0][1] ).toBe('foo');
+
+        });
+
+        test('cannot listen PROPERTY_MODIFIED event when property is deleted', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: null,
+                oldValue: 'world',
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_MODIFIED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+        });
+
+        test('cannot listen PROPERTY_MODIFIED event when property is created', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: 'hello',
+                oldValue: null,
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_MODIFIED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+        });
+
+        test('cannot listen PROPERTY_MODIFIED event when all properties are cleared', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: null,
+                newValue: null,
+                oldValue: null,
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_MODIFIED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+        });
+
+
+
+        test('can listen PROPERTY_DELETED event when property is deleted', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: null,
+                oldValue: 'world',
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_DELETED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).toHaveBeenCalledTimes(1);
+            expect( callback.mock.calls[0][0] ).toBe(LocalStorageService.Event.PROPERTY_DELETED);
+            expect( callback.mock.calls[0][1] ).toBe('foo');
+
+        });
+
+        test('cannot listen PROPERTY_DELETED event when property is modified', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: 'hello',
+                oldValue: 'world',
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_DELETED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+        });
+
+        test('cannot listen PROPERTY_DELETED event when property is created', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: 'hello',
+                oldValue: null,
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_DELETED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+        });
+
+        test('cannot listen PROPERTY_DELETED event when all properties are cleared', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: null,
+                newValue: null,
+                oldValue: null,
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.PROPERTY_DELETED, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+        });
+
+
+        test('can listen CLEAR event when all properties are cleared', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: null,
+                newValue: null,
+                oldValue: null,
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.CLEAR, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).toHaveBeenCalledTimes(1);
+            expect( callback.mock.calls[0][0] ).toBe(LocalStorageService.Event.CLEAR);
+
+        });
+
+        test('cannot listen CLEAR event when single property is deleted', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: null,
+                oldValue: 'hello',
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.CLEAR, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+        });
+
+        test('cannot listen CLEAR event when single property is modified', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: 'world',
+                oldValue: 'hello',
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.CLEAR, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+        });
+
+        test('cannot listen CLEAR event when single property is created', () => {
+
+            const storageEventMock : Partial<StorageEvent> = {
+                key: 'foo',
+                newValue: 'hello',
+                oldValue: null,
+                storageArea: window.localStorage,
+                url: 'example.com'
+            };
+
+            const callback = jest.fn();
+
+            listener = LocalStorageService.on(LocalStorageService.Event.CLEAR, callback);
+
+            expect( windowServiceOnSpy ).toHaveBeenCalledTimes(1);
+
+            const eventCallback = windowServiceOnSpy.mock.calls[0][1];
+
+            expect( isFunction(eventCallback) ).toBe(true)
+
+            expect( callback ).not.toHaveBeenCalled();
+
+            eventCallback(WindowServiceEvent.STORAGE_CHANGED, storageEventMock);
+
+            expect( callback ).not.toHaveBeenCalled();
+
+        });
+
 
     });
 
