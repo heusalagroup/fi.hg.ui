@@ -2,12 +2,42 @@
 
 import Observer, {ObserverCallback, ObserverDestructor} from "../../ts/Observer";
 import LogService from "../../ts/LogService";
+import {isString, trim} from "../../ts/modules/lodash";
 
 const LOG = LogService.createLogger('WindowService');
 
 export enum WindowColorScheme {
     DARK,
     LIGHT
+}
+
+export function isWindowColorScheme (value : any) : value is WindowColorScheme {
+    switch(value) {
+
+        case WindowColorScheme.DARK:
+        case WindowColorScheme.LIGHT:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
+export function parseWindowColorScheme (value : any) : WindowColorScheme | undefined {
+
+    if (isWindowColorScheme(value)) return value;
+
+    if (isString(value)) {
+        value = trim(value).toUpperCase();
+        switch(value) {
+            case 'DARK'  : return WindowColorScheme.DARK;
+            case 'LIGHT' : return WindowColorScheme.LIGHT;
+            default      : return undefined;
+        }
+    }
+
+    return undefined;
+
 }
 
 export function stringifyWindowColorScheme (value: WindowColorScheme) : string {
@@ -70,12 +100,23 @@ export class WindowService {
 
     }
 
+    public static setColorScheme (value: WindowColorScheme) {
+
+        if (this._colorScheme !== value) {
+            this._colorScheme = value;
+            if (this._observer.hasCallbacks(WindowServiceEvent.COLOR_SCHEME_CHANGED)) {
+                this._observer.triggerEvent(WindowServiceEvent.COLOR_SCHEME_CHANGED, value);
+            }
+        }
+
+    }
+
     public static on (name : WindowServiceEvent, callback: ObserverCallback<WindowServiceEvent>) : WindowServiceDestructor {
 
         if (name === WindowServiceEvent.COLOR_SCHEME_CHANGED) {
 
-            if (!this._isInitialized()) {
-                this._initialize();
+            if (!this._isWatchingMediaScheme()) {
+                this._initializeListeners();
             }
 
             const destructor = this._observer.listenEvent(name, callback);
@@ -85,7 +126,7 @@ export class WindowService {
                     destructor();
                 } finally {
                     if (!this._observer.hasCallbacks(WindowServiceEvent.COLOR_SCHEME_CHANGED)) {
-                        this._unInitialize();
+                        this._unInitializeListeners();
                     }
                 }
             };
@@ -99,7 +140,11 @@ export class WindowService {
     }
 
     public static destroy () {
-        this._unInitialize();
+
+        this._unInitializeListeners();
+
+        this._colorScheme = undefined;
+
     }
 
 
@@ -111,29 +156,31 @@ export class WindowService {
         return this._isDarkModeEnabled() ? WindowColorScheme.DARK : WindowColorScheme.LIGHT;
     }
 
-    private static _isInitialized () : boolean {
+    private static _isWatchingMediaScheme () : boolean {
         return !!this._watchMediaDarkScheme && !!this._watchMediaLightScheme;
     }
 
-    private static _initialize () {
+    private static _initializeListeners () {
 
         if ( this._watchMediaDarkScheme || this._watchMediaLightScheme ) {
-            this._unInitialize();
+            this._unInitializeListeners();
         }
 
         const darkCallback = this._darkColorSchemeChangeCallback = this._onDarkColorSchemeChange.bind(this);
         this._watchMediaDarkScheme = window.matchMedia(DARK_COLOR_SCHEME_QUERY);
         this._watchMediaDarkScheme.addEventListener('change', darkCallback);
 
-        const colorScheme = this._watchMediaDarkScheme.matches ? WindowColorScheme.DARK : WindowColorScheme.LIGHT;
-        if (this._colorScheme !== colorScheme) {
-            this._colorScheme = colorScheme;
-            LOG.info(`Color colorScheme initialized as ${stringifyWindowColorScheme(colorScheme)}`);
+        if (this._colorScheme === undefined) {
+            const colorScheme = this._watchMediaDarkScheme.matches ? WindowColorScheme.DARK : WindowColorScheme.LIGHT;
+            if (this._colorScheme !== colorScheme) {
+                this._colorScheme = colorScheme;
+                LOG.info(`Color colorScheme initialized as ${stringifyWindowColorScheme(colorScheme)}`);
+            }
         }
 
     }
 
-    private static _unInitialize () {
+    private static _unInitializeListeners () {
 
         const darkCallback = this._darkColorSchemeChangeCallback;
         if ( this._watchMediaDarkScheme !== undefined && darkCallback !== undefined ) {
@@ -141,8 +188,6 @@ export class WindowService {
             this._watchMediaDarkScheme = undefined;
             this._darkColorSchemeChangeCallback = undefined;
         }
-
-        this._colorScheme = undefined;
 
     }
 
