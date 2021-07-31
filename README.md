@@ -25,10 +25,10 @@ Recommended way to initialize your project is like this:
 ```
 mkdir -p src/nor
 
-git submodule add https://github.com/sendanor/typescript src/nor/ts
+git submodule add git@github.com:sendanor/typescript.git src/nor/ts
 git config -f .gitmodules submodule.src/nor/ts.branch main
 
-git submodule add https://github.com/sendanor/ui src/nor/ui
+git submodule add git@github.com:sendanor/ui.git src/nor/ui
 git config -f .gitmodules submodule.src/nor/ui.branch main
 ```
 
