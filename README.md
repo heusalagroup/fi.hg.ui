@@ -46,10 +46,15 @@ npm install --save-dev reflect-metadata
 
 ### Stable releases available for a commercial customer
 
-One stable release is 8000 € + taxes.
+For *tailored commercial release*, you may contact [our sales](mailto:info@sendanor.fi). 
+
+General rule for pricing is 500 € (or $600) / [feature](https://github.com/sendanor/ui/issues). One full stable release containing multiple 
+components is 8000 €.
 
 The payment includes a month of agile development with the customer, and a year of
 support for that release branch.
+
+
 
 ## Demo app
 
@@ -113,3 +118,17 @@ Although it may already partially work, ***this is just a POC***. We may change 
 The model for `iframe.setModel()` can be created using [lomake.app/builder](https://www.lomake.app/builder).
 
 This example is also available at [./examples/test-iframe.html](https://github.com/sendanor/ui/blob/main/examples/test-iframe.html) as well as online at [lomake.app/test-iframe.html](https://www.lomake.app/test-iframe.html).
+
+### React component
+
+We also have a react component to render the form -- but it has not been released yet. Our builder's preview uses it.
+
+```jsx
+<Form
+    model={formModel}
+    value={valueModel}
+    change={(value) => {}}
+    submit={() => {}}
+    cancel={() => {}}
+/>
+```
