@@ -19,10 +19,10 @@ export interface DarkModeEventCallback {
 
 export class WindowService {
 
-    public static Event = WindowServiceEvent;
-
     private static _observer : Observer<WindowServiceEvent> = new Observer<WindowServiceEvent>("FooService");
     private static _watchMediaDarkScheme : MediaQueryList | undefined;
+
+    public static Event = WindowServiceEvent;
 
     public static on (name : WindowServiceEvent, callback: ObserverCallback<WindowServiceEvent>) : ObserverDestructor {
 
