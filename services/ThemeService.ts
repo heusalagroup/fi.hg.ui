@@ -6,7 +6,6 @@ import ThemeLocalStorageService, {
     ThemeLocalStorageServiceDestructor,
     ThemeLocalStorageServiceEvent
 } from "./ThemeLocalStorageService";
-import LocalStorageService from "./LocalStorageService";
 
 const LOG = LogService.createLogger('ThemeService');
 

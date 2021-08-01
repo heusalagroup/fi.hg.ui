@@ -3,7 +3,6 @@
 import Observer, {ObserverCallback, ObserverDestructor} from "../../ts/Observer";
 import LogService from "../../ts/LogService";
 import {stringifyColorScheme, ColorScheme} from "./types/ColorScheme";
-import {ThemeServiceColorSchemeChangedEventCallback, ThemeServiceDestructor, ThemeServiceEvent} from "./ThemeService";
 
 const LOG = LogService.createLogger('WindowService');
 

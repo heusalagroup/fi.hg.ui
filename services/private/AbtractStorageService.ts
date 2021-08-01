@@ -1,7 +1,6 @@
 // Copyright (c) 2020, 2021 Sendanor. All rights reserved.
 
-import Observer, {ObserverCallback, ObserverDestructor} from "../../../ts/Observer";
-import {LocalStorageServiceDestructor} from "../LocalStorageService";
+import Observer, {ObserverDestructor} from "../../../ts/Observer";
 
 export enum StorageServiceEvent {
 
