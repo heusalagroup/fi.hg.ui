@@ -24,8 +24,13 @@ export function parseColorScheme (value: any): ColorScheme | undefined {
     if (isString(value)) {
         value = trim(value).toUpperCase();
         switch (value) {
+
+            case '0':
             case 'DARK'  : return ColorScheme.DARK;
+
+            case '1':
             case 'LIGHT' : return ColorScheme.LIGHT;
+
             default      : return undefined;
         }
     }

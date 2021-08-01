@@ -1,5 +1,5 @@
 import WindowService, {WindowServiceDestructor, WindowServiceEvent} from "./WindowService";
-import Observer, {ObserverCallback, ObserverDestructor} from "../../ts/Observer";
+import Observer, {ObserverDestructor} from "../../ts/Observer";
 import {ColorScheme, stringifyColorScheme} from "./types/ColorScheme";
 import LogService from "../../ts/LogService";
 
