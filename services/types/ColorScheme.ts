@@ -39,7 +39,10 @@ export function parseColorScheme (value: any): ColorScheme | undefined {
 
 }
 
-export function stringifyColorScheme (value: ColorScheme): string {
+export function stringifyColorScheme (value: ColorScheme | undefined): string {
+
+    if (value === undefined) return 'undefined';
+
     switch (value) {
         case ColorScheme.DARK  :
             return 'DARK';

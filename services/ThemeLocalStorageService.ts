@@ -21,10 +21,12 @@ export type ThemeLocalStorageServiceDestructor = ObserverDestructor;
 
 export class ThemeLocalStorageService {
 
-    private static _observer        : Observer<ThemeLocalStorageServiceEvent> = new Observer<ThemeLocalStorageServiceEvent>("ThemeLocalStorageService");
-
+    private static _observer                : Observer<ThemeLocalStorageServiceEvent> = new Observer<ThemeLocalStorageServiceEvent>("ThemeLocalStorageService");
     private static _propertyChangedListener : WindowServiceDestructor | undefined;
     private static _propertyClearedListener : WindowServiceDestructor | undefined;
+
+
+    public static Event = ThemeLocalStorageServiceEvent;
 
     public static getColorScheme () : ColorScheme | undefined {
         const value : string | null = LocalStorageService.getItem(COLOR_SCHEME_LOCAL_STORAGE_KEY);

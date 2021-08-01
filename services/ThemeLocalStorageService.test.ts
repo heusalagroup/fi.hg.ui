@@ -5,6 +5,7 @@ import ThemeLocalStorageService, {
 import {ColorScheme} from "./types/ColorScheme";
 import LocalStorageService from "./LocalStorageService";
 import {find, isFunction} from "../../ts/modules/lodash";
+import LogService, {LogLevel} from "../../ts/LogService";
 
 describe('ThemeLocalStorageService', () => {
 
@@ -18,7 +19,9 @@ describe('ThemeLocalStorageService', () => {
 
     beforeAll(() => {
 
-    })
+        LogService.setLogLevel(LogLevel.WARN);
+
+    });
 
     afterEach( () => {
 
@@ -127,6 +130,12 @@ describe('ThemeLocalStorageService', () => {
 
         });
 
+    });
+
+    describe('.Event', () => {
+        test('is ThemeLocalStorageServiceEvent', () => {
+            expect(ThemeLocalStorageService.Event).toStrictEqual(ThemeLocalStorageServiceEvent);
+        });
     });
 
     describe('.on', () => {
