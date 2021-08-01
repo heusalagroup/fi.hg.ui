@@ -1,7 +1,7 @@
 import JsonSessionStorageService from "./JsonSessionStorageService";
 import SessionStorageService from "./SessionStorageService";
 import SpyInstance = jest.SpyInstance;
-import {StorageServiceEvent} from "./AbtractStorageService";
+import {StorageServiceEvent} from "./private/AbtractStorageService";
 
 describe('JsonSessionStorageService', () => {
 

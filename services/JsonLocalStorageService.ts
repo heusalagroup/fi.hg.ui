@@ -4,14 +4,25 @@
 import JsonAny from "../../ts/Json";
 
 import LocalStorageService, {LocalStorageServiceDestructor} from "./LocalStorageService";
-import {StorageServiceEvent} from "./AbtractStorageService";
-import {ObserverCallback} from "../../ts/Observer";
+import {
+    StorageServiceChangedEventCallback, StorageServiceClearEventCallback,
+    StorageServiceCreatedEventCallback,
+    StorageServiceDeletedEventCallback,
+    StorageServiceEvent, StorageServiceModifiedEventCallback
+} from "./private/AbtractStorageService";
+import {ObserverCallback, ObserverDestructor} from "../../ts/Observer";
 
 //const LOG = LogService.createLogger('JsonLocalStorageService');
 
 export class JsonLocalStorageService {
 
     public static Event = LocalStorageService.Event;
+
+    public static on (name : StorageServiceEvent.PROPERTY_DELETED , callback : StorageServiceDeletedEventCallback)  : ObserverDestructor;
+    public static on (name : StorageServiceEvent.PROPERTY_CREATED , callback : StorageServiceCreatedEventCallback)  : ObserverDestructor;
+    public static on (name : StorageServiceEvent.PROPERTY_MODIFIED, callback : StorageServiceModifiedEventCallback) : ObserverDestructor;
+    public static on (name : StorageServiceEvent.PROPERTY_CHANGED , callback : StorageServiceChangedEventCallback)  : ObserverDestructor;
+    public static on (name : StorageServiceEvent.CLEAR            , callback : StorageServiceClearEventCallback)    : ObserverDestructor;
 
     /**
      * This is just a wrapper for LocalStorageService.on(name, callback)
@@ -20,10 +31,22 @@ export class JsonLocalStorageService {
      * @param callback
      */
     public static on (
-        name     : StorageServiceEvent,
-        callback : ObserverCallback<StorageServiceEvent>
-    ) : LocalStorageServiceDestructor {
-        return LocalStorageService.on(name, callback);
+        name : (
+              StorageServiceEvent.PROPERTY_DELETED
+            | StorageServiceEvent.PROPERTY_CREATED
+            | StorageServiceEvent.PROPERTY_MODIFIED
+            | StorageServiceEvent.PROPERTY_CHANGED
+            | StorageServiceEvent.CLEAR
+        ),
+        callback : (
+              StorageServiceDeletedEventCallback
+            | StorageServiceCreatedEventCallback
+            | StorageServiceModifiedEventCallback
+            | StorageServiceChangedEventCallback
+            | StorageServiceClearEventCallback
+        )
+    ) : ObserverDestructor {
+        return LocalStorageService.on(name as any, callback as any);
     }
 
     public static hasItem (key : string) : boolean {

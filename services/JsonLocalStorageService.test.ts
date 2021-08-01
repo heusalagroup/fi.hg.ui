@@ -1,7 +1,7 @@
 import JsonLocalStorageService from "./JsonLocalStorageService";
 import LocalStorageService from "./LocalStorageService";
 import SpyInstance = jest.SpyInstance;
-import {StorageServiceEvent} from "./AbtractStorageService";
+import {StorageServiceEvent} from "./private/AbtractStorageService";
 
 describe('JsonLocalStorageService', () => {
 

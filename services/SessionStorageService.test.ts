@@ -4,7 +4,7 @@ import SessionStorageService, {SessionStorageServiceDestructor} from "./SessionS
 import {isFunction} from "../../ts/modules/lodash";
 import WindowService, {WindowServiceEvent} from "./WindowService";
 import JsonSessionStorageService from "./JsonSessionStorageService";
-import {StorageServiceEvent} from "./AbtractStorageService";
+import {StorageServiceEvent} from "./private/AbtractStorageService";
 
 describe('SessionStorageService', () => {
 

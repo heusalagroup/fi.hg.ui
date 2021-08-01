@@ -1,7 +1,7 @@
 // Copyright (c) 2020, 2021 Sendanor. All rights reserved.
 
-import Observer, {ObserverCallback} from "../../ts/Observer";
-import {LocalStorageServiceDestructor} from "./LocalStorageService";
+import Observer, {ObserverCallback, ObserverDestructor} from "../../../ts/Observer";
+import {LocalStorageServiceDestructor} from "../LocalStorageService";
 
 export enum StorageServiceEvent {
 
@@ -45,6 +45,12 @@ export function isStorageServiceEvent (value : any) : value is StorageServiceEve
 
     }
 }
+
+export type StorageServiceChangedEventCallback  = (name: StorageServiceEvent.PROPERTY_CHANGED, key: string) => void;
+export type StorageServiceCreatedEventCallback  = (name: StorageServiceEvent.PROPERTY_CREATED, key: string) => void;
+export type StorageServiceDeletedEventCallback  = (name: StorageServiceEvent.PROPERTY_DELETED, key: string) => void;
+export type StorageServiceModifiedEventCallback = (name: StorageServiceEvent.PROPERTY_MODIFIED, key: string) => void;
+export type StorageServiceClearEventCallback    = (name: StorageServiceEvent.CLEAR) => void;
 
 export interface StorageObject {
     getItem(key: string) : string | null;
@@ -107,10 +113,28 @@ export abstract class AbstractStorageService {
     }
 
 
+    public static on (name : StorageServiceEvent.PROPERTY_DELETED , callback : StorageServiceDeletedEventCallback)  : ObserverDestructor;
+    public static on (name : StorageServiceEvent.PROPERTY_CREATED , callback : StorageServiceCreatedEventCallback)  : ObserverDestructor;
+    public static on (name : StorageServiceEvent.PROPERTY_MODIFIED, callback : StorageServiceModifiedEventCallback) : ObserverDestructor;
+    public static on (name : StorageServiceEvent.PROPERTY_CHANGED , callback : StorageServiceChangedEventCallback)  : ObserverDestructor;
+    public static on (name : StorageServiceEvent.CLEAR            , callback : StorageServiceClearEventCallback)    : ObserverDestructor;
+
     public static on (
-        name     : StorageServiceEvent,
-        callback : ObserverCallback<StorageServiceEvent>
-    ) : LocalStorageServiceDestructor {
+        name     : (
+              StorageServiceEvent.PROPERTY_DELETED
+            | StorageServiceEvent.PROPERTY_CREATED
+            | StorageServiceEvent.PROPERTY_MODIFIED
+            | StorageServiceEvent.PROPERTY_CHANGED
+            | StorageServiceEvent.CLEAR
+            ),
+        callback : (
+              StorageServiceDeletedEventCallback
+            | StorageServiceCreatedEventCallback
+            | StorageServiceModifiedEventCallback
+            | StorageServiceChangedEventCallback
+            | StorageServiceClearEventCallback
+            )
+    ) : ObserverDestructor {
         throw new Error('Must be implemented');
     }
 

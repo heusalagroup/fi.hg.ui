@@ -3,68 +3,12 @@
 import {isFunction} from "../../ts/modules/lodash";
 import WindowService, {
     DARK_COLOR_SCHEME_QUERY,
-    isWindowColorScheme,
-    parseWindowColorScheme,
-    WindowColorScheme,
     WindowServiceDestructor,
     WindowServiceEvent
 } from "./WindowService";
 import LogService, {LogLevel} from "../../ts/LogService";
 import SpyInstance = jest.SpyInstance;
-
-describe('isWindowColorScheme', () => {
-
-    test('returns true for correct values', () => {
-        expect( isWindowColorScheme(WindowColorScheme.DARK) ).toBe(true);
-        expect( isWindowColorScheme(WindowColorScheme.LIGHT) ).toBe(true);
-    });
-
-    test('returns false for incorrect values', () => {
-        expect( isWindowColorScheme("DARK") ).toBe(false);
-        expect( isWindowColorScheme("LIGHT") ).toBe(false);
-        expect( isWindowColorScheme(-1) ).toBe(false);
-        expect( isWindowColorScheme(999) ).toBe(false);
-        expect( isWindowColorScheme(undefined) ).toBe(false);
-        expect( isWindowColorScheme(null) ).toBe(false);
-        expect( isWindowColorScheme(false) ).toBe(false);
-        expect( isWindowColorScheme(true) ).toBe(false);
-        expect( isWindowColorScheme({}) ).toBe(false);
-        expect( isWindowColorScheme([]) ).toBe(false);
-        expect( isWindowColorScheme(NaN) ).toBe(false);
-    });
-
-});
-
-describe('parseWindowColorScheme', () => {
-
-    test('can detect WindowColorScheme', () => {
-        expect( parseWindowColorScheme(WindowColorScheme.DARK) ).toBe(WindowColorScheme.DARK);
-        expect( parseWindowColorScheme(WindowColorScheme.LIGHT) ).toBe(WindowColorScheme.LIGHT);
-    });
-
-    test('can parse uppercase strings', () => {
-        expect( parseWindowColorScheme("DARK") ).toBe(WindowColorScheme.DARK);
-        expect( parseWindowColorScheme("LIGHT") ).toBe(WindowColorScheme.LIGHT);
-    });
-
-    test('can parse lowercase strings', () => {
-        expect( parseWindowColorScheme("dark") ).toBe(WindowColorScheme.DARK);
-        expect( parseWindowColorScheme("light") ).toBe(WindowColorScheme.LIGHT);
-    });
-
-    test('returns undefined for unknown values', () => {
-        expect( parseWindowColorScheme("foo") ).toBe(undefined);
-        expect( parseWindowColorScheme("") ).toBe(undefined);
-        expect( parseWindowColorScheme(undefined) ).toBe(undefined);
-        expect( parseWindowColorScheme(null) ).toBe(undefined);
-        expect( parseWindowColorScheme(NaN) ).toBe(undefined);
-        expect( parseWindowColorScheme(false) ).toBe(undefined);
-        expect( parseWindowColorScheme(true) ).toBe(undefined);
-        expect( parseWindowColorScheme({}) ).toBe(undefined);
-        expect( parseWindowColorScheme([]) ).toBe(undefined);
-    });
-
-});
+import {ColorScheme} from "./types/ColorScheme";
 
 describe('WindowService', () => {
 
@@ -165,7 +109,7 @@ describe('WindowService', () => {
 
             expect( callback ).toHaveBeenCalledTimes(1);
             expect( callback.mock.calls[0][0] ).toBe(WindowServiceEvent.COLOR_SCHEME_CHANGED);
-            expect( callback.mock.calls[0][1] ).toBe(WindowColorScheme.DARK);
+            expect( callback.mock.calls[0][1] ).toBe(ColorScheme.DARK);
 
         });
 
@@ -201,7 +145,7 @@ describe('WindowService', () => {
 
             expect( callback ).toHaveBeenCalledTimes(1);
             expect( callback.mock.calls[0][0] ).toBe(WindowServiceEvent.COLOR_SCHEME_CHANGED);
-            expect( callback.mock.calls[0][1] ).toBe(WindowColorScheme.LIGHT);
+            expect( callback.mock.calls[0][1] ).toBe(ColorScheme.LIGHT);
 
         });
 
@@ -336,7 +280,7 @@ describe('WindowService', () => {
 
             windowMatchMediaMock.mockReturnValue(matchMediaResult as unknown as MediaQueryList);
 
-            expect( WindowService.getColorScheme() ).toStrictEqual(WindowColorScheme.LIGHT);
+            expect( WindowService.getColorScheme() ).toStrictEqual(ColorScheme.LIGHT);
 
             expect( windowMatchMediaMock ).toHaveBeenCalledTimes(1);
 
@@ -350,7 +294,7 @@ describe('WindowService', () => {
 
             windowMatchMediaMock.mockReturnValue(matchMediaResult as unknown as MediaQueryList);
 
-            expect( WindowService.getColorScheme() ).toStrictEqual(WindowColorScheme.DARK);
+            expect( WindowService.getColorScheme() ).toStrictEqual(ColorScheme.DARK);
 
             expect( windowMatchMediaMock ).toHaveBeenCalledTimes(1);
 
@@ -382,11 +326,11 @@ describe('WindowService', () => {
             const eventCallback = matchMediaResultSpy.addEventListener.mock.calls[0][1];
             expect( isFunction(eventCallback) ).toBe(true);
 
-            expect( WindowService.getColorScheme() ).toBe(WindowColorScheme.DARK);
+            expect( WindowService.getColorScheme() ).toBe(ColorScheme.DARK);
 
             eventCallback({matches: false});
 
-            expect( WindowService.getColorScheme() ).toBe(WindowColorScheme.LIGHT);
+            expect( WindowService.getColorScheme() ).toBe(ColorScheme.LIGHT);
 
         });
 
@@ -451,64 +395,6 @@ describe('WindowService', () => {
             expect( WindowService.isLightModeEnabled() ).toStrictEqual(true);
 
             expect( windowMatchMediaMock ).toHaveBeenCalledTimes(1);
-
-        });
-
-    });
-
-    describe('.setColorScheme', () => {
-
-        test('can change color scheme from LIGHT to DARK', () => {
-
-            expect( WindowService.getColorScheme() ).toBe(WindowColorScheme.LIGHT);
-
-            WindowService.setColorScheme(WindowColorScheme.DARK);
-
-            expect( WindowService.getColorScheme() ).toBe(WindowColorScheme.DARK);
-
-        });
-
-        test('can change color scheme from DARK to LIGHT', () => {
-
-            expect( WindowService.getColorScheme() ).toBe(WindowColorScheme.LIGHT);
-
-            WindowService.setColorScheme(WindowColorScheme.DARK);
-
-            expect( WindowService.getColorScheme() ).toBe(WindowColorScheme.DARK);
-
-            WindowService.setColorScheme(WindowColorScheme.LIGHT);
-
-            expect( WindowService.getColorScheme() ).toBe(WindowColorScheme.LIGHT);
-
-        });
-
-        test('does not trigger event callback if schema does not change', () => {
-
-            expect(listener).toBe(undefined);
-
-            callback = jest.fn();
-
-            const matchMediaResultSpy = {
-                matches: true,
-                addEventListener: jest.fn(),
-                removeEventListener: jest.fn()
-            };
-
-            windowMatchMediaMock.mockReturnValue(matchMediaResultSpy as unknown as MediaQueryList);
-
-            listener = WindowService.on(WindowServiceEvent.COLOR_SCHEME_CHANGED, callback as unknown as WindowServiceDestructor);
-
-            expect( WindowService.getColorScheme() ).toBe(WindowColorScheme.DARK);
-
-            WindowService.setColorScheme(WindowColorScheme.DARK);
-
-            expect( WindowService.getColorScheme() ).toBe(WindowColorScheme.DARK);
-
-            callback.mockClear();
-
-            WindowService.setColorScheme(WindowColorScheme.DARK);
-
-            expect( callback ).toHaveBeenCalledTimes(0);
 
         });
 

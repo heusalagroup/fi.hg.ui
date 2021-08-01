@@ -2,65 +2,28 @@
 
 import Observer, {ObserverCallback, ObserverDestructor} from "../../ts/Observer";
 import LogService from "../../ts/LogService";
-import {isString, trim} from "../../ts/modules/lodash";
+import {stringifyColorScheme, ColorScheme} from "./types/ColorScheme";
+import {ThemeServiceColorSchemeChangedEventCallback, ThemeServiceDestructor, ThemeServiceEvent} from "./ThemeService";
 
 const LOG = LogService.createLogger('WindowService');
 
-export enum WindowColorScheme {
-    DARK,
-    LIGHT
-}
-
-export function isWindowColorScheme (value : any) : value is WindowColorScheme {
-    switch(value) {
-
-        case WindowColorScheme.DARK:
-        case WindowColorScheme.LIGHT:
-            return true;
-
-        default:
-            return false;
-    }
-}
-
-export function parseWindowColorScheme (value : any) : WindowColorScheme | undefined {
-
-    if (isWindowColorScheme(value)) return value;
-
-    if (isString(value)) {
-        value = trim(value).toUpperCase();
-        switch(value) {
-            case 'DARK'  : return WindowColorScheme.DARK;
-            case 'LIGHT' : return WindowColorScheme.LIGHT;
-            default      : return undefined;
-        }
-    }
-
-    return undefined;
-
-}
-
-export function stringifyWindowColorScheme (value: WindowColorScheme) : string {
-    switch (value) {
-        case WindowColorScheme.DARK  : return 'DARK';
-        case WindowColorScheme.LIGHT : return 'LIGHT';
-        default                      : return `WindowColorScheme(${value})`;
-    }
-}
-
 export enum WindowServiceEvent {
 
-    COLOR_SCHEME_CHANGED = "WindowServiceEvent:colorScheme",
+    COLOR_SCHEME_CHANGED = "WindowServiceEvent:colorSchemeChanged",
 
-    STORAGE_CHANGED = "WindowServiceEvent:storage"
+    STORAGE_CHANGED = "WindowServiceEvent:storageChanged"
 
-}
-
-export interface WindowColorSchemeEventCallback {
-    (event: WindowServiceEvent, scheme: WindowColorScheme) : void;
 }
 
 export type WindowServiceDestructor = ObserverDestructor;
+
+export interface WindowServiceColorSchemeChangedEventCallback {
+    (event: WindowServiceEvent.COLOR_SCHEME_CHANGED, scheme: ColorScheme) : void;
+}
+
+export interface WindowServiceStorageChangedEventCallback {
+    (event: WindowServiceEvent.STORAGE_CHANGED, storageEvent: StorageEvent) : void;
+}
 
 interface MediaQueryListChangeCallback {
     (e : MediaQueryListEvent) : void;
@@ -68,7 +31,7 @@ interface MediaQueryListChangeCallback {
 
 export const DARK_COLOR_SCHEME_QUERY = '(prefers-color-scheme: dark)';
 
-export interface StorageCallback {
+export interface StorageEventCallback {
     (event: StorageEvent): void;
 }
 
@@ -77,29 +40,35 @@ export class WindowService {
     private static _observer : Observer<WindowServiceEvent> = new Observer<WindowServiceEvent>("WindowService");
     private static _watchMediaDarkScheme  : MediaQueryList | undefined;
     private static _watchMediaLightScheme : MediaQueryList | undefined;
-    private static _colorScheme           : WindowColorScheme | undefined;
+    private static _colorScheme           : ColorScheme | undefined;
     private static _darkColorSchemeChangeCallback  : MediaQueryListChangeCallback | undefined;
-    private static _storageCallback                : StorageCallback | undefined;
+    private static _storageCallback                : StorageEventCallback | undefined;
 
 
     public static Event = WindowServiceEvent;
 
     public static isDarkModeEnabled () : boolean {
-        return this.getColorScheme() === WindowColorScheme.DARK;
+        return this.getColorScheme() === ColorScheme.DARK;
     }
 
     public static isLightModeEnabled () : boolean {
-        return this.getColorScheme() === WindowColorScheme.LIGHT;
+        return this.getColorScheme() === ColorScheme.LIGHT;
     }
 
-    public static getColorScheme () : WindowColorScheme {
+    /**
+     * This method returns the current color scheme in the browser.
+     *
+     * Check related ThemeService for app-level color scheme, which can also be changed in-app, and
+     * includes a LocalStorage state.
+     */
+    public static getColorScheme () : ColorScheme {
 
         let colorScheme = this._colorScheme;
 
         if (colorScheme === undefined) {
             colorScheme = this._getColorScheme();
             this._colorScheme = colorScheme;
-            LOG.info(`Color colorScheme initialized as ${stringifyWindowColorScheme(colorScheme)}`);
+            LOG.info(`Color colorScheme initialized as ${stringifyColorScheme(colorScheme)}`);
             return colorScheme;
         }
 
@@ -107,20 +76,13 @@ export class WindowService {
 
     }
 
-    public static setColorScheme (value: WindowColorScheme) {
+    public static on (eventName: WindowServiceEvent.COLOR_SCHEME_CHANGED, callback: WindowServiceColorSchemeChangedEventCallback) : WindowServiceDestructor;
+    public static on (eventName: WindowServiceEvent.STORAGE_CHANGED     , callback: WindowServiceStorageChangedEventCallback)     : WindowServiceDestructor;
 
-        if (this._colorScheme !== value) {
-            this._colorScheme = value;
-            if (this._observer.hasCallbacks(WindowServiceEvent.COLOR_SCHEME_CHANGED)) {
-                this._observer.triggerEvent(WindowServiceEvent.COLOR_SCHEME_CHANGED, value);
-            }
-        }
-
-    }
-
+    // Implementation
     public static on (
-        name : WindowServiceEvent,
-        callback: ObserverCallback<WindowServiceEvent>
+        name     : WindowServiceEvent.COLOR_SCHEME_CHANGED | WindowServiceEvent.STORAGE_CHANGED,
+        callback : WindowServiceColorSchemeChangedEventCallback | WindowServiceStorageChangedEventCallback
     ) : WindowServiceDestructor {
 
         if (name === WindowServiceEvent.COLOR_SCHEME_CHANGED) {
@@ -129,7 +91,7 @@ export class WindowService {
                 this._initializeMediaSchemeListeners();
             }
 
-            let destructor : any = this._observer.listenEvent(name, callback);
+            let destructor : any = this._observer.listenEvent(name, callback as ObserverCallback<WindowServiceEvent>);
 
             return () => {
                 try {
@@ -148,7 +110,7 @@ export class WindowService {
                 this._initializeStorageListener();
             }
 
-            let destructor: any = this._observer.listenEvent(name, callback);
+            let destructor: any = this._observer.listenEvent(name, callback as ObserverCallback<WindowServiceEvent>);
 
             return () => {
                 try {
@@ -218,8 +180,8 @@ export class WindowService {
         return !!window.matchMedia && !!window.matchMedia(DARK_COLOR_SCHEME_QUERY)?.matches;
     }
 
-    private static _getColorScheme () : WindowColorScheme {
-        return this._isDarkModeEnabled() ? WindowColorScheme.DARK : WindowColorScheme.LIGHT;
+    private static _getColorScheme () : ColorScheme {
+        return this._isDarkModeEnabled() ? ColorScheme.DARK : ColorScheme.LIGHT;
     }
 
     private static _isWatchingMediaScheme () : boolean {
@@ -237,10 +199,10 @@ export class WindowService {
         this._watchMediaDarkScheme.addEventListener('change', darkCallback);
 
         if (this._colorScheme === undefined) {
-            const colorScheme = this._watchMediaDarkScheme.matches ? WindowColorScheme.DARK : WindowColorScheme.LIGHT;
+            const colorScheme = this._watchMediaDarkScheme.matches ? ColorScheme.DARK : ColorScheme.LIGHT;
             if (this._colorScheme !== colorScheme) {
                 this._colorScheme = colorScheme;
-                LOG.info(`Color colorScheme initialized as ${stringifyWindowColorScheme(colorScheme)}`);
+                LOG.info(`Color colorScheme initialized as ${stringifyColorScheme(colorScheme)}`);
             }
         }
 
@@ -258,13 +220,13 @@ export class WindowService {
     }
 
     private static _onDarkColorSchemeChange (e : MediaQueryListEvent) {
-        const newColorScheme : WindowColorScheme = e.matches ? WindowColorScheme.DARK : WindowColorScheme.LIGHT;
+        const newColorScheme : ColorScheme = e.matches ? ColorScheme.DARK : ColorScheme.LIGHT;
         if (newColorScheme !== this._colorScheme) {
             this._colorScheme = newColorScheme;
-            LOG.info(`Color scheme changed as ${stringifyWindowColorScheme(newColorScheme)}`);
+            LOG.info(`Color scheme changed as ${stringifyColorScheme(newColorScheme)}`);
             this._observer.triggerEvent(WindowServiceEvent.COLOR_SCHEME_CHANGED, newColorScheme);
         } else {
-            LOG.debug(`Color scheme was already same ${stringifyWindowColorScheme(newColorScheme)}`);
+            LOG.debug(`Color scheme was already same ${stringifyColorScheme(newColorScheme)}`);
         }
     }
 

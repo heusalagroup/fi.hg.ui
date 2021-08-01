@@ -3,8 +3,11 @@
 import AbstractStorageService, {
     isStorageServiceEvent,
     StorageObject,
-    StorageServiceEvent
-} from "./AbtractStorageService";
+    StorageServiceChangedEventCallback, StorageServiceClearEventCallback,
+    StorageServiceCreatedEventCallback,
+    StorageServiceDeletedEventCallback,
+    StorageServiceEvent, StorageServiceModifiedEventCallback
+} from "./private/AbtractStorageService";
 import Observer, {ObserverCallback, ObserverDestructor} from "../../ts/Observer";
 import WindowService, {WindowServiceDestructor, WindowServiceEvent} from "./WindowService";
 
@@ -23,10 +26,29 @@ export class LocalStorageService extends AbstractStorageService {
         return window.localStorage;
     }
 
+    public static on (name : StorageServiceEvent.PROPERTY_DELETED , callback : StorageServiceDeletedEventCallback)  : ObserverDestructor;
+    public static on (name : StorageServiceEvent.PROPERTY_CREATED , callback : StorageServiceCreatedEventCallback)  : ObserverDestructor;
+    public static on (name : StorageServiceEvent.PROPERTY_MODIFIED, callback : StorageServiceModifiedEventCallback) : ObserverDestructor;
+    public static on (name : StorageServiceEvent.PROPERTY_CHANGED , callback : StorageServiceChangedEventCallback)  : ObserverDestructor;
+    public static on (name : StorageServiceEvent.CLEAR            , callback : StorageServiceClearEventCallback)    : ObserverDestructor;
+
+    // Implementation
     public static on (
-        name     : StorageServiceEvent,
-        callback : ObserverCallback<StorageServiceEvent>
-    ) : LocalStorageServiceDestructor {
+        name     : (
+              StorageServiceEvent.PROPERTY_DELETED
+            | StorageServiceEvent.PROPERTY_CREATED
+            | StorageServiceEvent.PROPERTY_MODIFIED
+            | StorageServiceEvent.PROPERTY_CHANGED
+            | StorageServiceEvent.CLEAR
+            ),
+        callback : (
+              StorageServiceDeletedEventCallback
+            | StorageServiceCreatedEventCallback
+            | StorageServiceModifiedEventCallback
+            | StorageServiceChangedEventCallback
+            | StorageServiceClearEventCallback
+            )
+    ) : ObserverDestructor {
 
         if (isStorageServiceEvent(name)) {
 
@@ -34,7 +56,7 @@ export class LocalStorageService extends AbstractStorageService {
                 this._initializeStorageListener();
             }
 
-            let destructor: any = this._observer.listenEvent(name, callback);
+            let destructor: any = this._observer.listenEvent(name, callback as unknown as ObserverCallback<StorageServiceEvent>);
 
             return () => {
                 try {
