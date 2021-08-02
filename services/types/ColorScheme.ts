@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Sendanor. All rights reserved.
+
 import {isString, trim} from "../../../ts/modules/lodash";
 
 export enum ColorScheme {

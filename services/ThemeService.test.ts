@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Sendanor. All rights reserved.
+
 import ThemeService, {
     ThemeServiceColorSchemeChangedEventCallback,
     ThemeServiceDestructor,

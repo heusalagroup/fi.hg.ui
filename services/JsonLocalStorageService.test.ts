@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Sendanor. All rights reserved.
+
 import JsonLocalStorageService from "./JsonLocalStorageService";
 import LocalStorageService from "./LocalStorageService";
 import SpyInstance = jest.SpyInstance;

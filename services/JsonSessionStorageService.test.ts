@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Sendanor. All rights reserved.
+
 import JsonSessionStorageService from "./JsonSessionStorageService";
 import SessionStorageService from "./SessionStorageService";
 import SpyInstance = jest.SpyInstance;

@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Sendanor. All rights reserved.
+
 import WindowService, {WindowServiceDestructor, WindowServiceEvent} from "./WindowService";
 import Observer, {ObserverDestructor} from "../../ts/Observer";
 import {ColorScheme, stringifyColorScheme} from "./types/ColorScheme";

@@ -1,6 +1,5 @@
-/**
- * This service exposes API to control user defined theme setting stored in local storage
- */
+// Copyright (c) 2021 Sendanor. All rights reserved.
+
 import {ColorScheme, parseColorScheme, stringifyColorScheme} from "./types/ColorScheme";
 import LocalStorageService from "./LocalStorageService";
 import Observer, {ObserverDestructor} from "../../ts/Observer";
@@ -19,6 +18,9 @@ export const COLOR_SCHEME_LOCAL_STORAGE_KEY = 'fi.nor.colorScheme';
 
 export type ThemeLocalStorageServiceDestructor = ObserverDestructor;
 
+/**
+ * This service exposes API to control user defined theme setting stored in local storage
+ */
 export class ThemeLocalStorageService {
 
     private static _observer                : Observer<ThemeLocalStorageServiceEvent> = new Observer<ThemeLocalStorageServiceEvent>("ThemeLocalStorageService");

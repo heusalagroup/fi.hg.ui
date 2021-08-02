@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Sendanor. All rights reserved.
+
 import ThemeLocalStorageService, {
     COLOR_SCHEME_LOCAL_STORAGE_KEY,
     ThemeLocalStorageServiceEvent
