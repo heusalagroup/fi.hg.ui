@@ -66,7 +66,7 @@ export class WindowEventService {
 
     private static _observer         : Observer<WindowEventServiceEvent> = new Observer<WindowEventServiceEvent>("WindowEventService");
     private static _messageCallback  : any | undefined = undefined;
-    private static _listenParent     : boolean = true;
+    private static _listenParent     : boolean = false;
     private static _listeningParent  : boolean = false;
 
 
