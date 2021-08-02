@@ -10,13 +10,15 @@ const LOG = LogService.createLogger('WindowEventService');
 /**
  * Any object that has postMessage API.
  */
-export interface WindowServiceEventTargetObject {
+export interface WindowServiceEventTargetInterface {
     postMessage(
         message       : any,
         targetOrigin  : string,
         transfer     ?: ArrayBuffer | MessagePort | ImageBitmap | OffscreenCanvas
     ) : void;
 }
+
+export type WindowServiceEventTargetObject = Window | WindowServiceEventTargetInterface;
 
 export enum WindowEventServiceEvent {
 
