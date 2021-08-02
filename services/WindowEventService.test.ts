@@ -655,7 +655,7 @@ describe('WindowEventService', () => {
 
         });
 
-        describe('with parent', () => {
+        xdescribe('with parent', () => {
 
             describe('parent events enabled', () => {
 

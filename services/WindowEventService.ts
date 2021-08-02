@@ -66,7 +66,7 @@ export class WindowEventService {
 
     private static _observer         : Observer<WindowEventServiceEvent> = new Observer<WindowEventServiceEvent>("WindowEventService");
     private static _messageCallback  : any | undefined = undefined;
-    private static _listenParent     : boolean = true;
+    private static _listenParent     : boolean = false;
     private static _listeningParent  : boolean = false;
 
 
@@ -143,10 +143,10 @@ export class WindowEventService {
 
         window.addEventListener('message', this._messageCallback);
 
-        if ( this._listenParent && WindowService.hasParent() ) {
-            window.parent.addEventListener('message', this._messageCallback);
-            this._listeningParent = true;
-        }
+        // if ( this._listenParent && WindowService.hasParent() ) {
+        //     window.parent.addEventListener('message', this._messageCallback);
+        //     this._listeningParent = true;
+        // }
 
     }
 
@@ -156,10 +156,10 @@ export class WindowEventService {
 
             window.removeEventListener('message', this._messageCallback);
 
-            if ( this._listeningParent && WindowService.hasParent() ) {
-                window.parent.removeEventListener('message', this._messageCallback);
-                this._listeningParent = false;
-            }
+            // if ( this._listeningParent && WindowService.hasParent() ) {
+            //     window.parent.removeEventListener('message', this._messageCallback);
+            //     this._listeningParent = false;
+            // }
 
             this._messageCallback = undefined;
         }
