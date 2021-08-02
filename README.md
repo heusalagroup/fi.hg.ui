@@ -13,6 +13,10 @@ For now this repository is mostly for [issue tracking](https://github.com/sendan
 This library expects [@sendanor/typescript](https://github.com/sendanor/typescript) to be located in the 
 relative path `../ts` and only required dependency it has is for [Lodash library](https://lodash.com/).
 
+### It's well tested
+
+Our unit tests exists beside the code. To run tests, check out our test repository [@sendanor/test](https://github.com/sendanor/test).
+
 ### We don't have traditional releases
 
 This project evolves directly to our git repository in an agile manner.
