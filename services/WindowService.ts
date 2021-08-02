@@ -46,6 +46,10 @@ export class WindowService {
 
     public static Event = WindowServiceEvent;
 
+    public static hasParent () : boolean {
+        return window !== window?.parent;
+    }
+
     public static isDarkModeEnabled () : boolean {
         return this.getColorScheme() === ColorScheme.DARK;
     }

@@ -4,6 +4,7 @@ import LogService from "../../ts/LogService";
 import Observer, {ObserverCallback, ObserverDestructor} from "../../ts/Observer";
 import {JsonObject} from "../../ts/Json";
 import {isString} from "../../ts/modules/lodash";
+import WindowService from "./WindowService";
 
 const LOG = LogService.createLogger('WindowEventService');
 
@@ -65,6 +66,8 @@ export class WindowEventService {
 
     private static _observer         : Observer<WindowEventServiceEvent> = new Observer<WindowEventServiceEvent>("WindowEventService");
     private static _messageCallback  : any | undefined = undefined;
+    private static _listenParent     : boolean = true;
+    private static _listeningParent  : boolean = false;
 
 
     public static Event = WindowEventServiceEvent;
@@ -111,8 +114,24 @@ export class WindowEventService {
 
     public static destroy () {
         this._unInitializeWindowMessageListener();
+        this._listenParent = true;
     }
 
+    public static disableParentEvents () {
+        this._listenParent = false;
+        if (this._listeningParent && window.parent) {
+            window.parent.removeEventListener('message', this._messageCallback);
+            this._listeningParent = false;
+        }
+    }
+
+    public static enableParentEvents () {
+        this._listenParent = true;
+        if (this._messageCallback) {
+            window.parent.addEventListener('message', this._messageCallback);
+            this._listeningParent = true;
+        }
+    }
 
     private static _initializeWindowMessageListener () {
 
@@ -124,12 +143,24 @@ export class WindowEventService {
 
         window.addEventListener('message', this._messageCallback);
 
+        if ( this._listenParent && WindowService.hasParent() ) {
+            window.parent.addEventListener('message', this._messageCallback);
+            this._listeningParent = true;
+        }
+
     }
 
     private static _unInitializeWindowMessageListener () {
 
         if (this._messageCallback) {
+
             window.removeEventListener('message', this._messageCallback);
+
+            if ( this._listeningParent && WindowService.hasParent() ) {
+                window.parent.removeEventListener('message', this._messageCallback);
+                this._listeningParent = false;
+            }
+
             this._messageCallback = undefined;
         }
 
