@@ -2,12 +2,18 @@
 
 import WindowService, {WindowServiceDestructor, WindowServiceEvent} from "./WindowService";
 import Observer, {ObserverDestructor} from "../../ts/Observer";
-import {ColorScheme, stringifyColorScheme} from "./types/ColorScheme";
+import {ColorScheme, isColorScheme, stringifyColorScheme} from "./types/ColorScheme";
 import LogService from "../../ts/LogService";
 import ThemeLocalStorageService, {
     ThemeLocalStorageServiceDestructor,
     ThemeLocalStorageServiceEvent
 } from "./ThemeLocalStorageService";
+import WindowEventService, {
+    WindowEventServiceDestructor,
+    WindowEventServiceEvent,
+    WindowServiceEventTargetObject
+} from "./WindowEventService";
+import {JsonObject} from "../../ts/Json";
 
 const LOG = LogService.createLogger('ThemeService');
 
@@ -21,12 +27,30 @@ export interface ThemeServiceColorSchemeChangedEventCallback {
     (event: ThemeServiceEvent.COLOR_SCHEME_CHANGED, scheme: ColorScheme) : void;
 }
 
+export enum ThemeServiceMessageType {
+    COLOR_SCHEME_CHANGED = "fi.nor.ui.ThemeService:colorSchemeChanged"
+}
+
+export interface ThemeChangeMessageDTO {
+    readonly type  : ThemeServiceMessageType.COLOR_SCHEME_CHANGED;
+    readonly value : ColorScheme | undefined;
+}
+
+export function isThemeChangeMessageDTO (value : any) : value is ThemeChangeMessageDTO {
+    return (
+        !!value
+        && value?.type === ThemeServiceMessageType.COLOR_SCHEME_CHANGED
+        && ( value?.value === undefined || isColorScheme(value?.value) )
+    );
+}
+
 export class ThemeService {
 
-    private static _observer               : Observer<ThemeServiceEvent> = new Observer<ThemeServiceEvent>("ThemeService");
-    private static _colorScheme            : ColorScheme | undefined;
-    private static _windowServiceListener  : WindowServiceDestructor | undefined;
-    private static _storageServiceListener : ThemeLocalStorageServiceDestructor | undefined;
+    private static _observer                   : Observer<ThemeServiceEvent> = new Observer<ThemeServiceEvent>("ThemeService");
+    private static _colorScheme                : ColorScheme | undefined;
+    private static _windowServiceListener      : WindowServiceDestructor | undefined;
+    private static _storageServiceListener     : ThemeLocalStorageServiceDestructor | undefined;
+    private static _windowEventServiceListener : WindowEventServiceDestructor | undefined;
 
 
     public static Event = ThemeServiceEvent;
@@ -81,6 +105,7 @@ export class ThemeService {
             if (this._colorScheme === undefined) {
                 this._startWindowServiceListener();
                 this._startLocalStorageListener();
+                this._startWindowEventServiceListener();
             }
 
             let destructor : any = this._observer.listenEvent(name, callback);
@@ -93,6 +118,7 @@ export class ThemeService {
                     if (!this._observer.hasCallbacks(ThemeServiceEvent.COLOR_SCHEME_CHANGED)) {
                         this._removeWindowServiceListener();
                         this._removeLocalStorageListener();
+                        this._removeWindowEventServiceListener();
                     }
                 }
             };
@@ -108,6 +134,74 @@ export class ThemeService {
         this._removeWindowServiceListener();
         this._removeLocalStorageListener();
         this._colorScheme = undefined;
+
+    }
+
+    /**
+     * Sends a message to set color scheme on remote target.
+     *
+     * This should be something that can receive events.
+     *
+     * @param target This should be the object from `window.open()` or `window.opener()` or `HTMLIFrameElement.contentWindow` or `window.parent`, etc
+     * @param value The color schema to use. If you specify 'undefined' the user defined value will be removed (eg. browser's choice will be active then).
+     * @param origin Optional origin. Generally it's unsafe to use '*' but dark/light theme value is not very big secret.
+     */
+    public static setRemoteColorScheme (
+        value  : ColorScheme | undefined,
+        target : WindowServiceEventTargetObject,
+        origin : string = '*'
+    ) {
+
+        const message : ThemeChangeMessageDTO = {
+            type: ThemeServiceMessageType.COLOR_SCHEME_CHANGED,
+            value: value
+        };
+
+        const messageString = JSON.stringify(message);
+
+        target.postMessage(messageString, origin);
+
+    }
+
+    /**
+     * Sends a message to remove a color scheme from remote target.
+     *
+     * This should be something that can receive events.
+     *
+     * @param target This should be the object from `window.open()` or `window.opener()` or `HTMLIFrameElement.contentWindow` or `window.parent`, etc
+     * @param origin Optional origin. Generally it's unsafe to use '*' but dark/light theme value is not very big secret.
+     */
+    public static unsetRemoteColorScheme (
+        target : WindowServiceEventTargetObject,
+        origin : string = '*'
+    ) {
+        return this.setRemoteColorScheme(undefined, target, origin);
+    }
+
+    private static _startWindowEventServiceListener () {
+
+        this._windowEventServiceListener = WindowEventService.on(
+            WindowEventService.Event.JSON_MESSAGE,
+            (event: WindowEventServiceEvent.JSON_MESSAGE, message: JsonObject) => {
+                if (this._observer.hasCallbacks(ThemeServiceEvent.COLOR_SCHEME_CHANGED)) {
+                    if (isThemeChangeMessageDTO(message)) {
+                        LOG.debug(`Color scheme changed through a message as ${stringifyColorScheme(message.value)}`);
+                        this.setColorScheme(message.value);
+                    }
+                } else {
+                    LOG.warn(`Warning! We are listening events for browser color scheme when we don't have our own listeners.`);
+                }
+            }
+        );
+
+    }
+
+    private static _removeWindowEventServiceListener () {
+
+        if (this._windowEventServiceListener) {
+            this._windowEventServiceListener();
+            this._windowEventServiceListener = undefined;
+        }
 
     }
 

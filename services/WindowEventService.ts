@@ -7,6 +7,17 @@ import {isString} from "../../ts/modules/lodash";
 
 const LOG = LogService.createLogger('WindowEventService');
 
+/**
+ * Any object that has postMessage API.
+ */
+export interface WindowServiceEventTargetObject {
+    postMessage(
+        message       : any,
+        targetOrigin  : string,
+        transfer     ?: ArrayBuffer | MessagePort | ImageBitmap | OffscreenCanvas
+    ) : void;
+}
+
 export enum WindowEventServiceEvent {
 
     /**
