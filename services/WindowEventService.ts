@@ -58,13 +58,17 @@ export interface WindowEventServiceJsonMessageEventCallback {
 
 export type WindowEventServiceDestructor = ObserverDestructor;
 
+export interface WindowEventCallback {
+    (event: MessageEvent) : void;
+}
+
 /**
  * Service which can pass on messages to other instances, including from parent session to iframe session(s).
  */
 export class WindowEventService {
 
     private static _observer         : Observer<WindowEventServiceEvent> = new Observer<WindowEventServiceEvent>("WindowEventService");
-    private static _messageCallback  : any | undefined = undefined;
+    private static _messageCallback  : WindowEventCallback | undefined = undefined;
 
 
     public static Event = WindowEventServiceEvent;
