@@ -74,4 +74,74 @@ describe('ColorScheme', () => {
 
     });
 
+    describe('#test', () => {
+
+        test('returns true for correct values', () => {
+            expect( ColorScheme.test(ColorScheme.DARK) ).toBe(true);
+            expect( ColorScheme.test(ColorScheme.LIGHT) ).toBe(true);
+        });
+
+        test('returns false for incorrect values', () => {
+            expect( ColorScheme.test("DARK") ).toBe(false);
+            expect( ColorScheme.test("LIGHT") ).toBe(false);
+            expect( ColorScheme.test(-1) ).toBe(false);
+            expect( ColorScheme.test(999) ).toBe(false);
+            expect( ColorScheme.test(undefined) ).toBe(false);
+            expect( ColorScheme.test(null) ).toBe(false);
+            expect( ColorScheme.test(false) ).toBe(false);
+            expect( ColorScheme.test(true) ).toBe(false);
+            expect( ColorScheme.test({}) ).toBe(false);
+            expect( ColorScheme.test([]) ).toBe(false);
+            expect( ColorScheme.test(NaN) ).toBe(false);
+        });
+
+    });
+
+    describe('#parse', () => {
+
+        test('can pass through ColorScheme types', () => {
+            expect( ColorScheme.parse(ColorScheme.DARK) ).toBe(ColorScheme.DARK);
+            expect( ColorScheme.parse(ColorScheme.LIGHT) ).toBe(ColorScheme.LIGHT);
+        });
+
+        test('can parse uppercase strings', () => {
+            expect( ColorScheme.parse("DARK") ).toBe(ColorScheme.DARK);
+            expect( ColorScheme.parse("LIGHT") ).toBe(ColorScheme.LIGHT);
+        });
+
+        test('can parse lowercase strings', () => {
+            expect( ColorScheme.parse("dark") ).toBe(ColorScheme.DARK);
+            expect( ColorScheme.parse("light") ).toBe(ColorScheme.LIGHT);
+        });
+
+        test('returns undefined for unknown values', () => {
+            expect( ColorScheme.parse("foo") ).toBe(undefined);
+            expect( ColorScheme.parse("") ).toBe(undefined);
+            expect( ColorScheme.parse(undefined) ).toBe(undefined);
+            expect( ColorScheme.parse(null) ).toBe(undefined);
+            expect( ColorScheme.parse(NaN) ).toBe(undefined);
+            expect( ColorScheme.parse(false) ).toBe(undefined);
+            expect( ColorScheme.parse(true) ).toBe(undefined);
+            expect( ColorScheme.parse({}) ).toBe(undefined);
+            expect( ColorScheme.parse([]) ).toBe(undefined);
+        });
+
+    });
+
+    describe('#stringify', () => {
+
+        test('can stringify DARK', () => {
+            expect( ColorScheme.stringify(ColorScheme.DARK) ).toBe('DARK');
+        });
+
+        test('can stringify LIGHT', () => {
+            expect( ColorScheme.stringify(ColorScheme.LIGHT) ).toBe('LIGHT');
+        });
+
+        test('can stringify undefined numbers', () => {
+            expect( ColorScheme.stringify(999) ).toBe('ColorScheme(999)');
+        });
+
+    });
+
 });
