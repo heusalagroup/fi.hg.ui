@@ -62,6 +62,7 @@ export function stringifyColorScheme (value: ColorScheme | undefined): string {
     }
 }
 
+// eslint-disable-next-line
 export namespace ColorScheme {
 
     export function test (value: any): value is ColorScheme {
