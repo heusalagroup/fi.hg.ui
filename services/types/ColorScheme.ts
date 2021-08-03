@@ -7,6 +7,11 @@ export enum ColorScheme {
     LIGHT
 }
 
+/**
+ * Use `ColorScheme.test()`
+ * @param value
+ * @deprecated
+ */
 export function isColorScheme (value: any): value is ColorScheme {
     switch (value) {
 
@@ -19,9 +24,14 @@ export function isColorScheme (value: any): value is ColorScheme {
     }
 }
 
+/**
+ * Use `ColorScheme.parse()`
+ * @param value
+ * @deprecated
+ */
 export function parseColorScheme (value: any): ColorScheme | undefined {
 
-    if (isColorScheme(value)) return value;
+    if (ColorScheme.test(value)) return value;
 
     if (isString(value)) {
         value = trim(value).toUpperCase();
@@ -41,6 +51,11 @@ export function parseColorScheme (value: any): ColorScheme | undefined {
 
 }
 
+/**
+ * Use `ColorScheme.stringify()`
+ * @param value
+ * @deprecated
+ */
 export function stringifyColorScheme (value: ColorScheme | undefined): string {
 
     if (value === undefined) return 'undefined';
@@ -53,4 +68,23 @@ export function stringifyColorScheme (value: ColorScheme | undefined): string {
         default                      :
             return `WindowColorScheme(${value})`;
     }
+}
+
+export namespace ColorScheme {
+
+    export function test (value: any): value is ColorScheme {
+        // noinspection JSDeprecatedSymbols
+        return isColorScheme(value);
+    }
+
+    export function parse (value: any): ColorScheme | undefined {
+        // noinspection JSDeprecatedSymbols
+        return parseColorScheme(value);
+    }
+
+    export function stringify (value: ColorScheme | undefined): string {
+        // noinspection JSDeprecatedSymbols
+        return stringifyColorScheme(value);
+    }
+
 }
