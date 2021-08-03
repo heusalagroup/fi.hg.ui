@@ -69,7 +69,7 @@ describe('ColorScheme', () => {
         });
 
         test('can stringify undefined numbers', () => {
-            expect( stringifyColorScheme(999) ).toBe('WindowColorScheme(999)');
+            expect( stringifyColorScheme(999) ).toBe('ColorScheme(999)');
         });
 
     });

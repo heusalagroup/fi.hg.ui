@@ -57,16 +57,11 @@ export function parseColorScheme (value: any): ColorScheme | undefined {
  * @deprecated
  */
 export function stringifyColorScheme (value: ColorScheme | undefined): string {
-
     if (value === undefined) return 'undefined';
-
     switch (value) {
-        case ColorScheme.DARK  :
-            return 'DARK';
-        case ColorScheme.LIGHT :
-            return 'LIGHT';
-        default                      :
-            return `WindowColorScheme(${value})`;
+        case ColorScheme.DARK  : return 'DARK';
+        case ColorScheme.LIGHT : return 'LIGHT';
+        default                : return `ColorScheme(${value})`;
     }
 }
 
