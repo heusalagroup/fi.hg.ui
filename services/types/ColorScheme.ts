@@ -8,9 +8,8 @@ export enum ColorScheme {
 }
 
 /**
- * Use `ColorScheme.test()`
+ * Also available `ColorScheme.test(value) : boolean`
  * @param value
- * @deprecated
  */
 export function isColorScheme (value: any): value is ColorScheme {
     switch (value) {
@@ -25,9 +24,8 @@ export function isColorScheme (value: any): value is ColorScheme {
 }
 
 /**
- * Use `ColorScheme.parse()`
+ * Also available `ColorScheme.parse(value: any) : ColorScheme | undefined`
  * @param value
- * @deprecated
  */
 export function parseColorScheme (value: any): ColorScheme | undefined {
 
@@ -52,9 +50,8 @@ export function parseColorScheme (value: any): ColorScheme | undefined {
 }
 
 /**
- * Use `ColorScheme.stringify()`
+ * Also available `ColorScheme.stringify(value: ColorScheme | undefined) : string`
  * @param value
- * @deprecated
  */
 export function stringifyColorScheme (value: ColorScheme | undefined): string {
     if (value === undefined) return 'undefined';
@@ -68,17 +65,14 @@ export function stringifyColorScheme (value: ColorScheme | undefined): string {
 export namespace ColorScheme {
 
     export function test (value: any): value is ColorScheme {
-        // noinspection JSDeprecatedSymbols
         return isColorScheme(value);
     }
 
     export function parse (value: any): ColorScheme | undefined {
-        // noinspection JSDeprecatedSymbols
         return parseColorScheme(value);
     }
 
     export function stringify (value: ColorScheme | undefined): string {
-        // noinspection JSDeprecatedSymbols
         return stringifyColorScheme(value);
     }
 
