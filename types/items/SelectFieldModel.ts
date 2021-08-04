@@ -2,7 +2,7 @@
 
 import FormItemType from "../FormItemType";
 import FormFieldModel from "../FormFieldModel";
-import {isArray} from "../../../../ts/modules/lodash";
+import {isArray} from "../../../ts/modules/lodash";
 
 export interface SelectFieldItem<T> {
 

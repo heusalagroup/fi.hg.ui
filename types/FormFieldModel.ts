@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2021 Sendanor. All rights reserved.
 
-import {isString} from "../../../ts/modules/lodash";
+import {isString} from "../../ts/modules/lodash";
 import FormItemModel from "./FormItemModel";
 import {FormFieldType, isFormFieldType} from "./FormFieldType";
 

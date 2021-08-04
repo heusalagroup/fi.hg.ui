@@ -1,7 +1,7 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
-import RequestMethod from "../../../ts/request/types/RequestMethod";
-import {JsonArray, JsonObject} from "../../../ts/Json";
+import RequestMethod from "../../ts/request/types/RequestMethod";
+import {JsonArray, JsonObject} from "../../ts/Json";
 import {HttpResponseAction} from "./HttpResponseAction";
 
 export interface JsonHttpAction {

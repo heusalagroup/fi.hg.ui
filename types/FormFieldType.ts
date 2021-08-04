@@ -1,5 +1,5 @@
 import FormItemType from "./FormItemType";
-import {isString} from "../../../ts/modules/lodash";
+import {isString} from "../../ts/modules/lodash";
 
 export type FormFieldType = (
     FormItemType.TEXT_FIELD

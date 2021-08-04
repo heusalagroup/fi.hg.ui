@@ -1,6 +1,6 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
-import {every, isString, keys} from "../../../ts/modules/lodash";
+import {every, isString, keys} from "../../ts/modules/lodash";
 
 export interface FormValue {
     [key: string]: any

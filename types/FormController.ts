@@ -15,7 +15,8 @@ export interface FormController {
 
 export function isFormController (value: any) : value is FormController {
 
-
+    // FIXME: Todo
+    return false;
 
 }
 

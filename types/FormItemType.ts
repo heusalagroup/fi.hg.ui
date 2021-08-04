@@ -1,4 +1,4 @@
-import {isString} from "../../../ts/modules/lodash";
+import {isString} from "../../ts/modules/lodash";
 
 /**
  * If you add more fields, make sure to update ./FormFieldType.ts also.

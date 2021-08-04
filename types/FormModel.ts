@@ -1,7 +1,7 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import FormItem, {isFormItem} from "./FormItem";
-import {every, isArray, isString, isStringOrUndefined} from "../../../ts/modules/lodash";
+import {every, isArray, isString, isStringOrUndefined} from "../../ts/modules/lodash";
 
 export interface FormModel {
 
