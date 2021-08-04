@@ -9,7 +9,8 @@ export function isFormValue (value : any) : value is FormValue {
 }
 
 export function stringifyFormValue (value: FormValue): string {
-    return `FormValue(${value})`;
+    if (!isFormValue(value)) throw new TypeError('Not a FormValue');
+    return `FormValue(${JSON.stringify(value)})`;
 }
 
 export function parseFormValue (value: any): FormValue | undefined {

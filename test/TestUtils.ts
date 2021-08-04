@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2021 Sendanor. All rights reserved.
 
-import {filter} from "../../ts/modules/lodash";
+import { createOr, filter, TestCallback } from "../../ts/modules/lodash";
 
 export namespace TestUtils {
 
@@ -8,10 +8,15 @@ export namespace TestUtils {
      * Create array of invalid values
      *
      * @param skipValues Skips values in this array
+     * @param skipTests
      */
     export function createInvalidValues (
-        skipValues: any[] = []
+        skipValues: any[] = [],
+        skipTests: TestCallback[] = []
     ) : any[] {
+
+        const skipTest = skipTests.length >= 1 ? createOr(...skipTests) : undefined;
+
         return filter([
             undefined,
             null,
@@ -21,8 +26,8 @@ export namespace TestUtils {
             () => {},
             0,
             Symbol(),
-            1628078651664, // Date.now()
-            new Date('2021-08-04T12:04:00.844Z'), // new Date()
+            1628078651664,
+            new Date('2021-08-04T12:04:00.844Z'),
             1,
             12,
             -12,
@@ -38,8 +43,20 @@ export namespace TestUtils {
             ["Hello world", "foo"],
             {},
             {"foo":"bar"},
-            {"foo":1234}
-        ], (item : any) : boolean => skipValues.indexOf(item) >= 0);
+            {"foo":1234},
+        ], (item : any) : boolean => {
+
+            if (skipValues.indexOf(item) >= 0) {
+                return false;
+            }
+
+            if (skipTest && skipTest(item)) {
+                return false;
+            }
+
+            return true;
+
+        });
     }
 
 }
