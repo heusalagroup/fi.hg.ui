@@ -10,4 +10,30 @@ export function isFormItem (value: any) : value is FormItem {
     );
 }
 
+export function stringifyFormItem (value: FormItem): string {
+    return `FormItem(${value})`;
+}
+
+export function parseFormItem (value: any): FormItem | undefined {
+    if ( isFormItem(value) ) return value;
+    return undefined;
+}
+
+// eslint-disable-next-line
+export namespace FormItem {
+
+    export function test (value: any): value is FormItem {
+        return isFormItem(value);
+    }
+
+    export function stringify (value: FormItem): string {
+        return stringifyFormItem(value);
+    }
+
+    export function parse (value: any): FormItem | undefined {
+        return parseFormItem(value);
+    }
+
+}
+
 export default FormItem;

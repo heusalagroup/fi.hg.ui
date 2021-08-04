@@ -1,11 +1,15 @@
 // Copyright (c) 2020-2021 Sendanor. All rights reserved.
 
-import {isString} from "../../ts/modules/lodash";
+import {
+    isBooleanOrUndefined,
+    isString,
+    isStringOrUndefined,
+    isUndefined
+} from "../../ts/modules/lodash";
 import FormItemModel from "./FormItemModel";
 import {FormFieldType, isFormFieldType} from "./FormFieldType";
 
-export interface FormFieldModel
-    extends FormItemModel {
+export interface FormFieldModel extends FormItemModel {
 
     type        : FormFieldType;
     key         ?: string;
@@ -19,11 +23,37 @@ export function isFormFieldModel (value: any) : value is FormFieldModel {
     return (
         !!value
         && isFormFieldType(value?.type)
-        && (value?.key === undefined         || isString(value?.key))
-        && (value?.label === undefined       || isString(value?.label))
-        && (value?.placeholder === undefined || isString(value?.placeholder))
-        && (value?.required === undefined    || isString(value?.required))
+        && isStringOrUndefined(value?.key)
+        && isStringOrUndefined(value?.label)
+        && isStringOrUndefined(value?.placeholder)
+        && isBooleanOrUndefined(value?.required)
     );
+}
+
+export function stringifyFormFieldModel (value: FormFieldModel): string {
+    return `FormFieldModel(${value})`;
+}
+
+export function parseFormFieldModel (value: any): FormFieldModel | undefined {
+    if ( isFormFieldModel(value) ) return value;
+    return undefined;
+}
+
+// eslint-disable-next-line
+export namespace FormFieldModel {
+
+    export function test (value: any): value is FormFieldModel {
+        return isFormFieldModel(value);
+    }
+
+    export function stringify (value: FormFieldModel): string {
+        return stringifyFormFieldModel(value);
+    }
+
+    export function parse (value: any): FormFieldModel | undefined {
+        return parseFormFieldModel(value);
+    }
+
 }
 
 export default FormFieldModel;

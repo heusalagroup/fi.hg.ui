@@ -24,4 +24,30 @@ export function isFormModel (value : any) : value is FormModel {
 
 }
 
+export function stringifyFormModel (value: FormModel): string {
+    return `FormModel(${value})`;
+}
+
+export function parseFormModel (value: any): FormModel | undefined {
+    if ( isFormModel(value) ) return value;
+    return undefined;
+}
+
+// eslint-disable-next-line
+export namespace FormModel {
+
+    export function test (value: any): value is FormModel {
+        return isFormModel(value);
+    }
+
+    export function stringify (value: FormModel): string {
+        return stringifyFormModel(value);
+    }
+
+    export function parse (value: any): FormModel | undefined {
+        return parseFormModel(value);
+    }
+
+}
+
 export default FormModel;

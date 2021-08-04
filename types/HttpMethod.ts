@@ -13,18 +13,6 @@ export enum HttpMethod {
 
 }
 
-export function stringifyHttpMethod (value : HttpMethod) : string {
-    switch (value) {
-        case HttpMethod.OPTIONS  : return 'options';
-        case HttpMethod.GET      : return 'get';
-        case HttpMethod.POST     : return 'post';
-        case HttpMethod.PUT      : return 'put';
-        case HttpMethod.DELETE   : return 'delete';
-        case HttpMethod.PATCH    : return 'patch';
-    }
-    throw new TypeError(`Unsupported HttpMethod value: ${value}`)
-}
-
 export function isHttpMethod (value: any) : value is HttpMethod {
     if (!isString(value)) return false;
     switch (value) {
@@ -40,6 +28,18 @@ export function isHttpMethod (value: any) : value is HttpMethod {
             return false;
 
     }
+}
+
+export function stringifyHttpMethod (value : HttpMethod) : string {
+    switch (value) {
+        case HttpMethod.OPTIONS  : return 'options';
+        case HttpMethod.GET      : return 'get';
+        case HttpMethod.POST     : return 'post';
+        case HttpMethod.PUT      : return 'put';
+        case HttpMethod.DELETE   : return 'delete';
+        case HttpMethod.PATCH    : return 'patch';
+    }
+    throw new TypeError(`Unsupported HttpMethod value: ${value}`)
 }
 
 export function parseHttpMethod (value: any) : HttpMethod | undefined {
@@ -66,15 +66,15 @@ export function parseHttpMethod (value: any) : HttpMethod | undefined {
 // eslint-disable-next-line
 export namespace HttpMethod {
 
-    function test (value : any) : value is HttpMethod {
+    export function test (value : any) : value is HttpMethod {
         return isHttpMethod(value);
     }
 
-    function stringify (value: HttpMethod) : string {
+    export function stringify (value: HttpMethod) : string {
         return stringifyHttpMethod(value);
     }
 
-    function parse (value: any) : HttpMethod | undefined {
+    export function parse (value: any) : HttpMethod | undefined {
         return parseHttpMethod(value);
     }
 

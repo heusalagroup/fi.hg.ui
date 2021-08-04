@@ -11,7 +11,7 @@ export type FormFieldType = (
     | FormItemType.SELECT_FIELD
 );
 
-export function isFormFieldType(value: any): value is FormFieldType {
+export function isFormFieldType (value: any): value is FormFieldType {
 
     if (!isString(value)) return false;
 
@@ -28,6 +28,32 @@ export function isFormFieldType(value: any): value is FormFieldType {
 
         default:
             return false;
+    }
+
+}
+
+export function stringifyFormFieldType (value: FormFieldType): string {
+    return `FormFieldType(${value})`;
+}
+
+export function parseFormFieldType (value: any): FormFieldType | undefined {
+    if ( isFormFieldType(value) ) return value;
+    return undefined;
+}
+
+// eslint-disable-next-line
+export namespace FormFieldType {
+
+    export function test (value: any): value is FormFieldType {
+        return isFormFieldType(value);
+    }
+
+    export function stringify (value: FormFieldType): string {
+        return stringifyFormFieldType(value);
+    }
+
+    export function parse (value: any): FormFieldType | undefined {
+        return parseFormFieldType(value);
     }
 
 }

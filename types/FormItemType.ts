@@ -39,4 +39,31 @@ export function isFormItemType (value: any) : value is FormItemType {
 
 }
 
+
+export function stringifyFormItemType (value: FormItemType): string {
+    return `FormItemType(${value})`;
+}
+
+export function parseFormItemType (value: any): FormItemType | undefined {
+    if ( isFormItemType(value) ) return value;
+    return undefined;
+}
+
+// eslint-disable-next-line
+export namespace FormItemType {
+
+    export function test (value: any): value is FormItemType {
+        return isFormItemType(value);
+    }
+
+    export function stringify (value: FormItemType): string {
+        return stringifyFormItemType(value);
+    }
+
+    export function parse (value: any): FormItemType | undefined {
+        return parseFormItemType(value);
+    }
+
+}
+
 export default FormItemType;
