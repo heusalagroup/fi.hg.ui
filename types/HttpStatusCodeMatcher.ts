@@ -1,7 +1,19 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
-import HttpStatusCode, { isHttpStatusCode, stringifyHttpStatusCode } from "./HttpStatusCode";
-import { isArray, map } from "../../ts/modules/lodash";
+import HttpStatusCode, {
+    isHttpStatusCode,
+    parseHttpStatusCode,
+    stringifyHttpStatusCode
+} from "./HttpStatusCode";
+import {
+    hasNoOtherKeys,
+    isArray, isRegularObject,
+    map,
+    ParserCallback,
+    StringifyCallback,
+    TestCallback
+} from "../../ts/modules/lodash";
+
 
 export interface HttpStatusCodeMatcher<T> {
 
@@ -14,20 +26,23 @@ export interface HttpStatusCodeMatcher<T> {
 
 }
 
+
 export function isHttpStatusCodeMatcher<T = any> (
-    value  : any,
-    isAction : ((value: any) => boolean) = (value) => !!value
+    value    : any,
+    isAction : TestCallback = (value) => !!value
 ): value is HttpStatusCodeMatcher<T> {
     return (
         !!value
+        && isRegularObject(value)
         && ( isHttpStatusCode(value?.statusCode) || isArray(value?.statusCode, isHttpStatusCode, 1) )
         && isAction(value?.action)
+        && hasNoOtherKeys(value, ["statusCode", "action"])
     );
 }
 
 export function stringifyHttpStatusCodeMatcher<T = any> (
     value           : HttpStatusCodeMatcher<T>,
-    stringifyAction : ((value: any) => string) | undefined = undefined
+    stringifyAction : StringifyCallback | undefined = undefined
 ): string {
 
     if ( !isHttpStatusCodeMatcher(value) ) throw new TypeError(`Not HttpStatusCodeMatcher: ${value}`);
@@ -52,13 +67,39 @@ export function stringifyHttpStatusCodeMatcher<T = any> (
 /**
  *
  * @param value
+ * @param actionTester
+ * @param actionParser
  * @fixme This method doesn't have support to parse actions
  */
 export function parseHttpStatusCodeMatcher<T> (
-    value: any
+    value        : any,
+    actionTester : TestCallback | undefined,
+    actionParser : ParserCallback<T> | undefined = undefined
 ): HttpStatusCodeMatcher<T> | undefined {
-    if ( isHttpStatusCodeMatcher<T>(value) ) return value;
+
+    if ( isRegularObject(value) && hasNoOtherKeys(value, ["statusCode", "action"]) ) {
+
+        const statusCode = parseHttpStatusCode(value?.statusCode);
+        const action     = actionParser ? actionParser( value?.action ) : value?.action;
+
+        if ( statusCode === undefined || action === undefined ) {
+            return undefined;
+        }
+
+        if (!isHttpStatusCode(statusCode)) {
+            return undefined;
+        }
+
+        if ( actionTester && !actionTester(action) ) {
+            return undefined;
+        }
+
+        return {statusCode, action};
+
+    }
+
     return undefined;
+
 }
 
 // eslint-disable-next-line
@@ -82,8 +123,12 @@ export namespace HttpStatusCodeMatcher {
         return stringifyHttpStatusCodeMatcher<T>(value, stringifyAction);
     }
 
-    export function parse<T> (value: any): HttpStatusCodeMatcher<T> | undefined {
-        return parseHttpStatusCodeMatcher<T>(value);
+    export function parse<T> (
+        value        : any,
+        actionTester : TestCallback | undefined,
+        actionParser : ParserCallback<T> | undefined = undefined
+    ): HttpStatusCodeMatcher<T> | undefined {
+        return parseHttpStatusCodeMatcher<T>(value, actionTester, actionParser);
     }
 
 }

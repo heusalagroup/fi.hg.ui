@@ -1,25 +1,43 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
-import HttpStatusCodeMatcher, { isHttpStatusCodeMatcher } from "./HttpStatusCodeMatcher";
-import FormControllerAction, { isFormControllerAction } from "./FormControllerAction";
+import HttpStatusCodeMatcher, {
+    isHttpStatusCodeMatcher,
+    parseHttpStatusCodeMatcher, stringifyHttpStatusCodeMatcher
+} from "./HttpStatusCodeMatcher";
+import FormControllerAction, {
+    isFormControllerAction,
+    parseFormControllerAction, stringifyFormControllerAction
+} from "./FormControllerAction";
+import { isRegularObject } from "../../ts/modules/lodash";
+
 
 export type HttpResponseAction = HttpStatusCodeMatcher<FormControllerAction> | FormControllerAction;
 
+
 export function isHttpResponseAction (value: any): value is HttpResponseAction {
     return (
-        isFormControllerAction(value)
-        || isHttpStatusCodeMatcher(value, isFormControllerAction)
+        isFormControllerAction(value) || isHttpStatusCodeMatcher(value, isFormControllerAction)
     );
 }
 
 export function stringifyHttpResponseAction (value: HttpResponseAction): string {
-    if ( !isHttpResponseAction(value) ) throw new TypeError(`Not HttpResponseAction: ${value}`);
-    return `HttpResponseAction(${value})`;
+
+    if ( isHttpStatusCodeMatcher(value) ) {
+        return stringifyHttpStatusCodeMatcher(value);
+    }
+
+    return stringifyFormControllerAction(value);
+
 }
 
 export function parseHttpResponseAction (value: any): HttpResponseAction | undefined {
-    if ( isHttpResponseAction(value) ) return value;
-    return undefined;
+
+    if ( isRegularObject(value) && value?.action && value?.statusCode ) {
+        return parseHttpStatusCodeMatcher<FormControllerAction>(value, isFormControllerAction, parseFormControllerAction);
+    }
+
+    return parseFormControllerAction(value);
+
 }
 
 // eslint-disable-next-line

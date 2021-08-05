@@ -42,7 +42,9 @@ export function stringifyFormControllerAction (value: FormControllerAction): str
  *
  * @param value
  */
-export function parseFormControllerAction (value: any): FormSubmitCallback | JsonHttpAction | undefined {
+export function parseFormControllerAction (
+    value: any
+): FormSubmitCallback | JsonHttpAction | undefined {
     return FormSubmitCallback.parse(value) ?? JsonHttpAction.parse(value);
 }
 
