@@ -12,6 +12,7 @@ export function isFormSubmitCallback (value: any): value is FormSubmitCallback {
 }
 
 export function stringifyFormSubmitCallback (value: FormSubmitCallback): string {
+    if ( !isFormSubmitCallback(value) ) throw new TypeError(`Not FormSubmitCallback: ${value}`);
     return `FormSubmitCallback(${value})`;
 }
 

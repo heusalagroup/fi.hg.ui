@@ -14,6 +14,7 @@ export function isEmailFieldModel (value: any) : value is EmailFieldModel {
 }
 
 export function stringifyEmailFieldModel (value: EmailFieldModel): string {
+    if ( !isEmailFieldModel(value) ) throw new TypeError(`Not EmailFieldModel: ${value}`);
     return `EmailFieldModel(${value})`;
 }
 

@@ -14,6 +14,7 @@ export function isCheckboxFieldModel (value: any) : value is CheckboxFieldModel 
 }
 
 export function stringifyCheckboxFieldModel (value: CheckboxFieldModel): string {
+    if ( !isCheckboxFieldModel(value) ) throw new TypeError(`Not CheckboxFieldModel: ${value}`);
     return `CheckboxFieldModel(${value})`;
 }
 

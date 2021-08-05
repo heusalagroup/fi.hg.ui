@@ -14,6 +14,7 @@ export function isTextFieldModel (value: any) : value is TextFieldModel {
 }
 
 export function stringifyTextFieldModel (value: TextFieldModel): string {
+    if ( !isTextFieldModel(value) ) throw new TypeError(`Not TextFieldModel: ${value}`);
     return `TextFieldModel(${value})`;
 }
 

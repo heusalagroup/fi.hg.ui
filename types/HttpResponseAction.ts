@@ -13,6 +13,7 @@ export function isHttpResponseAction (value: any): value is HttpResponseAction {
 }
 
 export function stringifyHttpResponseAction (value: HttpResponseAction): string {
+    if ( !isHttpResponseAction(value) ) throw new TypeError(`Not HttpResponseAction: ${value}`);
     return `HttpResponseAction(${value})`;
 }
 

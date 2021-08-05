@@ -25,6 +25,7 @@ export function isFormModel (value : any) : value is FormModel {
 }
 
 export function stringifyFormModel (value: FormModel): string {
+    if ( !isFormModel(value) ) throw new TypeError(`Not FormModel: ${value}`);
     return `FormModel(${value})`;
 }
 

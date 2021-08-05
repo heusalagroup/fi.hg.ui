@@ -7,7 +7,8 @@ import {
 } from "./FormControllerAction";
 import FormValue, { isFormValue, parseFormValue } from "./FormValue";
 import FormModel, { isFormModel, parseFormModel } from "./FormModel";
-import { isObject, isString, trim } from "../../ts/modules/lodash";
+import { isObject, isString, isUndefined, trim } from "../../ts/modules/lodash";
+import { parseJson } from "../../ts/Json";
 
 export interface FormController {
 
@@ -18,18 +19,20 @@ export interface FormController {
 
 }
 
+
 export function isFormController (value: any): value is FormController {
     return (
         !!value
         && isFormModel(value?.model)
-        && isFormValue(value?.value)
-        && isFormControllerAction(value?.onSubmit)
-        && isFormControllerAction(value?.onCancel)
+        && ( isUndefined(value?.value)    || isFormValue(value?.value) )
+        && ( isUndefined(value?.onSubmit) || isFormControllerAction(value?.onSubmit) )
+        && ( isUndefined(value?.onCancel) || isFormControllerAction(value?.onCancel) )
     );
 }
 
 export function stringifyFormController (value: FormController): string {
-    return `FormController(${value})`;
+    if (!isFormController(value)) throw new TypeError(`Not FormController: ${value}`);
+    return `FormController("${value.model.title}")`;
 }
 
 export function parseFormController (controller: any): FormController | undefined {
@@ -40,7 +43,7 @@ export function parseFormController (controller: any): FormController | undefine
 
     if (isString(v)) {
 
-        v = JSON.parse(trim(v));
+        v = parseJson(trim(v));
 
         if (isFormController(v)) {
             return v;
@@ -68,6 +71,7 @@ export function parseFormController (controller: any): FormController | undefine
 
 }
 
+
 // eslint-disable-next-line
 export namespace FormController {
 
@@ -84,5 +88,6 @@ export namespace FormController {
     }
 
 }
+
 
 export default FormController;

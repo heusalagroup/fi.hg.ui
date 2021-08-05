@@ -31,6 +31,7 @@ export function isFormFieldModel (value: any) : value is FormFieldModel {
 }
 
 export function stringifyFormFieldModel (value: FormFieldModel): string {
+    if ( !isFormFieldModel(value) ) throw new TypeError(`Not FormFieldModel: ${value}`);
     return `FormFieldModel(${value})`;
 }
 

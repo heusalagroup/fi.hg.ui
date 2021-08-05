@@ -22,6 +22,7 @@ export function isPageBreakModel (value: any) : value is PageBreakModel {
 }
 
 export function stringifyPageBreakModel (value: PageBreakModel): string {
+    if ( !isPageBreakModel(value) ) throw new TypeError(`Not PageBreakModel: ${value}`);
     return `PageBreakModel(${value})`;
 }
 

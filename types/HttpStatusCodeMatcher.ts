@@ -30,6 +30,8 @@ export function stringifyHttpStatusCodeMatcher<T = any> (
     stringifyAction : ((value: any) => string) | undefined = undefined
 ): string {
 
+    if ( !isHttpStatusCodeMatcher(value) ) throw new TypeError(`Not HttpStatusCodeMatcher: ${value}`);
+
     if (stringifyAction !== undefined) {
 
         if (isArray(value.statusCode)) {

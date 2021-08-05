@@ -14,6 +14,7 @@ export function isIntegerFieldModel (value: any) : value is IntegerFieldModel {
 }
 
 export function stringifyIntegerFieldModel (value: IntegerFieldModel): string {
+    if ( !isIntegerFieldModel(value) ) throw new TypeError(`Not IntegerFieldModel: ${value}`);
     return `IntegerFieldModel(${value})`;
 }
 

@@ -14,6 +14,7 @@ export function isTextAreaFieldModel (value: any) : value is TextAreaFieldModel 
 }
 
 export function stringifyTextAreaFieldModel (value: TextAreaFieldModel): string {
+    if ( !isTextAreaFieldModel(value) ) throw new TypeError(`Not TextAreaFieldModel: ${value}`);
     return `TextAreaFieldModel(${value})`;
 }
 

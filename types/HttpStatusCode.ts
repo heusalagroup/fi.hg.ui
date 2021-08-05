@@ -26,6 +26,7 @@ export function isHttpStatusCode (value: any): value is HttpStatusCode {
 }
 
 export function stringifyHttpStatusCode (value: HttpStatusCode): string {
+    if ( !isHttpStatusCode(value) ) throw new TypeError(`Not HttpStatusCode: ${value}`);
     if (isArray(value)) {
         return `HttpStatusCode#${value[0]}-${value[1]}`;
     }

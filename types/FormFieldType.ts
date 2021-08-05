@@ -33,6 +33,7 @@ export function isFormFieldType (value: any): value is FormFieldType {
 }
 
 export function stringifyFormFieldType (value: FormFieldType): string {
+    if ( !isFormFieldType(value) ) throw new TypeError(`Not FormFieldType: ${value}`);
     return `FormFieldType(${value})`;
 }
 

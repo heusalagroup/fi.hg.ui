@@ -1,23 +1,27 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
-import { isFunction } from "../../ts/modules/lodash";
+import { isFunction, parseFunctionSignature } from "../../ts/modules/lodash";
+
 
 export interface FormCancelCallback {
     (): void;
 }
+
 
 export function isFormCancelCallback (value: any): value is FormCancelCallback {
     return isFunction(value);
 }
 
 export function stringifyFormCancelCallback (value: FormCancelCallback): string {
-    return `FormCancelCallback(${value})`;
+    if ( !isFormCancelCallback(value) ) throw new TypeError(`Not FormCancelCallback: ${value}`);
+    return `FormCancelCallback#${parseFunctionSignature(value)}`;
 }
 
 export function parseFormCancelCallback (value: any): FormCancelCallback | undefined {
     if ( isFormCancelCallback(value) ) return value;
     return undefined;
 }
+
 
 // eslint-disable-next-line
 export namespace FormCancelCallback {
@@ -35,3 +39,5 @@ export namespace FormCancelCallback {
     }
 
 }
+
+export default FormCancelCallback;

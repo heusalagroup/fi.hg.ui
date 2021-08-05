@@ -30,6 +30,7 @@ export function isSelectFieldModel<T = any> (
 }
 
 export function stringifySelectFieldModel<T = any> (value: SelectFieldModel<T>): string {
+    if ( !isSelectFieldModel(value) ) throw new TypeError(`Not SelectFieldModel: ${value}`);
     return `SelectFieldModel(${value})`;
 }
 

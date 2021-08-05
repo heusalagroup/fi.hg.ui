@@ -18,6 +18,7 @@ export function isFormPageModel (value: any): value is FormPageModel {
 }
 
 export function stringifyFormPageModel (value: FormPageModel): string {
+    if ( !isFormPageModel(value) ) throw new TypeError(`Not FormPageModel: ${value}`);
     return `FormPageModel(${value})`;
 }
 

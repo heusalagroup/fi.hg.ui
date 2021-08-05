@@ -14,6 +14,7 @@ export function isPasswordFieldModel (value: any) : value is PasswordFieldModel 
 }
 
 export function stringifyPasswordFieldModel (value: PasswordFieldModel): string {
+    if ( !isPasswordFieldModel(value) ) throw new TypeError(`Not PasswordFieldModel: ${value}`);
     return `PasswordFieldModel(${value})`;
 }
 

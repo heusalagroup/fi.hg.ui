@@ -11,6 +11,7 @@ export function isFormItem (value: any) : value is FormItem {
 }
 
 export function stringifyFormItem (value: FormItem): string {
+    if ( !isFormItem(value) ) throw new TypeError(`Not FormItem: ${value}`);
     return `FormItem(${value})`;
 }
 

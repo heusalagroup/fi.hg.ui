@@ -40,6 +40,7 @@ export function isJsonHttpAction (value: any): value is JsonHttpAction {
 }
 
 export function stringifyJsonHttpAction (value: JsonHttpAction): string {
+    if ( !isJsonHttpAction(value) ) throw new TypeError(`Not JsonHttpAction: ${value}`);
     return `JsonHttpAction(${value})`;
 }
 

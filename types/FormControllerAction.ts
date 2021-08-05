@@ -3,6 +3,7 @@
 import FormSubmitCallback, { isFormSubmitCallback } from "./FormSubmitCallback";
 import JsonHttpAction, { isJsonHttpAction } from "./JsonHttpAction";
 import { isString } from "../../ts/modules/lodash";
+import { isFormController } from "./FormController";
 
 /**
  * If the value is a string, it will be treated as JsonHttpAction with the string as the URL param.
@@ -18,6 +19,7 @@ export function isFormControllerAction (value: any): value is FormControllerActi
 }
 
 export function stringifyFormControllerAction (value: FormControllerAction): string {
+    if (!isFormControllerAction(value)) throw new TypeError(`Not FormControllerAction: ${value}`);
     return `FormControllerAction(${value})`;
 }
 
