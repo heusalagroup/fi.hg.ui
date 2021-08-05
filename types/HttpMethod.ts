@@ -4,14 +4,23 @@ import {isString, trim} from "../../ts/modules/lodash";
 
 export enum HttpMethod {
 
-    OPTIONS  = "OPTIONS",
-    GET      = "GET",
-    POST     = "POST",
-    PUT      = "PUT",
-    DELETE   = "DELETE",
-    PATCH    = "PATCH"
+    OPTIONS  = "options",
+    GET      = "get",
+    POST     = "post",
+    PUT      = "put",
+    DELETE   = "delete",
+    PATCH    = "patch"
 
 }
+
+export type HttpMethodString = (
+    HttpMethod.OPTIONS
+    | HttpMethod.GET
+    | HttpMethod.POST
+    | HttpMethod.PUT
+    | HttpMethod.DELETE
+    | HttpMethod.PATCH
+);
 
 export function isHttpMethod (value: any) : value is HttpMethod {
     if (!isString(value)) return false;
@@ -32,12 +41,12 @@ export function isHttpMethod (value: any) : value is HttpMethod {
 
 export function stringifyHttpMethod (value : HttpMethod) : string {
     switch (value) {
-        case HttpMethod.OPTIONS  : return 'options';
-        case HttpMethod.GET      : return 'get';
-        case HttpMethod.POST     : return 'post';
-        case HttpMethod.PUT      : return 'put';
-        case HttpMethod.DELETE   : return 'delete';
-        case HttpMethod.PATCH    : return 'patch';
+        case HttpMethod.OPTIONS  : return 'OPTIONS';
+        case HttpMethod.GET      : return 'GET';
+        case HttpMethod.POST     : return 'POST';
+        case HttpMethod.PUT      : return 'PUT';
+        case HttpMethod.DELETE   : return 'DELETE';
+        case HttpMethod.PATCH    : return 'PATCH';
     }
     throw new TypeError(`Unsupported HttpMethod value: ${value}`)
 }
@@ -48,15 +57,15 @@ export function parseHttpMethod (value: any) : HttpMethod | undefined {
         return undefined;
     }
 
-    value = trim(value).toUpperCase();
+    value = trim(value).toLowerCase();
     switch(value) {
 
-        case 'OPTIONS' : return HttpMethod.OPTIONS;
-        case 'GET'     : return HttpMethod.GET;
-        case 'POST'    : return HttpMethod.POST;
-        case 'PUT'     : return HttpMethod.PUT;
-        case 'DELETE'  : return HttpMethod.DELETE;
-        case 'PATCH'   : return HttpMethod.PATCH;
+        case 'options' : return HttpMethod.OPTIONS;
+        case 'get'     : return HttpMethod.GET;
+        case 'post'    : return HttpMethod.POST;
+        case 'put'     : return HttpMethod.PUT;
+        case 'delete'  : return HttpMethod.DELETE;
+        case 'patch'   : return HttpMethod.PATCH;
         default        : return undefined;
 
     }

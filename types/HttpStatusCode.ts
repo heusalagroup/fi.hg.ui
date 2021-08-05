@@ -3,7 +3,6 @@
 import {
     indexOf,
     isArray,
-    isNumber,
     isSafeInteger,
     isString,
     parseInteger,
@@ -21,8 +20,17 @@ import {
  */
 export type HttpStatusCode = number | [number, number];
 
+function isIntegerBetweenHttpStatusRange (value: any) : value is number {
+    return isSafeInteger(value, 100, 599);
+}
+
 export function isHttpStatusCode (value: any): value is HttpStatusCode {
-    return isNumber(value) || isArray(value, isNumber, 2, 2);
+
+    if (isArray(value, isIntegerBetweenHttpStatusRange, 2, 2)) {
+        return value[0] < value[1];
+    }
+
+    return isIntegerBetweenHttpStatusRange(value);
 }
 
 export function stringifyHttpStatusCode (value: HttpStatusCode): string {
@@ -33,39 +41,55 @@ export function stringifyHttpStatusCode (value: HttpStatusCode): string {
     return `HttpStatusCode#${value}`;
 }
 
-function parseHttpStatusCodeString (valueString : string, separator : string ) : HttpStatusCode | undefined {
+export function parseHttpStatusCodeString (valueString : string, separator : string ) : HttpStatusCode | undefined {
 
-    const index = indexOf(valueString, separator);
+    const index = valueString.indexOf(separator);
 
     if ( index < 0 ) {
-        return parseInteger(valueString);
+        const parsedValue = parseInteger(valueString);
+        return isIntegerBetweenHttpStatusRange(parsedValue) ? parsedValue : undefined;
     }
 
     const start = parseInteger(valueString.substr(0, index));
-    const end = parseInteger(valueString.substr(index+separator.length));
+    const end = parseInteger(valueString.substr(index + separator.length ));
 
-    if ( isSafeInteger(start) && isSafeInteger(end) ) {
-        return [ start, end ];
+    if ( isIntegerBetweenHttpStatusRange(start) && isIntegerBetweenHttpStatusRange(end) ) {
+        return normalizeStatusCodeRange(start, end );
     }
 
     return undefined;
 
 }
 
+function normalizeStatusCodeRange (
+    start : number,
+    end   : number
+) : [number,number] {
+    if (start < end) {
+        return [start, end];
+    } else {
+        return [end, start];
+    }
+}
+
 export function parseHttpStatusCode (value: any): HttpStatusCode | undefined {
 
-    if (isHttpStatusCode(value)) return value;
+    if (isHttpStatusCode(value)) {
+        if (isArray(value)) {
+            return normalizeStatusCodeRange(value[0], value[1]);
+        }
+        return value;
+    }
 
     if (isString(value)) {
 
         if (startsWith(value, 'HttpStatusCode#')) {
-            value = value.substr('HttpStatusCode#'.length);
+            value = value.substr( 'HttpStatusCode#'.length );
         }
 
         return (
             parseHttpStatusCodeString(value, '-')
             ?? parseHttpStatusCodeString(value, ' ')
-            ?? parseHttpStatusCodeString(value, '\n')
             ?? parseHttpStatusCodeString(value, '..')
             ?? parseHttpStatusCodeString(value, '...')
             ?? parseHttpStatusCodeString(value, ',')
@@ -77,15 +101,18 @@ export function parseHttpStatusCode (value: any): HttpStatusCode | undefined {
             ?? parseHttpStatusCodeString(value, '/')
             ?? parseHttpStatusCodeString(value, '<')
             ?? parseHttpStatusCodeString(value, '>')
+            ?? parseHttpStatusCodeString(value, '\t')
+            ?? parseHttpStatusCodeString(value, '\n')
         );
+
     }
 
-    if (isArray(value, isString, 2, 2)) {
+    if (isArray(value, undefined, 2, 2)) {
         const [startString, endString] = value;
         const start = parseInteger(startString);
         const end = parseInteger(endString);
-        if ( isSafeInteger(start) && isSafeInteger(end) ) {
-            return [start, end];
+        if ( isIntegerBetweenHttpStatusRange(start) && isIntegerBetweenHttpStatusRange(end) ) {
+            return normalizeStatusCodeRange(start, end);
         }
     }
 

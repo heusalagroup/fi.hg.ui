@@ -1,19 +1,21 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import {FormValue} from "./FormValue";
-import { isFunction } from "../../ts/modules/lodash";
+import { isFunction, parseFunctionSignature } from "../../ts/modules/lodash";
+
 
 export interface FormSubmitCallback {
     (value: FormValue): void;
 }
 
+
 export function isFormSubmitCallback (value: any): value is FormSubmitCallback {
-    return isFunction(value?.foo);
+    return isFunction(value);
 }
 
 export function stringifyFormSubmitCallback (value: FormSubmitCallback): string {
     if ( !isFormSubmitCallback(value) ) throw new TypeError(`Not FormSubmitCallback: ${value}`);
-    return `FormSubmitCallback(${value})`;
+    return `FormSubmitCallback#${parseFunctionSignature(value)}`;
 }
 
 export function parseFormSubmitCallback (value: any): FormSubmitCallback | undefined {

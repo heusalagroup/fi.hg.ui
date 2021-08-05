@@ -6,12 +6,12 @@ describe('stringifyHttpMethod', () => {
 
     test( 'can stringify values', () => {
 
-        expect(stringifyHttpMethod(HttpMethod.OPTIONS)).toBe('options');
-        expect(stringifyHttpMethod(HttpMethod.GET)).toBe('get');
-        expect(stringifyHttpMethod(HttpMethod.POST)).toBe('post');
-        expect(stringifyHttpMethod(HttpMethod.PUT)).toBe('put');
-        expect(stringifyHttpMethod(HttpMethod.DELETE)).toBe('delete');
-        expect(stringifyHttpMethod(HttpMethod.PATCH)).toBe('patch');
+        expect(stringifyHttpMethod(HttpMethod.OPTIONS)).toBe('OPTIONS');
+        expect(stringifyHttpMethod(HttpMethod.GET)).toBe('GET');
+        expect(stringifyHttpMethod(HttpMethod.POST)).toBe('POST');
+        expect(stringifyHttpMethod(HttpMethod.PUT)).toBe('PUT');
+        expect(stringifyHttpMethod(HttpMethod.DELETE)).toBe('DELETE');
+        expect(stringifyHttpMethod(HttpMethod.PATCH)).toBe('PATCH');
 
     });
 
@@ -232,12 +232,12 @@ describe('HttpMethod', () => {
 
         test( 'can stringify values', () => {
 
-            expect(HttpMethod.stringify(HttpMethod.OPTIONS)).toBe('options');
-            expect(HttpMethod.stringify(HttpMethod.GET)).toBe('get');
-            expect(HttpMethod.stringify(HttpMethod.POST)).toBe('post');
-            expect(HttpMethod.stringify(HttpMethod.PUT)).toBe('put');
-            expect(HttpMethod.stringify(HttpMethod.DELETE)).toBe('delete');
-            expect(HttpMethod.stringify(HttpMethod.PATCH)).toBe('patch');
+            expect(HttpMethod.stringify(HttpMethod.OPTIONS)).toBe('OPTIONS');
+            expect(HttpMethod.stringify(HttpMethod.GET)).toBe('GET');
+            expect(HttpMethod.stringify(HttpMethod.POST)).toBe('POST');
+            expect(HttpMethod.stringify(HttpMethod.PUT)).toBe('PUT');
+            expect(HttpMethod.stringify(HttpMethod.DELETE)).toBe('DELETE');
+            expect(HttpMethod.stringify(HttpMethod.PATCH)).toBe('PATCH');
 
         });
 

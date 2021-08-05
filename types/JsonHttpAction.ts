@@ -2,15 +2,23 @@
 
 import { isJsonArray, isJsonObject, JsonArray, JsonObject } from "../../ts/Json";
 import { HttpResponseAction, isHttpResponseAction } from "./HttpResponseAction";
-import { isString, isStringOrUndefined, isUndefined } from "../../ts/modules/lodash";
-import HttpMethod, { isHttpMethod } from "./HttpMethod";
+import {
+    hasNoOtherKeys,
+    isObject,
+    isRegularObject,
+    isString,
+    isStringOrUndefined,
+    isUndefined
+} from "../../ts/modules/lodash";
+import HttpMethod, { HttpMethodString, isHttpMethod } from "./HttpMethod";
+
 
 export interface JsonHttpAction {
 
     /**
      * Defaults to POST method.
      */
-    readonly method?: HttpMethod;
+    readonly method?: HttpMethodString | HttpMethod;
 
     readonly url ?: string;
 
@@ -29,25 +37,32 @@ export interface JsonHttpAction {
 
 }
 
+
 export function isJsonHttpAction (value: any): value is JsonHttpAction {
     return (
         !!value
+        && isRegularObject(value)
+        && hasNoOtherKeys(value, ['method', 'url', 'payload', 'onResponse'])
         && ( isHttpMethod(value?.method) || isUndefined(value?.method) )
         && isStringOrUndefined(value?.url, 1)
-        && ( isJsonObject(value?.payload) || isJsonArray(value?.payload) )
-        && ( isHttpResponseAction(value?.onResponse) )
+        && ( isUndefined(value?.payload) || isJsonObject(value?.payload) || isJsonArray(value?.payload) )
+        && ( isUndefined(value?.onResponse) || isHttpResponseAction(value?.onResponse) )
     );
 }
 
 export function stringifyJsonHttpAction (value: JsonHttpAction): string {
-    if ( !isJsonHttpAction(value) ) throw new TypeError(`Not JsonHttpAction: ${value}`);
-    return `JsonHttpAction(${value})`;
+    if ( !isJsonHttpAction(value) ) throw new TypeError(`Not JsonHttpAction: ${JSON.stringify(value)}`);
+    const {method, url} = value;
+    return `JsonHttpAction(${method ? HttpMethod.stringify(method) : 'POST'}${url ? ` ${url}` : ''})`;
 }
 
 export function parseJsonHttpAction (value: any): JsonHttpAction | undefined {
 
     if (isString(value)) {
-        return {url: value};
+        if (value.length) {
+            return {url: value};
+        }
+        return {};
     }
 
     if (isJsonHttpAction(value)) {
