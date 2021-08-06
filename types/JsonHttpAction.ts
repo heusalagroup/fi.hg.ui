@@ -7,7 +7,7 @@ import {
     isObject,
     isRegularObject,
     isString,
-    isStringOrUndefined,
+    isStringOrUndefined, isStringOrUndefinedOf,
     isUndefined
 } from "../../ts/modules/lodash";
 import HttpMethod, { HttpMethodString, isHttpMethod } from "./HttpMethod";
@@ -44,7 +44,7 @@ export function isJsonHttpAction (value: any): value is JsonHttpAction {
         && isRegularObject(value)
         && hasNoOtherKeys(value, ['method', 'url', 'payload', 'onResponse'])
         && ( isHttpMethod(value?.method) || isUndefined(value?.method) )
-        && isStringOrUndefined(value?.url, 1)
+        && isStringOrUndefinedOf(value?.url, 1)
         && ( isUndefined(value?.payload) || isJsonObject(value?.payload) || isJsonArray(value?.payload) )
         && ( isUndefined(value?.onResponse) || isHttpResponseAction(value?.onResponse) )
     );

@@ -7,11 +7,11 @@ import HttpStatusCode, {
 } from "./HttpStatusCode";
 import {
     hasNoOtherKeys,
-    isArray, isRegularObject,
+    isArray, isArrayOf, isRegularObject,
     map,
     ParserCallback,
     StringifyCallback,
-    TestCallback
+    TestCallbackNonStandard
 } from "../../ts/modules/lodash";
 
 
@@ -29,12 +29,12 @@ export interface HttpStatusCodeMatcher<T> {
 
 export function isHttpStatusCodeMatcher<T = any> (
     value    : any,
-    isAction : TestCallback = (value) => !!value
+    isAction : TestCallbackNonStandard = (value) => !!value
 ): value is HttpStatusCodeMatcher<T> {
     return (
         !!value
         && isRegularObject(value)
-        && ( isHttpStatusCode(value?.statusCode) || isArray(value?.statusCode, isHttpStatusCode, 1) )
+        && ( isHttpStatusCode(value?.statusCode) || isArrayOf(value?.statusCode, isHttpStatusCode, 1) )
         && isAction(value?.action)
         && hasNoOtherKeys(value, ["statusCode", "action"])
     );
@@ -73,7 +73,7 @@ export function stringifyHttpStatusCodeMatcher<T = any> (
  */
 export function parseHttpStatusCodeMatcher<T> (
     value        : any,
-    actionTester : TestCallback | undefined,
+    actionTester : TestCallbackNonStandard | undefined,
     actionParser : ParserCallback<T> | undefined = undefined
 ): HttpStatusCodeMatcher<T> | undefined {
 
@@ -125,7 +125,7 @@ export namespace HttpStatusCodeMatcher {
 
     export function parse<T> (
         value        : any,
-        actionTester : TestCallback | undefined,
+        actionTester : TestCallbackNonStandard | undefined,
         actionParser : ParserCallback<T> | undefined = undefined
     ): HttpStatusCodeMatcher<T> | undefined {
         return parseHttpStatusCodeMatcher<T>(value, actionTester, actionParser);

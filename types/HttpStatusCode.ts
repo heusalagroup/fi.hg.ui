@@ -2,8 +2,8 @@
 
 import {
     indexOf,
-    isArray,
-    isSafeInteger,
+    isArray, isArrayOf,
+    isSafeInteger, isSafeIntegerOf,
     isString,
     parseInteger,
     startsWith
@@ -21,12 +21,12 @@ import {
 export type HttpStatusCode = number | [number, number];
 
 function isIntegerBetweenHttpStatusRange (value: any) : value is number {
-    return isSafeInteger(value, 100, 599);
+    return isSafeIntegerOf(value, 100, 599);
 }
 
 export function isHttpStatusCode (value: any): value is HttpStatusCode {
 
-    if (isArray(value, isIntegerBetweenHttpStatusRange, 2, 2)) {
+    if (isArrayOf(value, isIntegerBetweenHttpStatusRange, 2, 2)) {
         return value[0] < value[1];
     }
 
@@ -35,7 +35,7 @@ export function isHttpStatusCode (value: any): value is HttpStatusCode {
 
 export function stringifyHttpStatusCode (value: HttpStatusCode): string {
     if ( !isHttpStatusCode(value) ) throw new TypeError(`Not HttpStatusCode: ${value}`);
-    if (isArray(value)) {
+    if ( isArray(value) ) {
         return `HttpStatusCode#${value[0]}-${value[1]}`;
     }
     return `HttpStatusCode#${value}`;
@@ -107,7 +107,7 @@ export function parseHttpStatusCode (value: any): HttpStatusCode | undefined {
 
     }
 
-    if (isArray(value, undefined, 2, 2)) {
+    if (isArrayOf(value, undefined, 2, 2)) {
         const [startString, endString] = value;
         const start = parseInteger(startString);
         const end = parseInteger(endString);

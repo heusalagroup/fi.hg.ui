@@ -2,7 +2,12 @@
 
 import FormItemType from "../FormItemType";
 import FormFieldModel, { isFormFieldModel } from "../FormFieldModel";
-import { isArray, TestCallback } from "../../../ts/modules/lodash";
+import {
+    isArray,
+    isArrayOf,
+    TestCallbackNonStandard,
+    TestCallback
+} from "../../../ts/modules/lodash";
 
 export interface SelectFieldItem<T> {
 
@@ -24,7 +29,7 @@ export function isSelectFieldModel<T = any> (
 ) : value is SelectFieldModel<T> {
     return (
         value?.type === FormItemType.SELECT_FIELD
-        && isArray<T>(value?.values, isItem)
+        && isArrayOf<T>(value?.values, isItem)
         && isFormFieldModel(value)
     );
 }
