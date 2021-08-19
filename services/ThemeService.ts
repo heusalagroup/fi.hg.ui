@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Sendanor. All rights reserved.
+// Copyright (c) 2021-2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import WindowService, {WindowServiceDestructor, WindowServiceEvent} from "./WindowService";
 import Observer, {ObserverDestructor} from "../../ts/Observer";

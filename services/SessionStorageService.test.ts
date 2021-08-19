@@ -1,4 +1,4 @@
-// Copyright (c) 2020, 2021 Sendanor. All rights reserved.
+// Copyright (c) 2020-2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import SessionStorageService, {SessionStorageServiceDestructor} from "./SessionStorageService";
 import {isFunction} from "../../ts/modules/lodash";

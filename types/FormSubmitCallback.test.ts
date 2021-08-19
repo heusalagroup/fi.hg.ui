@@ -1,3 +1,5 @@
+// Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
+
 import FormSubmitCallback, { isFormSubmitCallback, parseFormSubmitCallback, stringifyFormSubmitCallback } from "./FormSubmitCallback";
 import FormValue from "./FormValue";
 

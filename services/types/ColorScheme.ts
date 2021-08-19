@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Sendanor. All rights reserved.
+// Copyright (c) 2021-2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import {isString, trim} from "../../../ts/modules/lodash";
 

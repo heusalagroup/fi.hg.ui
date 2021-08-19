@@ -1,3 +1,5 @@
+// Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
+
 import FormControllerAction, { isFormControllerAction, parseFormControllerAction, stringifyFormControllerAction } from "./FormControllerAction";
 import { FormValue } from "./FormValue";
 

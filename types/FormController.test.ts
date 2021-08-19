@@ -1,3 +1,5 @@
+// Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
+
 import FormController, { isFormController, parseFormController, stringifyFormController } from "./FormController";
 import FormItemType from "./FormItemType";
 

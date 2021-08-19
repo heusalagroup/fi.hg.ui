@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Sendanor. All rights reserved.
+// Copyright (c) 2020-2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import FormModel, { isFormModel } from "./FormModel";
 import { isPipelineModel, PipelineModel } from "../../pipeline/types/PipelineModel";

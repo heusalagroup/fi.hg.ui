@@ -1,3 +1,5 @@
+// Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
+
 import FormItemType, {isFormItemType} from "./FormItemType";
 
 export interface FormItemModel {

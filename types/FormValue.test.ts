@@ -1,3 +1,5 @@
+// Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
+
 import FormValue, { isFormValue, parseFormValue, stringifyFormValue } from "./FormValue";
 
 describe('isFormValue', () => {

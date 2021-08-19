@@ -1,0 +1,128 @@
+// Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
+
+.slider-field {
+
+  background-color : #00000009;
+  border           : 1px solid #00000022;
+  border-radius    : 0.5em;
+
+  padding      : 0.5em 0;
+  margin       : 0.5em 0;
+  box-sizing   : border-box;
+  max-width    : 100%;
+  min-width    : 0;
+
+  & > .slider-field-label {
+
+    background-color  : #00000009;
+    border            : 1px solid #00000022;
+    border-radius     : 0.5em;
+    margin            : 0;
+    padding           : 0;
+    display           : flex;
+    flex-direction    : row;
+    align-items       : center;
+    justify-content   : center;
+    box-sizing        : border-box;
+
+  }
+
+  & > .slider-field-options {
+
+    padding      : 0;
+    margin       : 0;
+    box-sizing   : border-box;
+    max-width    : 100%;
+    min-width    : 0;
+
+    display         : flex;
+    flex-direction  : row;
+    align-items     : center;
+    align-content   : center;
+    justify-items   : center;
+    justify-content : center;
+
+    & > .slider-field-option {
+
+      padding      : 0;
+      margin       : 0;
+      box-sizing   : border-box;
+      max-width    : 100%;
+      min-width    : 0;
+
+      display         : flex;
+      flex-direction  : column;
+      align-items     : stretch;
+      align-content   : center;
+      justify-items   : center;
+      justify-content : center;
+
+      & > .slider-field-option-input {
+
+        flex-grow    : 1;
+        padding      : 0;
+        margin       : 0;
+        box-sizing   : border-box;
+        max-width    : 100%;
+        min-width    : 0;
+
+        display         : flex;
+        flex-direction  : row;
+        align-items     : center;
+        align-content   : center;
+        justify-items   : center;
+        justify-content : center;
+
+        & > .slider-field-option-input-fill {
+
+          flex-grow      : 1;
+          padding      : 0;
+          margin       : 0;
+          box-sizing   : border-box;
+          max-width    : 100%;
+          min-width    : 0;
+
+          &.slider-field-option-input-fill-with-line {
+            border-top     : 1px solid #000000;
+          }
+
+        }
+
+        & > .slider-field-option-input-element {
+          flex-shrink    : 0;
+          margin         : 0;
+          padding        : 0;
+          border         : 0;
+          outline        : 0;
+          font-size      : 1.25em;
+          border-radius  : 0.25em;
+          max-width      : 100%;
+          min-width      : 0;
+          box-sizing     : border-box;
+        }
+
+      }
+
+      & > .slider-field-option-label {
+
+        flex-shrink  : 1;
+        padding      : 0;
+        margin       : 0;
+        box-sizing   : border-box;
+        max-width    : 100%;
+        min-width    : 0;
+
+        & > .slider-field-option-label-text {
+
+          padding      : 0 1em 0 0.5em;
+          box-sizing   : border-box;
+
+        }
+
+      }
+
+    }
+
+  }
+
+}
