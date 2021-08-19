@@ -2,7 +2,10 @@
 
 export enum RequestHeaderName {
 
-    AUTHORIZATION = "Authorization"
+    AUTHORIZATION = "Authorization",
+
+    RESOURCE_ID      = "Resource-Id",
+    RESOURCE_VERSION = "Resource-Version"
 
 }
 

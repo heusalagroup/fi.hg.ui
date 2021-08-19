@@ -1,9 +1,10 @@
 // Copyright (c) 2020-2021 Sendanor. All rights reserved.
 
 import FormDTO from "./FormDTO";
+import { RepositoryEntry } from "../../../repository/Repository";
 
 export interface FormListResponseDTO {
-    readonly payload: FormDTO[];
+    readonly payload: RepositoryEntry<FormDTO>[];
 }
 
 export default FormListResponseDTO;

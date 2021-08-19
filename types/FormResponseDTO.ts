@@ -3,7 +3,9 @@
 import FormDTO from "./FormDTO";
 
 export interface FormResponseDTO {
-    readonly payload: FormDTO;
+    readonly id       : string;
+    readonly version  : number;
+    readonly payload  : FormDTO;
 }
 
 export default FormResponseDTO;
