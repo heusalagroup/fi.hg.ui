@@ -2,9 +2,7 @@
 
 import {
     isBooleanOrUndefined,
-    isString,
-    isStringOrUndefined,
-    isUndefined
+    isStringOrUndefined
 } from "../../ts/modules/lodash";
 import FormItemModel from "./FormItemModel";
 import {FormFieldType, isFormFieldType} from "./FormFieldType";

@@ -3,9 +3,7 @@
 import FormItemType from "../FormItemType";
 import FormFieldModel, { isFormFieldModel } from "../FormFieldModel";
 import {
-    isArray,
     isArrayOf,
-    TestCallbackNonStandard,
     TestCallback
 } from "../../../ts/modules/lodash";
 
