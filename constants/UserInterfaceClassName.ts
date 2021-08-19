@@ -19,7 +19,8 @@ export enum UserInterfaceClassName {
     DRAGGABLE          = "draggable",
     DROP_ZONE          = "drop-zone",
     POPUP              = "popup",
-    ICON               = "icon"
+    ICON               = "icon",
+    LOADER             = "nor-loader",
 
 }
 

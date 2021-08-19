@@ -1,7 +1,7 @@
 // Copyright (c) 2020-2021 Sendanor. All rights reserved.
 
 import React from "react";
-import ClassName from "../../../../constants/className";
+import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
 import "./Loader.scss";
 import {ReactComponent as LoadingIcon} from "./loading.svg";
 
@@ -26,11 +26,6 @@ export interface LoaderState {
 
 /**
  * Loader component.
- *
- * Part of Sendanor's Commercial NorJS React Components. Not a stable release.
- *
- * Copyright 2020 Jaakko-Heikki Heusala <jheusala@iki.fi>
- *           2020 Sendanor <info@sendanor.fi>
  */
 export class Loader extends React.Component<LoaderProps, LoaderState> {
 
@@ -90,9 +85,9 @@ export class Loader extends React.Component<LoaderProps, LoaderState> {
         const loadingIcon = this.state.hidden ? '' : <LoadingIcon />;
 
         return (
-            <div className={ ClassName.LOADER + ' ' + (this.props.className ?? '')}>
+            <div className={ UserInterfaceClassName.LOADER + ' ' + (this.props.className ?? '')}>
 
-                <div className={ClassName.LOADER + '-icon-container'}
+                <div className={UserInterfaceClassName.LOADER + '-icon-container'}
                      style={{animation: `spin ${this.props.speed}s linear infinite`}}
                 >{loadingIcon}</div>
 
