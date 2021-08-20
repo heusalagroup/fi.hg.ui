@@ -1,9 +1,9 @@
 // Copyright (c) 2020-2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import FormDTO, { isFormDTO } from "./FormDTO";
-import { hasNoOtherKeys, isRegularObject, isSafeInteger, isString } from "../../ts/modules/lodash";
+import ResponseDTO, { isResponseDTO } from "./ResponseDTO";
 
-export interface FormResponseDTO {
+export interface FormResponseDTO extends ResponseDTO<FormDTO> {
     readonly id       : string;
     readonly version  : number;
     readonly payload  : FormDTO;
@@ -12,13 +12,7 @@ export interface FormResponseDTO {
 export function isFormResponseDTO (
     value: any
 ): value is FormResponseDTO {
-    return (
-        isRegularObject(value)
-        && hasNoOtherKeys(value, ['id', 'version', 'payload'])
-        && isString(value?.id)
-        && isSafeInteger(value?.version)
-        && isFormDTO(value?.payload)
-    );
+    return isResponseDTO<FormDTO>(value, isFormDTO);
 }
 
 export function stringifyFormResponseDTO (value: FormResponseDTO): string {
