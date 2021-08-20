@@ -4,11 +4,11 @@ import FormValueDTO, { isFormValueDTO } from "./FormValueDTO";
 import { isRepositoryEntry, RepositoryEntry } from "./RepositoryEntry";
 import { hasNoOtherKeys, isArrayOf, isRegularObject } from "../../ts/modules/lodash";
 
-export interface FormEntryListResponseDTO {
+export interface FormValueListResponseDTO {
     readonly payload: RepositoryEntry<FormValueDTO>[];
 }
 
-export function isFormEntryListResponseDTO (value: any): value is FormEntryListResponseDTO {
+export function isFormValueListResponseDTO (value: any): value is FormValueListResponseDTO {
     return (
         isRegularObject(value)
         && hasNoOtherKeys(value, ['payload'])
@@ -16,14 +16,14 @@ export function isFormEntryListResponseDTO (value: any): value is FormEntryListR
     );
 }
 
-export function stringifyFormEntryListResponseDTO (value: FormEntryListResponseDTO): string {
-    if ( !isFormEntryListResponseDTO(value) ) throw new TypeError(`Not FormEntryListResponseDTO: ${value}`);
+export function stringifyFormValueListResponseDTO (value: FormValueListResponseDTO): string {
+    if ( !isFormValueListResponseDTO(value) ) throw new TypeError(`Not FormEntryListResponseDTO: ${value}`);
     return `FormEntryListResponseDTO(${value})`;
 }
 
-export function parseFormEntryListResponseDTO (value: any): FormEntryListResponseDTO | undefined {
-    if ( isFormEntryListResponseDTO(value) ) return value;
+export function parseFormValueListResponseDTO (value: any): FormValueListResponseDTO | undefined {
+    if ( isFormValueListResponseDTO(value) ) return value;
     return undefined;
 }
 
-export default FormEntryListResponseDTO;
+export default FormValueListResponseDTO;
