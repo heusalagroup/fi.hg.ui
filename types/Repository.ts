@@ -8,6 +8,7 @@ export interface Repository<T> extends PublicRepository<T> {
     findById (id: string): Promise<RepositoryEntry<T> | undefined>;
 
     getAll (): Promise<RepositoryEntry<T>[]>;
+    getAllByFormId (id: string): Promise<RepositoryEntry<T>[]>;
 
     createItem (data: T): Promise<RepositoryEntry<T>>;
 
