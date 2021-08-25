@@ -7,7 +7,7 @@ export interface FormResponseDTO extends ResponseDTO<FormDTO> {
     readonly id       : string;
     readonly version  : number;
     readonly payload  : FormDTO;
-    readonly deleted  : boolean;
+    readonly deleted ?: boolean;
 }
 
 export function isFormResponseDTO (

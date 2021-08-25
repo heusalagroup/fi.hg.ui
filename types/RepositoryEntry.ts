@@ -12,7 +12,7 @@ export interface RepositoryEntry<T> {
     readonly data     : T;
     readonly id       : string;
     readonly version  : number;
-    readonly deleted  : boolean;
+    readonly deleted ?: boolean;
 }
 
 export function isRepositoryEntry<T> (
