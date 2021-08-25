@@ -2,6 +2,7 @@
 
 import {
     hasNoOtherKeys,
+    isBoolean,
     isRegularObject,
     isSafeInteger,
     isString,
@@ -12,6 +13,7 @@ export interface ResponseDTO<T> {
     readonly id       : string;
     readonly version  : number;
     readonly payload  : T;
+    readonly deleted  : boolean;
 }
 
 export function isResponseDTO<T> (
@@ -20,8 +22,14 @@ export function isResponseDTO<T> (
 ): value is ResponseDTO<T> {
     return (
         isRegularObject(value)
-        && hasNoOtherKeys(value, ['id', 'version', 'payload'])
+        && hasNoOtherKeys(value, [
+            'id',
+            'version',
+            'payload',
+            'deleted'
+        ])
         && isString(value?.id)
+        && isBoolean(value?.deleted)
         && isSafeInteger(value?.version)
         && isT(value?.payload)
     );
