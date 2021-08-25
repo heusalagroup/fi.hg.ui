@@ -14,7 +14,7 @@ export interface Repository<T> extends PublicRepository<T> {
 
     update (id: string, data: T): Promise<RepositoryEntry<T>>;
 
-    deleteById (id: string): Promise<void>;
+    deleteById (id: string): Promise<RepositoryEntry<T>>;
 
 }
 
