@@ -14,12 +14,18 @@ export interface Repository<T> extends PublicRepository<T> {
         propertyValue : any
     ): Promise<RepositoryEntry<T>[]>;
 
-    createItem (data: T): Promise<RepositoryEntry<T>>;
+    createItem (
+        data: T
+    ): Promise<RepositoryEntry<T>>;
 
     update (id: string, data: T): Promise<RepositoryEntry<T>>;
 
     deleteById (id: string): Promise<RepositoryEntry<T>>;
 
+}
+
+export interface RepositoryFactory<T> {
+    (rooms: string[]) : Repository<T>;
 }
 
 export default Repository;
