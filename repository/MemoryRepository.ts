@@ -1,6 +1,13 @@
 import crypto from "crypto";
-import { filter, find, findIndex, map, remove } from "../../ts/modules/lodash";
-import { RepositoryEntry } from "../types/RepositoryEntry";
+import {
+    filter,
+    find,
+    findIndex,
+    get,
+    map,
+    remove
+} from "../../ts/modules/lodash";
+import RepositoryEntry from "../types/RepositoryEntry";
 import Repository from "../types/Repository";
 
 export interface MemoryItem<T> {
@@ -10,6 +17,13 @@ export interface MemoryItem<T> {
     readonly deleted : boolean;
 }
 
+/**
+ * Saves objects of type T in memory.
+ *
+ * Intended to be used for development purposes.
+ *
+ * See also [MatrixCrudRepository](https://github.com/sendanor/matrix/blob/main/MatrixCrudRepository.ts)
+ */
 export class MemoryRepository<T> implements Repository<T> {
 
     private readonly _items : MemoryItem<T>[];
@@ -27,13 +41,18 @@ export class MemoryRepository<T> implements Repository<T> {
         }));
     }
 
-    public async getAllByFormId (id: string): Promise<RepositoryEntry<T>[]> {
-        function test (item: MemoryItem<T>) : boolean {
-            // @ts-ignore
-            return item?.data?.formId === id;
-        }
+    public async getAllByProperty (
+        propertyName  : string,
+        propertyValue : any
+    ): Promise<RepositoryEntry<T>[]> {
+
+        const items = this._items;
+
         return map(
-            filter(this._items, test),
+            filter(
+                items,
+                (item: RepositoryEntry<T>) : boolean => get(item?.data, propertyName) === propertyValue
+            ),
             (item: MemoryItem<T>) : RepositoryEntry<T> => ({
                 id       : item.id,
                 version  : item.version,
@@ -41,6 +60,7 @@ export class MemoryRepository<T> implements Repository<T> {
                 deleted  : item.deleted
             })
         );
+
     }
 
     public async createItem (data: T) : Promise<RepositoryEntry<T>> {
