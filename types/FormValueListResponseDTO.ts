@@ -1,7 +1,7 @@
 // Copyright (c) 2020-2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import FormValueDTO, { isFormValueDTO } from "./FormValueDTO";
-import { isRepositoryEntry, RepositoryEntry } from "./RepositoryEntry";
+import { isRepositoryEntry, RepositoryEntry } from "../../ts/simpleRepository/types/RepositoryEntry";
 import { hasNoOtherKeys, isArrayOf, isRegularObject } from "../../ts/modules/lodash";
 
 export interface FormValueListResponseDTO {
