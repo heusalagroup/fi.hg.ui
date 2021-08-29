@@ -20,7 +20,8 @@ export enum UserInterfaceClassName {
     DROP_ZONE          = "drop-zone",
     POPUP              = "popup",
     ICON               = "icon",
-    LOADER             = "nor-loader",
+    MODAL_CONTAINER    = "nor-modal-container",
+    LOADER             = "nor-loader"
 
 }
 

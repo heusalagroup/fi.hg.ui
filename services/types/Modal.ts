@@ -3,18 +3,18 @@
 import ModalType from "./ModalType";
 import Json from "../../../ts/Json";
 
-export type ModalComponent = any;
+export type ModalComponentType = any;
 
 let MODAL_ID_SEQUENCER = 0;
 
 export class Modal {
 
     private readonly _id        : string;
-    private readonly _component : ModalComponent;
+    private readonly _component : ModalComponentType;
     private readonly _type      : ModalType;
 
     public constructor (
-        component : ModalComponent,
+        component : ModalComponentType,
         type      : ModalType = ModalType.CENTER
     ) {
 

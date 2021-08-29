@@ -1,7 +1,7 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import ModalType from "./types/ModalType";
-import Modal, { ModalComponent } from "./types/Modal";
+import Modal, { ModalComponentType } from "./types/Modal";
 import {
     concat,
     forEach,
@@ -14,8 +14,13 @@ export interface ModalDestructor {
 }
 
 export enum ModalServiceEvent {
-    MODAL_CREATED = "ModalService:modalCreated",
-    MODAL_REMOVED = "ModalService:modalRemoved",
+    MODAL_CREATED         = "ModalService:modalCreated",
+    MODAL_REMOVED         = "ModalService:modalRemoved",
+    CURRENT_MODAL_CHANGED = "ModalService:currentModalChanged",
+}
+
+export interface ModalEventCallback {
+    (eventType: ModalServiceEvent, modal: Modal): void;
 }
 
 export type ModalServiceDestructor = ObserverDestructor;
@@ -31,8 +36,18 @@ export class ModalService {
         return this._modals;
     }
 
+    public static getCurrentModal () : Modal | undefined {
+
+        if (this._modals.length) {
+            return this._modals[this._modals.length - 1];
+        } else {
+            return undefined;
+        }
+
+    }
+
     public static createModal (
-        component : ModalComponent,
+        component : ModalComponentType,
         type      : ModalType = ModalType.CENTER
     ) : ModalDestructor {
 
@@ -42,6 +57,10 @@ export class ModalService {
 
         if (this._observer.hasCallbacks(ModalServiceEvent.MODAL_CREATED)) {
             this._observer.triggerEvent(ModalServiceEvent.MODAL_CREATED, modal);
+        }
+
+        if (this._observer.hasCallbacks(ModalServiceEvent.CURRENT_MODAL_CHANGED)) {
+            this._observer.triggerEvent(ModalServiceEvent.CURRENT_MODAL_CHANGED, modal);
         }
 
         return () => {
@@ -54,6 +73,8 @@ export class ModalService {
         modal : Modal
     ) {
 
+        const isCurrentModal = this.getCurrentModal() === modal;
+
         const removedModals = remove(this._modals, (item : Modal) : boolean => item === modal);
 
         if (this._observer.hasCallbacks(ModalServiceEvent.MODAL_REMOVED) && removedModals.length) {
@@ -61,6 +82,10 @@ export class ModalService {
             if (modal) {
                 this._observer.triggerEvent(ModalServiceEvent.MODAL_REMOVED, modal);
             }
+        }
+
+        if (isCurrentModal && this._observer.hasCallbacks(ModalServiceEvent.CURRENT_MODAL_CHANGED)) {
+            this._observer.triggerEvent(ModalServiceEvent.CURRENT_MODAL_CHANGED, modal);
         }
 
     }
