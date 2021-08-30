@@ -38,6 +38,7 @@ export class ModalContainer extends React.Component<ModalContainerProps, ModalCo
         this._currentModalListener = undefined;
         this._currentModalChangedCallback = this._onCurrentModalChange.bind(this);
         this._closeModalCallback          = this._onCloseModal.bind(this);
+        this._modalClickCallback          = this._modalClickCallback.bind(this);
 
     }
 
@@ -81,7 +82,9 @@ export class ModalContainer extends React.Component<ModalContainerProps, ModalCo
             }
                 onClick={this._closeModalCallback}
             >{
-                <div className={UserInterfaceClassName.MODAL_CONTAINER + '-content'}>{component}</div>
+                <div className={UserInterfaceClassName.MODAL_CONTAINER + '-content'}
+                     onClick={this._modalClickCallback}
+                >{component}</div>
             }</div>
         );
 
@@ -100,6 +103,15 @@ export class ModalContainer extends React.Component<ModalContainerProps, ModalCo
         if (this.state.modal !== undefined) {
             ModalService.removeModal(this.state.modal);
         }
+    }
+
+    private _modalClickCallback (event : React.MouseEvent<HTMLDivElement>) {
+
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+
     }
 
 }
