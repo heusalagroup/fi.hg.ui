@@ -1,7 +1,7 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import FormItem, {isFormItem} from "./FormItem";
-import {every, isArray, isString, isStringOrUndefined} from "../../ts/modules/lodash";
+import { isArrayOf, isString, isStringOrUndefined } from "../../ts/modules/lodash";
 
 export interface FormModel {
 
@@ -19,8 +19,8 @@ export function isFormModel (value : any) : value is FormModel {
         && isString(value?.title)
         && isStringOrUndefined(value?.cancelLabel)
         && isStringOrUndefined(value?.submitLabel)
-        && isArray(value?.items) && every(value.items, isFormItem)
-    )
+        && isArrayOf<FormItem>(value?.items, isFormItem)
+    );
 
 }
 

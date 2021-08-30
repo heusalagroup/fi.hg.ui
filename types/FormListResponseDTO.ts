@@ -11,8 +11,10 @@ export interface FormListResponseDTO {
 export function isFormListResponseDTO (value: any): value is FormListResponseDTO {
     return (
         isRegularObject(value)
-        && hasNoOtherKeys(value, ['payload'])
-        && isArrayOf<RepositoryEntry<FormDTO>>(value.payload, item => isRepositoryEntry<FormDTO>(item, isFormDTO) )
+        && hasNoOtherKeys(value, [
+            'payload'
+        ])
+        && isArrayOf<RepositoryEntry<FormDTO>>(value?.payload, item => isRepositoryEntry<FormDTO>(item, isFormDTO) )
     );
 }
 

@@ -22,7 +22,12 @@ export interface FormDTO {
 export function isFormDTO (value: any) : value is FormDTO {
     return (
         isRegularObject(value)
-        && hasNoOtherKeys(value, ['id', 'model', 'value', 'pipeline'])
+        && hasNoOtherKeys(value, [
+            'id',
+            'model',
+            'value',
+            'pipeline'
+        ])
         && isFormModel(value?.model)
         && isStringOrUndefined(value?.id)
         && ( isUndefined(value?.value)    || isFormValue(value?.value) )
