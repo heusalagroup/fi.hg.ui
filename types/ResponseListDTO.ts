@@ -1,11 +1,9 @@
 // Copyright (c) 2020-2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
 import {
-    hasNoOtherKeys, isArrayOf,
-    isBooleanOrUndefined,
+    hasNoOtherKeys,
+    isArrayOf,
     isRegularObject,
-    isSafeInteger,
-    isString,
     TestCallbackNonStandard
 } from "../../ts/modules/lodash";
 import ResponseDTO, { isResponseDTO } from "./ResponseDTO";

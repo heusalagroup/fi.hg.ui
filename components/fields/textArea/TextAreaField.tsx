@@ -46,6 +46,31 @@ export class TextAreaField extends React.Component<TextAreaFieldProps, TextAreaF
         }
     }
 
+    render () {
+
+        const label       = this.props.label       ?? this.props.model?.label;
+        const placeholder = this.props.placeholder ?? this.props.model?.placeholder;
+        const isReadOnly    = !this.props?.change;
+
+        return (
+            <label className={UserInterfaceClassName.TEXT_AREA_FIELD + ' ' + UserInterfaceClassName.FIELD}>
+                {label ? (
+                    <span className={UserInterfaceClassName.TEXT_AREA_FIELD+'-label'}>{label}</span>
+                ) : null}
+                <textarea
+                    className={UserInterfaceClassName.TEXT_AREA_FIELD+'-input'}
+                    autoComplete="off"
+                    placeholder={placeholder}
+                    value={this.state.value}
+                    onChange={this._handleChangeCallback}
+                    readOnly={isReadOnly}
+                />
+                {this.props.children}
+            </label>
+        );
+
+    }
+
     private _updateValueState () {
 
         const value : string = this.props?.value ?? '';
@@ -80,29 +105,6 @@ export class TextAreaField extends React.Component<TextAreaFieldProps, TextAreaF
                 console.error('Error: ', err);
             }
         }
-
-    }
-
-    render () {
-
-        const label       = this.props.label       ?? this.props.model?.label;
-        const placeholder = this.props.placeholder ?? this.props.model?.placeholder;
-
-        return (
-            <label className={UserInterfaceClassName.TEXT_AREA_FIELD + ' ' + UserInterfaceClassName.FIELD}>
-                {label ? (
-                    <span className={UserInterfaceClassName.TEXT_AREA_FIELD+'-label'}>{label}</span>
-                ) : null}
-                <textarea
-                    className={UserInterfaceClassName.TEXT_AREA_FIELD+'-input'}
-                    autoComplete="off"
-                    placeholder={placeholder}
-                    value={this.state.value}
-                    onChange={this._handleChangeCallback}
-                />
-                {this.props.children}
-            </label>
-        );
 
     }
 

@@ -9,26 +9,28 @@
   margin: 1em;
   border-radius: 0.5em;
 
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  display         : flex;
+  flex-direction  : row;
+  align-items     : stretch;
+  align-content   : stretch;
+  justify-items   : stretch;
+  justify-content : stretch;
 
   & > .text-area-field-label {
 
-    flex-shrink: 1;
-    padding: 0 1em 0 0.5em;
+    flex-shrink : 1;
+    padding     : 0 1em 0 0.5em;
 
   }
 
   & > .text-area-field-input {
-    flex-grow: 1;
-    padding: 0.5em;
-    border: 0;
-    font-size: 1.25em;
-    border-radius: 0.25em;
-    max-width: 100%;
-    min-width: 0;
+    flex-grow     : 1;
+    padding       : 0.5em;
+    border        : 0;
+    font-size     : 1.25em;
+    border-radius : 0.25em;
+    max-width     : 100%;
+    min-width     : 0;
   }
 
 }
