@@ -66,6 +66,7 @@ export class TextField extends React.Component<TextFieldProps, TextFieldState> {
                     placeholder={placeholder}
                     value={this.state.value}
                     onChange={this._handleChangeCallback}
+                    readOnly={ this.props?.change === undefined }
                 />
                 {this.props.children}
             </label>
