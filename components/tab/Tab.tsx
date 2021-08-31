@@ -13,6 +13,7 @@ const LOG = LogService.createLogger('Tab');
 
 export interface TabProps {
 
+    readonly children  ?: any;
     readonly className ?: string;
     readonly value      : any;
     readonly values     : SelectFieldItem<any>[];
@@ -43,18 +44,20 @@ export class Tab extends React.Component<TabProps, TabState> {
             <div className={
                 UserInterfaceClassName.TAB +
                 ' ' + (this.props.className ?? '')
-            }>{map(this.props.values, (item : SelectFieldItem<any>, tabIndex: number) => {
-                const tabClickCallback = () => this._onTabClick(tabIndex);
-                return (
-                    <Button
-                        className={
-                            UserInterfaceClassName.TAB + '-item'
-                            + ((this.props.value === item.value) ? ' ' + UserInterfaceClassName.TAB + '-item-selected' : '')
-                        }
-                        click={tabClickCallback}
-                    >{item.label}</Button>
-                );
-            })}
+            }>
+                {map(this.props.values, (item : SelectFieldItem<any>, tabIndex: number) => {
+                    const tabClickCallback = () => this._onTabClick(tabIndex);
+                    return (
+                        <Button
+                            className={
+                                UserInterfaceClassName.TAB + '-item'
+                                + ((this.props.value === item.value) ? ' ' + UserInterfaceClassName.TAB + '-item-selected' : '')
+                            }
+                            click={tabClickCallback}
+                        >{item.label}</Button>
+                    );
+                })}
+                {this.props.children}
             </div>
         );
 
