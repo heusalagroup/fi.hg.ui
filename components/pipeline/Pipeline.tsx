@@ -1,3 +1,5 @@
+// Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
+
 import * as React from "react";
 import "./Pipeline.scss";
 import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
