@@ -21,9 +21,7 @@ export enum UserInterfaceClassName {
     POPUP              = "popup",
     ICON               = "icon",
     MODAL_CONTAINER    = "nor-modal-container",
-    LOADER             = "nor-loader",
-    PIPELINE           = "nor-pipeline",
-    PIPELINE_RUN       = "nor-pipeline-run"
+    LOADER             = "nor-loader"
 
 }
 
