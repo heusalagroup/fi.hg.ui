@@ -12,10 +12,25 @@ import PipelineRunModel, { isPipelineRunModel } from "../../pipeline/types/Pipel
 
 export interface FormDTO {
 
-    readonly model   : FormModel;
-    readonly id     ?: string;
-    readonly value  ?: FormValue;
-    readonly run    ?: PipelineRunModel;
+    /**
+     * The ID of the form, if available.
+     */
+    readonly id       ?: string;
+
+    /**
+     * The model of the form
+     */
+    readonly model     : FormModel;
+
+    /**
+     * The value of the form
+     */
+    readonly value    ?: FormValue;
+
+    /**
+     * The (runtime) controller of the form
+     */
+    readonly run      ?: PipelineRunModel;
 
 }
 
