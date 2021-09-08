@@ -21,7 +21,8 @@ export enum UserInterfaceClassName {
     POPUP              = "popup",
     ICON               = "icon",
     MODAL_CONTAINER    = "nor-modal-container",
-    LOADER             = "nor-loader"
+    LOADER             = "nor-loader",
+    FORM_CONTROLS      = "nor-form-controls"
 
 }
 

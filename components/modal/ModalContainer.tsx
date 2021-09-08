@@ -71,16 +71,24 @@ export class ModalContainer extends React.Component<ModalContainerProps, ModalCo
             return null;
         }
 
-        const component = modal.getComponent();
-        const type      = modal.getType();
+        const component  = modal.getComponent();
+        const type       = modal.getType();
+        const hasOverlay = modal.isOverlayEnabled();
+
+        const containerProps : {onClick?: VoidCallback} = {};
+
+        if (hasOverlay) {
+            containerProps.onClick = this._closeModalCallback;
+        }
 
         return (
             <div className={
                 UserInterfaceClassName.MODAL_CONTAINER
                 + ' ' + (this.props.className ?? '')
                 + ' ' + UserInterfaceClassName.MODAL_CONTAINER + '-type-' + (stringifyModalType(type))
+                + ' ' + UserInterfaceClassName.MODAL_CONTAINER + '-overlay-' + (hasOverlay ? 'enabled' : 'disabled')
             }
-                onClick={this._closeModalCallback}
+                {...containerProps}
             >{
                 <div className={UserInterfaceClassName.MODAL_CONTAINER + '-content'}
                      onClick={this._modalClickCallback}
@@ -89,6 +97,7 @@ export class ModalContainer extends React.Component<ModalContainerProps, ModalCo
         );
 
     }
+
 
     private _onCurrentModalChange () {
 

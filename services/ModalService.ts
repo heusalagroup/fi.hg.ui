@@ -47,11 +47,12 @@ export class ModalService {
     }
 
     public static createModal (
-        component : ModalComponentType,
-        type      : ModalType = ModalType.CENTER
+        component       : ModalComponentType,
+        type            : ModalType = ModalType.CENTER,
+        overlayEnabled  : boolean   = true
     ) : ModalDestructor {
 
-        const modal = new Modal(component, type);
+        const modal = new Modal(component, type, overlayEnabled);
 
         this._modals.push(modal);
 
