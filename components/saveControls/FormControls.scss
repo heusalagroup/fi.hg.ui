@@ -12,15 +12,16 @@
   align-content   : center;
   justify-content : center;
 
-  background-color: #f6f6f6;
+  color            : #ffffff;
+  background-color : #5bb65b;
 
   & > .nor-form-controls-content {
 
-    flex-grow: 1;
-
-    box-sizing: border-box;
-    padding: 0 1em;
-    margin: 0;
+    flex-grow   : 1;
+    box-sizing  : border-box;
+    padding     : 0 1em;
+    margin      : 0;
+    font-weight : bold;
 
   }
 
@@ -49,14 +50,15 @@
 
   & > .nor-form-controls-cancel-button {
 
-    border: 1px solid #22222222;
-    margin-right: 3em;
+    color        : #f0f0f0;
+    border       : 1px solid #22222222;
+    margin-right : 3em;
 
   }
 
   & > .nor-form-controls-submit-button {
 
-    border: 1px solid #227722;
+    border: 1px solid #ffffff;
     color: #ffffff;
     background: #52ad52;
 
