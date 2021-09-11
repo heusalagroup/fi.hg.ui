@@ -8,6 +8,9 @@ import {
     remove
 } from "../../ts/modules/lodash";
 import Observer, { ObserverCallback, ObserverDestructor } from "../../ts/Observer";
+import LogService from "../../ts/LogService";
+
+const LOG = LogService.createLogger('ModalService');
 
 export interface ModalDestructor {
     (): void;
@@ -33,7 +36,7 @@ export class ModalService {
     public static Event = ModalServiceEvent;
 
     public static getAllModals () : readonly Modal[] {
-        return this._modals;
+        return concat([], this._modals);
     }
 
     public static getCurrentModal () : Modal | undefined {
@@ -49,18 +52,25 @@ export class ModalService {
     public static createModal (
         component       : ModalComponentType,
         type            : ModalType = ModalType.CENTER,
-        overlayEnabled  : boolean   = true
+        overlayEnabled  : boolean   = true,
+        placeOnTop      : boolean   = true
     ) : ModalDestructor {
+
+        LOG.debug(`createModal: `, component, type, overlayEnabled, placeOnTop);
 
         const modal = new Modal(component, type, overlayEnabled);
 
-        this._modals.push(modal);
+        if (placeOnTop) {
+            this._modals.push(modal);
+        } else {
+            this._modals.unshift(modal);
+        }
 
         if (this._observer.hasCallbacks(ModalServiceEvent.MODAL_CREATED)) {
             this._observer.triggerEvent(ModalServiceEvent.MODAL_CREATED, modal);
         }
 
-        if (this._observer.hasCallbacks(ModalServiceEvent.CURRENT_MODAL_CHANGED)) {
+        if ( placeOnTop && this._observer.hasCallbacks(ModalServiceEvent.CURRENT_MODAL_CHANGED) ) {
             this._observer.triggerEvent(ModalServiceEvent.CURRENT_MODAL_CHANGED, modal);
         }
 
@@ -74,19 +84,27 @@ export class ModalService {
         modal : Modal
     ) {
 
-        const isCurrentModal = this.getCurrentModal() === modal;
+        LOG.debug(`removeModal: modal: `, modal);
+
+        const prevModal = this.getCurrentModal();
+        LOG.debug(`removeModal: prevModal: `, prevModal);
 
         const removedModals = remove(this._modals, (item : Modal) : boolean => item === modal);
+        LOG.debug(`removeModal: removedModals: `, removedModals);
 
-        if (this._observer.hasCallbacks(ModalServiceEvent.MODAL_REMOVED) && removedModals.length) {
-            const modal = removedModals.shift();
-            if (modal) {
+        if (removedModals.length !== 0) {
+
+            const isCurrentModal = prevModal === modal;
+            LOG.debug(`removeModal: isCurrentModal: `, isCurrentModal);
+
+            if (this._observer.hasCallbacks(ModalServiceEvent.MODAL_REMOVED)) {
                 this._observer.triggerEvent(ModalServiceEvent.MODAL_REMOVED, modal);
             }
-        }
 
-        if (isCurrentModal && this._observer.hasCallbacks(ModalServiceEvent.CURRENT_MODAL_CHANGED)) {
-            this._observer.triggerEvent(ModalServiceEvent.CURRENT_MODAL_CHANGED, modal);
+            if (isCurrentModal && this._observer.hasCallbacks(ModalServiceEvent.CURRENT_MODAL_CHANGED)) {
+                this._observer.triggerEvent(ModalServiceEvent.CURRENT_MODAL_CHANGED, modal);
+            }
+
         }
 
     }
@@ -99,6 +117,8 @@ export class ModalService {
     }
 
     public static destroy (): void {
+
+        LOG.debug(`destroy called`);
 
         const modals = concat([], this._modals);
         forEach(modals, modal => {

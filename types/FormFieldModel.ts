@@ -38,21 +38,4 @@ export function parseFormFieldModel (value: any): FormFieldModel | undefined {
     return undefined;
 }
 
-// eslint-disable-next-line
-export namespace FormFieldModel {
-
-    export function test (value: any): value is FormFieldModel {
-        return isFormFieldModel(value);
-    }
-
-    export function stringify (value: FormFieldModel): string {
-        return stringifyFormFieldModel(value);
-    }
-
-    export function parse (value: any): FormFieldModel | undefined {
-        return parseFormFieldModel(value);
-    }
-
-}
-
 export default FormFieldModel;

@@ -49,10 +49,11 @@
 
     & > .popup-window {
 
-      border-radius: 0.5em;
-      right: 0;
-      left: 0;
-      box-sizing: border-box;
+      border-radius  : 0.5em;
+      right          : 0;
+      left           : 0;
+      box-sizing     : border-box;
+      min-width      : 15em;
 
       & > .select-field-dropdown {
 

@@ -22,21 +22,4 @@ export function parseFormItem (value: any): FormItem | undefined {
     return undefined;
 }
 
-// eslint-disable-next-line
-export namespace FormItem {
-
-    export function test (value: any): value is FormItem {
-        return isFormItem(value);
-    }
-
-    export function stringify (value: FormItem): string {
-        return stringifyFormItem(value);
-    }
-
-    export function parse (value: any): FormItem | undefined {
-        return parseFormItem(value);
-    }
-
-}
-
 export default FormItem;
