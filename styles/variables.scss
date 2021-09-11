@@ -8,3 +8,14 @@ $loader-background-color   : #00000011;
 $loader-background-opacity : 0.5;
 $loader-icon-color         : #000000;
 $loader-icon-opacity       : 0.7;
+
+// Fields
+
+$field-border-size       : 1px;
+$field-border-style      : solid;
+$field-border-color      : #00000022;
+$field-background-color  : #00000009;
+$field-border            : $field-border-size $field-border-style $field-border-color;
+$field-padding           : 0.5em;
+$field-margin            : 1em 2px;
+$field-border-radius     : 0.5em;

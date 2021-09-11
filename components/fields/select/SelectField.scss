@@ -1,18 +1,19 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
+@import "src/nor/ui/styles/variables";
 
 .select-field {
 
-  margin: 1em;
-  box-sizing: border-box;
+  box-sizing   : border-box;
+  padding      : 0;
+  margin       : $field-margin;
 
   & > .select-field-label {
 
-    background-color: #00000009;
-    border: 1px solid #00000022;
-    border-radius: 0.5em;
-
-    margin: 0;
-    padding: 0.5em;
+    background-color  : $field-background-color;
+    border            : $field-border;
+    border-radius     : $field-border-radius;
+    padding           : $field-padding;
+    margin            : 0;
 
     display: flex;
     flex-direction: row;

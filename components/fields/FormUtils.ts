@@ -19,6 +19,8 @@ import {isPasswordFieldModel} from "../../types/items/PasswordFieldModel";
 import PasswordField from "./password/PasswordField";
 import EmailField from "./email/EmailField";
 import {isEmailFieldModel} from "../../types/items/EmailFieldModel";
+import { isSliderFieldModel } from "../../types/items/SliderFieldModel";
+import SliderField from "./slider/SliderField";
 
 export class FormUtils {
 
@@ -50,6 +52,10 @@ export class FormUtils {
 
         if (isSelectFieldModel(item)) {
             return SelectField;
+        }
+
+        if (isSliderFieldModel(item)) {
+            return SliderField;
         }
 
         return undefined;

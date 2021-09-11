@@ -15,6 +15,10 @@
   color            : #ffffff;
   background-color : #5bb65b;
 
+  &.nor-form-controls-with-errors {
+    background-color : #b65b5b;
+  }
+
   & > .nor-form-controls-content {
 
     flex-grow   : 1;

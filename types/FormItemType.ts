@@ -12,6 +12,7 @@ export enum FormItemType {
     PASSWORD_FIELD   = "password-field",
     EMAIL_FIELD      = "email-field",
     SELECT_FIELD     = "select-field",
+    SLIDER_FIELD     = "slider-field",
     CHECKBOX_FIELD   = "checkbox-field",
     TEXT_AREA_FIELD  = "text-area-field",
     INTEGER_FIELD    = "integer-field",
@@ -41,7 +42,6 @@ export function isFormItemType (value: any) : value is FormItemType {
 
 }
 
-
 export function stringifyFormItemType (value: FormItemType): string {
     if ( !isFormItemType(value) ) throw new TypeError(`Not FormItemType: ${value}`);
     return `FormItemType(${value})`;
@@ -50,23 +50,6 @@ export function stringifyFormItemType (value: FormItemType): string {
 export function parseFormItemType (value: any): FormItemType | undefined {
     if ( isFormItemType(value) ) return value;
     return undefined;
-}
-
-// eslint-disable-next-line
-export namespace FormItemType {
-
-    export function test (value: any): value is FormItemType {
-        return isFormItemType(value);
-    }
-
-    export function stringify (value: FormItemType): string {
-        return stringifyFormItemType(value);
-    }
-
-    export function parse (value: any): FormItemType | undefined {
-        return parseFormItemType(value);
-    }
-
 }
 
 export default FormItemType;

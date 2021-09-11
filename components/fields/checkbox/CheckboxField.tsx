@@ -26,7 +26,8 @@ export class CheckboxField extends React.Component<CheckboxFieldProps, CheckboxF
     private readonly _handleChangeCallback : OnChangeCallback<HTMLInputElement>;
     private readonly _inputRef             : React.RefObject<HTMLInputElement>;
 
-    constructor(props: CheckboxFieldProps) {
+
+    public constructor(props: CheckboxFieldProps) {
 
         super(props);
 
@@ -37,12 +38,35 @@ export class CheckboxField extends React.Component<CheckboxFieldProps, CheckboxF
 
     }
 
-    componentDidMount() {
+    public componentDidMount() {
     }
 
-    componentDidUpdate(prevProps: Readonly<CheckboxFieldProps>, prevState: Readonly<CheckboxFieldState>, snapshot?: any) {
+    public componentDidUpdate(prevProps: Readonly<CheckboxFieldProps>, prevState: Readonly<CheckboxFieldState>, snapshot?: any) {
         LOG.debug('Update: ', prevProps, this.props);
     }
+
+    public render () {
+
+        const label = this.props.label ?? this.props.model?.label;
+
+        return (
+            <label className={UserInterfaceClassName.CHECKBOX_FIELD + ' ' + UserInterfaceClassName.FIELD}>
+                <input
+                    ref={this._inputRef}
+                    className={UserInterfaceClassName.CHECKBOX_FIELD+'-input'}
+                    type="checkbox"
+                    autoComplete="off"
+                    onChange={this._handleChangeCallback}
+                />
+                {label ? (
+                    <span className={UserInterfaceClassName.CHECKBOX_FIELD+'-label'}>{label}</span>
+                ) : null}
+                {this.props.children}
+            </label>
+        );
+
+    }
+
 
     private _getValue () : boolean {
 
@@ -73,28 +97,6 @@ export class CheckboxField extends React.Component<CheckboxFieldProps, CheckboxF
         } else {
             LOG.warn('No change props defined!');
         }
-
-    }
-
-    render () {
-
-        const label = this.props.label ?? this.props.model?.label;
-
-        return (
-            <label className={UserInterfaceClassName.CHECKBOX_FIELD + ' ' + UserInterfaceClassName.FIELD}>
-                <input
-                    ref={this._inputRef}
-                    className={UserInterfaceClassName.CHECKBOX_FIELD+'-input'}
-                    type="checkbox"
-                    autoComplete="off"
-                    onChange={this._handleChangeCallback}
-                />
-                {label ? (
-                    <span className={UserInterfaceClassName.CHECKBOX_FIELD+'-label'}>{label}</span>
-                ) : null}
-                {this.props.children}
-            </label>
-        );
 
     }
 

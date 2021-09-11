@@ -11,6 +11,7 @@ export type FormFieldType = (
     | FormItemType.PASSWORD_FIELD
     | FormItemType.EMAIL_FIELD
     | FormItemType.SELECT_FIELD
+    | FormItemType.SLIDER_FIELD
 );
 
 export function isFormFieldType (value: any): value is FormFieldType {
@@ -26,6 +27,7 @@ export function isFormFieldType (value: any): value is FormFieldType {
         case FormItemType.EMAIL_FIELD:
         case FormItemType.INTEGER_FIELD:
         case FormItemType.SELECT_FIELD:
+        case FormItemType.SLIDER_FIELD:
             return true;
 
         default:
@@ -42,23 +44,6 @@ export function stringifyFormFieldType (value: FormFieldType): string {
 export function parseFormFieldType (value: any): FormFieldType | undefined {
     if ( isFormFieldType(value) ) return value;
     return undefined;
-}
-
-// eslint-disable-next-line
-export namespace FormFieldType {
-
-    export function test (value: any): value is FormFieldType {
-        return isFormFieldType(value);
-    }
-
-    export function stringify (value: FormFieldType): string {
-        return stringifyFormFieldType(value);
-    }
-
-    export function parse (value: any): FormFieldType | undefined {
-        return parseFormFieldType(value);
-    }
-
 }
 
 export default FormFieldType;

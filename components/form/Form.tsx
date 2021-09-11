@@ -43,7 +43,7 @@ export class Form extends React.Component<FormProps<any>, FormState> {
     private readonly _backPageCallback  : ButtonClickCallback;
     private readonly _nextPageCallback  : ButtonClickCallback;
 
-    constructor(props: FormProps<any>) {
+    public constructor(props: FormProps<any>) {
 
         super(props);
 
@@ -58,7 +58,7 @@ export class Form extends React.Component<FormProps<any>, FormState> {
 
     }
 
-    render () {
+    public render () {
 
         const pageNumber : number                     = this.state.page;
         const spec       : FormModel                  = this.props.model;

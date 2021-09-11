@@ -9,6 +9,7 @@ const LOG = LogService.createLogger('FormControls');
 
 export interface FormControlsProps {
 
+    readonly hasErrors   ?: boolean;
     readonly className   ?: string;
     readonly cancelLabel ?: string;
     readonly cancel      ?: VoidCallback;
@@ -23,8 +24,8 @@ export interface FormControlsState {
 
 export class FormControls extends React.Component<FormControlsProps, FormControlsState> {
 
-    private _cancelCallback : VoidCallback;
-    private _submitCallback : VoidCallback;
+    private readonly _cancelCallback : VoidCallback;
+    private readonly _submitCallback : VoidCallback;
 
     public static defaultProps: Partial<FormControlsProps> = {};
 
@@ -41,11 +42,15 @@ export class FormControls extends React.Component<FormControlsProps, FormControl
 
         const hasSubmit   : boolean = !!this.props?.submit;
         const hasCancel   : boolean = !!this.props?.cancel;
+        const hasErrors   : boolean = !!this.props?.hasErrors;
         const submitLabel : string  = this.props?.submitLabel ?? 'Submit';
         const cancelLabel : string  = this.props?.cancelLabel ?? 'Cancel';
 
         return (
-            <div className={UserInterfaceClassName.FORM_CONTROLS + ' ' + (this.props.className ?? '')}>
+            <div className={
+                UserInterfaceClassName.FORM_CONTROLS + ' ' + (this.props.className ?? '')
+                + (hasErrors ? ' ' + UserInterfaceClassName.FORM_CONTROLS + '-with-errors' : '')
+            }>
 
                 <div className={UserInterfaceClassName.FORM_CONTROLS + '-content'}>{this.props.children}</div>
 

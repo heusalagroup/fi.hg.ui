@@ -1,13 +1,14 @@
 // Copyright (c) 2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
+@import "src/nor/ui/styles/variables";
+
 .integer-field {
 
-  background-color: #00000009;
-  border: 1px solid #00000022;
-
-  padding: 0.5em;
-  margin: 1em;
-  border-radius: 0.5em;
+  background-color  : $field-background-color;
+  border            : $field-border;
+  padding           : $field-padding;
+  margin            : $field-margin;
+  border-radius     : $field-border-radius;
 
   display: flex;
   flex-direction: row;

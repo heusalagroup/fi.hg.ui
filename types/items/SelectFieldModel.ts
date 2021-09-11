@@ -47,24 +47,4 @@ export function parseSelectFieldModel<T = any> (value: any): SelectFieldModel<T>
     return undefined;
 }
 
-// eslint-disable-next-line
-export namespace SelectFieldModel {
-
-    export function test<T = any> (
-        value: any,
-        isItem : TestCallback | undefined = undefined
-    ): value is SelectFieldModel<T> {
-        return isSelectFieldModel(value, isItem);
-    }
-
-    export function stringify<T = any> (value: SelectFieldModel<T>): string {
-        return stringifySelectFieldModel<T>(value);
-    }
-
-    export function parse<T = any> (value: any): SelectFieldModel<T> | undefined {
-        return parseSelectFieldModel<T>(value);
-    }
-
-}
-
 export default SelectFieldModel;

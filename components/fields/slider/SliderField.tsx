@@ -34,7 +34,8 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
     private readonly _id                  : number;
     private readonly _radioChangeCallback : EventCallback<React.ChangeEvent<HTMLInputElement>>;
 
-    constructor(props: SliderFieldProps<any>) {
+
+    public constructor(props: SliderFieldProps<any>) {
 
         super(props);
 
@@ -53,19 +54,19 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
 
     }
 
-    componentDidMount() {
+    public componentDidMount() {
 
         this._updateNameToStateIfChanged();
 
     }
 
-    componentDidUpdate(prevProps: Readonly<SliderFieldProps<any>>, prevState: Readonly<SliderFieldState>, snapshot?: any) {
+    public componentDidUpdate(prevProps: Readonly<SliderFieldProps<any>>, prevState: Readonly<SliderFieldState>, snapshot?: any) {
 
         this._updateNameToStateIfChanged();
 
     }
 
-    render () {
+    public render () {
 
         const sliderName = this.state.name;
 
@@ -154,6 +155,7 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
         );
 
     }
+
 
     private _getInitialName () : string {
         return this.props?.name ?? `${AUTOMATIC_FIELD_NAME_PREFIX}${this._id}`;
