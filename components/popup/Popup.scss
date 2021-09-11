@@ -29,7 +29,7 @@
 
   & > .popup-window {
     margin: 0;
-    padding: 0;
+    padding: 0 0 4em 0; // The 4em is a quick fix for Save Controls problem
     box-sizing: border-box;
     border: 1px solid #eee;
     background-color: #f9f9f9;
