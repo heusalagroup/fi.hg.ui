@@ -14,6 +14,8 @@ export interface FormFieldModel extends FormItemModel {
     label       ?: string;
     placeholder ?: string;
     required    ?: boolean;
+    minValue    ?: any;
+    maxValue    ?: any;
 
 }
 
