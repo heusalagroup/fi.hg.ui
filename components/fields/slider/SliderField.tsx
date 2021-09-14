@@ -10,13 +10,12 @@ import {find, map} from "../../../../ts/modules/lodash";
 import {EventCallback} from "../../../interfaces/callbacks";
 import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
 
+const LOG = LogService.createLogger('SliderField');
+const COMPONENT_CLASS_NAME = UserInterfaceClassName.SLIDER_FIELD;
 const AUTOMATIC_FIELD_NAME_PREFIX = 'slider-field-';
 
-const LOG = LogService.createLogger('SliderField');
-
 export interface SliderFieldState {
-    readonly fieldState : FormFieldState;
-    readonly currentItem : number;
+    readonly fieldState  : FormFieldState;
     readonly name        : string;
 }
 
@@ -36,7 +35,7 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
     private readonly _radioChangeCallback : EventCallback<React.ChangeEvent<HTMLInputElement>>;
 
 
-    public constructor(props: SliderFieldProps<any>) {
+    public constructor (props: SliderFieldProps<any>) {
         super(props);
         this._fieldState = FormFieldState.CONSTRUCTED;
         SliderField._idSequence += 1;
@@ -44,7 +43,6 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
         const initialName = this._getInitialName();
         this.state = {
             name: initialName,
-            currentItem: 0,
             fieldState: this._fieldState
         };
         this._radioChangeCallback = this._onRadioChange.bind(this);
@@ -62,13 +60,13 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
         return `#${this.getKey()}: "${this.getLabel()}"`;
     }
 
-    public componentDidMount() {
+    public componentDidMount () {
         this._updateNameToStateIfChanged();
         this._setFieldState(FormFieldState.MOUNTED);
         this._updateFieldState();
     }
 
-    public componentDidUpdate(
+    public componentDidUpdate (
         prevProps: Readonly<SliderFieldProps<any>>,
         prevState: Readonly<SliderFieldState>,
         snapshot?: any
@@ -93,15 +91,15 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
         const label       = this.props?.label          ?? this.props.model?.label;
         const value       : any = this.props?.value    ?? undefined;
 
-        LOG.debug('Selected value: ', value);
+        LOG.debug(`${this.getIdentifier()}: Selected value: `, value);
 
-        const selectItems : SelectFieldItem<any>[] = this.props?.values ?? this.props?.model?.values ?? [];
+        const selectItems : SelectFieldItem<any>[] = this._getValues();
 
         const selectedItem : SelectFieldItem<any> | undefined = find(selectItems, (item : SelectFieldItem<any>) : boolean => {
             return item?.value === value;
         });
 
-        LOG.debug('Selected item: ', selectedItem);
+        LOG.debug(`${this.getIdentifier()}: Selected item: `, selectedItem);
 
         // const selectedItemLabel : string = selectedItem?.label ?? '';
 
@@ -110,24 +108,24 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
 
         return (
             <div className={
-                UserInterfaceClassName.SLIDER_FIELD
+                COMPONENT_CLASS_NAME
                 + ' ' + (this.props.className ?? '')
                 + ' ' + UserInterfaceClassName.FIELD
                 + ` ${UserInterfaceClassName.FIELD}-state-${fieldState}`
             }>
 
                 {label ? (
-                    <label className={UserInterfaceClassName.SLIDER_FIELD+'-label'}>{label}</label>
+                    <label className={COMPONENT_CLASS_NAME+'-label'}>{label}</label>
                 ) : null}
 
-                <div className={UserInterfaceClassName.SLIDER_FIELD + '-options'}>
+                <div className={COMPONENT_CLASS_NAME + '-options'}>
                     {map(selectItems, (item : SelectFieldItem<any>, itemIndex: number) => {
 
                         const itemLabel    : string  = item?.label ?? '';
                         const itemValue    : any     = item?.value ?? undefined;
                         const itemSelected : boolean = selectedItem ? itemValue === selectedItem?.value : false;
 
-                        LOG.debug('item: ', itemLabel, itemValue, itemSelected);
+                        LOG.debug(`${this.getIdentifier()}: item: `, itemLabel, itemValue, itemSelected);
 
                         const itemProps : {checked?: boolean} = {};
                         if (itemSelected) {
@@ -137,17 +135,17 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
                         return (
                             <label
                                 key={`slider-${this._id}-label-${itemIndex}`}
-                                className={UserInterfaceClassName.SLIDER_FIELD + '-option'}
+                                className={COMPONENT_CLASS_NAME + '-option'}
                             >
 
-                                <div className={UserInterfaceClassName.SLIDER_FIELD + '-option-input'}>
+                                <div className={COMPONENT_CLASS_NAME + '-option-input'}>
                                     <div className={
-                                        UserInterfaceClassName.SLIDER_FIELD + '-option-input-fill '
-                                        + UserInterfaceClassName.SLIDER_FIELD + '-option-input-fill-with-'
+                                        COMPONENT_CLASS_NAME + '-option-input-fill '
+                                        + COMPONENT_CLASS_NAME + '-option-input-fill-with-'
                                             + (itemIndex !== 0 ? 'line' : 'no-line')
                                     } />
                                     <input
-                                        className={UserInterfaceClassName.SLIDER_FIELD+'-option-input-element'}
+                                        className={COMPONENT_CLASS_NAME+'-option-input-element'}
                                         type="radio"
                                         name={sliderName}
                                         value={`${itemIndex}`}
@@ -156,15 +154,15 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
                                         {...itemProps}
                                     />
                                     <div className={
-                                        UserInterfaceClassName.SLIDER_FIELD + '-option-input-fill '
-                                        + UserInterfaceClassName.SLIDER_FIELD + '-option-input-fill-with-'
+                                        COMPONENT_CLASS_NAME + '-option-input-fill '
+                                        + COMPONENT_CLASS_NAME + '-option-input-fill-with-'
                                         + (itemIndex !== itemCount - 1 ? 'line' : 'no-line')
                                     } />
                                 </div>
 
-                                <div className={UserInterfaceClassName.SLIDER_FIELD + '-option-label'}>
+                                <div className={COMPONENT_CLASS_NAME + '-option-label'}>
                                     {itemLabel ? (
-                                        <span className={UserInterfaceClassName.SLIDER_FIELD+'-option-label-text'}>{itemLabel}</span>
+                                        <span className={COMPONENT_CLASS_NAME+'-option-label-text'}>{itemLabel}</span>
                                     ) : null}
                                 </div>
 
@@ -185,7 +183,7 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
 
         if (this.state.fieldState !== value) {
             this.setState({fieldState: value});
-            LOG.debug(`Changed state as `, value);
+            LOG.debug(`${this.getIdentifier()}: Changed state as `, stringifyFormFieldState(value));
         }
 
         if (this.props?.changeState) {
@@ -196,21 +194,25 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
 
     private _updateFieldState () {
 
-        LOG.debug(`_updateFieldState: state: `, this._fieldState);
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: state: `, stringifyFormFieldState(this._fieldState));
 
-        if (this._fieldState < FormFieldState.MOUNTED) return;
-        if (this._fieldState >= FormFieldState.UNMOUNTED) return;
+        if ( this._fieldState < FormFieldState.MOUNTED ) return;
+        if ( this._fieldState >= FormFieldState.UNMOUNTED ) return;
 
-        const currentItem : number = this.state?.currentItem ?? -1;
-        const items       : SelectFieldItem<any>[] = this.props?.values ?? [];
-        const item : SelectFieldItem<any> | undefined = ( currentItem >= 0 && currentItem < items.length ) ? items[currentItem] : undefined;
+        const currentValue : any | undefined = this.props.value;
+
+        const items       : SelectFieldItem<any>[] = this._getValues();
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: items: `, items);
+
+        const item        : SelectFieldItem<any> | undefined = currentValue === undefined ? undefined : find(items, (i : SelectFieldItem<any>) => i?.value === currentValue);
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: item: `, item);
 
         const isValid = this._validateWithStateValue(
-            item,
+            item?.value,
             this.props.value,
             this.props?.model?.required ?? false
         );
-        LOG.debug(`_updateFieldState: isValid`);
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: isValid: `, isValid);
 
         this._setFieldState( isValid ? FormFieldState.VALID : FormFieldState.INVALID );
 
@@ -222,15 +224,15 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
         required   : boolean
     ) : boolean {
 
-        LOG.debug(`validateWithStateValue: stateValue = `, stateValue);
+        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: stateValue = `, stateValue);
 
         if ( !this._validateValue(propValue, required) ) {
-            LOG.debug(`validateWithStateValue: propValue = `, propValue);
+            LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: propValue = `, propValue);
             return false;
         }
 
         const parsedStateValue : any | undefined = stateValue;
-        LOG.debug(`validateWithStateValue: parsedStateValue = `, parsedStateValue);
+        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: parsedStateValue = `, parsedStateValue);
 
         if ( parsedStateValue === undefined && !!stateValue ) {
             return false;
@@ -240,7 +242,7 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
             return false;
         }
 
-        LOG.debug(`validateWithStateValue: propValue = `, propValue);
+        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: propValue = `, propValue);
         return parsedStateValue === propValue;
 
     }
@@ -250,10 +252,10 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
         required      : boolean
     ) : boolean {
 
-        LOG.debug(`validateValue: internalValue = `, internalValue);
+        LOG.debug(`${this.getIdentifier()}: _validateValue: internalValue = `, internalValue);
 
         if ( internalValue === undefined ) {
-            LOG.debug(`validateValue: required = `, required);
+            LOG.debug(`${this.getIdentifier()}: _validateValue: required = `, required);
             return !required;
         }
 
@@ -261,20 +263,9 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
 
     }
 
-    private _getInitialName () : string {
-        return this.props?.name ?? `${AUTOMATIC_FIELD_NAME_PREFIX}${this._id}`;
-    }
-
-    private _updateNameToStateIfChanged () {
-        const propName = this._getInitialName();
-        if (propName !== this.state.name) {
-            this.setState({name: propName});
-        }
-    }
-
     private _change (value: any) {
 
-        LOG.debug('_change: value = ', value);
+        LOG.debug(`${this.getIdentifier()}: _change: value = `, value);
 
         if (this.props.change) {
             try {
@@ -283,7 +274,7 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
                 LOG.error('Error in change prop: ', err);
             }
         } else {
-            LOG.warn('No change prop defined!');
+            LOG.warn(`${this.getIdentifier()}: No change prop defined!`);
         }
 
     }
@@ -295,9 +286,9 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
      */
     private _selectItem (index: number) {
 
-        LOG.debug('_selectItem: Click on index ', index);
+        LOG.debug(`${this.getIdentifier()}: _selectItem: Click on index `, index);
 
-        const selectItems : SelectFieldItem<any>[] = this.props?.values ?? this.props?.model?.values ?? [];
+        const selectItems : SelectFieldItem<any>[] = this._getValues();
 
         if (index < selectItems.length) {
 
@@ -311,17 +302,32 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
 
     }
 
+    private _getValues () : SelectFieldItem<any>[] {
+        return this.props?.values ?? this.props?.model?.values ?? [];
+    }
+
+    private _getInitialName () : string {
+        return this.props?.name ?? `${AUTOMATIC_FIELD_NAME_PREFIX}${this._id}`;
+    }
+
+    private _updateNameToStateIfChanged () {
+        const propName = this._getInitialName();
+        if (propName !== this.state.name) {
+            this.setState({name: propName});
+        }
+    }
+
     private _onRadioChange (event : React.ChangeEvent<HTMLInputElement>) {
 
         const valueString = event?.target?.value ?? '';
-        LOG.debug('_onRadioChange: valueString=', valueString);
+        LOG.debug(`${this.getIdentifier()}: _onRadioChange: valueString=`, valueString);
         const valueIndex = valueString ? parseInt(valueString, 10) : undefined;
-        LOG.debug('_onRadioChange: valueIndex=', valueIndex);
+        LOG.debug(`${this.getIdentifier()}: _onRadioChange: valueIndex=`, valueIndex);
 
         if (valueIndex !== undefined) {
             this._selectItem(valueIndex);
         } else {
-            LOG.warn('_onRadioChange: value invalid: ', valueString);
+            LOG.warn(`${this.getIdentifier()}: _onRadioChange: value invalid: `, valueString);
         }
 
     }

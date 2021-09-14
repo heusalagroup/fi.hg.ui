@@ -72,6 +72,7 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
             this._openDropdown();
             this._delayedMoveToFirstItem();
         }
+        this._updateCurrentItemFromProps();
         this._setFieldState(FormFieldState.MOUNTED);
         this._updateFieldState();
     }
@@ -85,6 +86,7 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
             || prevProps.values !== this.props.values
             || prevProps.model !== this.props.model
         ) {
+            this._updateCurrentItemFromProps();
             this._updateFieldState();
         }
     }
@@ -210,15 +212,20 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
         if ( this._fieldState >= FormFieldState.UNMOUNTED ) return;
 
         const currentItem : number = this.state?.currentItem ?? -1;
-        const items       : SelectFieldItem<any>[] = this.props?.values ?? [];
-        const item : SelectFieldItem<any> | undefined = ( currentItem >= 0 && currentItem < items.length ) ? items[currentItem] : undefined;
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: currentItem: `, currentItem);
+
+        const items       : SelectFieldItem<any>[] = this._getValues();
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: items: `, items);
+
+        const item        : SelectFieldItem<any> | undefined = ( currentItem >= 0 && currentItem < items.length ) ? items[currentItem] : undefined;
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: item: `, item);
 
         const isValid = this._validateWithStateValue(
             item?.value,
             this.props.value,
             this.props?.model?.required ?? false
         );
-        LOG.debug(`${this.getIdentifier()}: _updateFieldState: isValid`);
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: isValid: `, isValid);
 
         this._setFieldState( isValid ? FormFieldState.VALID : FormFieldState.INVALID );
 
@@ -280,9 +287,33 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
                 LOG.error('Error in change prop: ', err);
             }
         } else {
-            LOG.warn('No change prop defined!');
+            LOG.warn(`${this.getIdentifier()}: No change prop defined!`);
         }
 
+    }
+
+    private _selectItem (index: number) {
+
+        LOG.debug(`${this.getIdentifier()}: _selectItem: Click on index `, index);
+
+        const selectItems : SelectFieldItem<any>[] = this._getValues();
+
+        if (index < selectItems.length) {
+
+            const value = selectItems[index]?.value;
+
+            this._change(value);
+
+            this._closeDropdown();
+
+        } else {
+            LOG.error('_selectItem: No item on index ', index);
+        }
+
+    }
+
+    private _getValues () : SelectFieldItem<any>[] {
+        return this.props?.values ?? this.props?.model?.values ?? [];
     }
 
     private _inputHasFocus () : boolean {
@@ -325,7 +356,7 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
             if (this.state.dropdownOpen) {
                 this._moveCurrentItemTo(0);
             } else {
-                LOG.warn('Warning! Dropdown not open yet.');
+                LOG.warn(`${this.getIdentifier()}: Warning! Dropdown not open yet.`);
             }
         }, MOVE_TO_ITEM_ON_OPEN_DROPDOWN_TIMEOUT);
 
@@ -355,26 +386,6 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
                 LOG.debug(`${this.getIdentifier()}: _onBlur: Dropdown is not open anymore`);
             }
         }, CLOSE_DROPDOWN_TIMEOUT_ON_BLUR);
-
-    }
-
-    private _selectItem (index: number) {
-
-        LOG.debug(`${this.getIdentifier()}: _selectItem: Click on index `, index);
-
-        const selectItems : SelectFieldItem<any>[] = this.props?.values ?? this.props?.model?.values ?? [];
-
-        if (index < selectItems.length) {
-
-            const value = selectItems[index]?.value;
-
-            this._change(value);
-
-            this._closeDropdown();
-
-        } else {
-            LOG.error('_selectItem: No item on index ', index);
-        }
 
     }
 
@@ -434,13 +445,40 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
 
     }
 
-    private _onEnter() {
+    private _onEnter () {
 
         if (this.state.dropdownOpen) {
             return this._selectItem(this.state.currentItem);
         } else {
             this._openDropdown();
             this._delayedMoveToFirstItem();
+        }
+
+    }
+
+    private _updateCurrentItemFromProps () {
+
+        const currentValue : any | undefined = this.props?.value;
+        if (currentValue === undefined) {
+            return;
+        }
+
+        const prevItem : number = this.state?.currentItem ?? -1;
+        LOG.debug(`${this.getIdentifier()}: _updateCurrentItemFromProps: prevItem: `, prevItem);
+
+        const items       : SelectFieldItem<any>[] = this._getValues();
+        LOG.debug(`${this.getIdentifier()}: _updateCurrentItemFromProps: items: `, items);
+
+        const currentItem = findIndex(items, (item : SelectFieldItem<any>) : boolean => {
+            return item.value === currentValue;
+        });
+
+        if ( currentItem >= 0 && currentItem !== prevItem ) {
+            this.setState({
+                currentItem: currentItem
+            }, () => {
+                this._updateFieldState();
+            });
         }
 
     }
@@ -467,6 +505,8 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
                 dropdownOpen: true
             };
 
+        }, () => {
+            this._updateFieldState();
         });
 
     }
@@ -497,6 +537,8 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
                 dropdownOpen: true
             };
 
+        }, () => {
+            this._updateFieldState();
         });
 
     }
@@ -527,6 +569,8 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
                 dropdownOpen: true
             };
 
+        }, () => {
+            this._updateFieldState();
         });
 
     }
@@ -552,6 +596,8 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
 
         this.setState({
             currentItem: buttonIndex
+        }, () => {
+            this._updateFieldState();
         });
 
     }
