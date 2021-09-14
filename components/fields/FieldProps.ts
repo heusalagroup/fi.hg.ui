@@ -7,14 +7,12 @@ export interface FieldChangeCallback<T> {
 
 export interface FieldProps<T, ValueT> {
 
-    className   ?: string;
-    label       ?: string;
-    placeholder ?: string;
-    model       ?: T;
-
-    value       ?: ValueT;
-
-    change      ?: FieldChangeCallback<ValueT | undefined>;
+    readonly className   ?: string;
+    readonly label       ?: string;
+    readonly placeholder ?: string;
+    readonly model       ?: T;
+    readonly value       ?: ValueT;
+    readonly change      ?: FieldChangeCallback<ValueT | undefined>;
 
 }
 

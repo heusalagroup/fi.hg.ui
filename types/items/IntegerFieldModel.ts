@@ -2,15 +2,23 @@
 
 import FormItemType from "../FormItemType";
 import FormFieldModel, { isFormFieldModel } from "../FormFieldModel";
+import { isNumberOrUndefined } from "../../../ts/modules/lodash";
 
 export interface IntegerFieldModel extends FormFieldModel {
 
-    type         : FormItemType.INTEGER_FIELD;
+    readonly type      : FormItemType.INTEGER_FIELD;
+    readonly minValue ?: number;
+    readonly maxValue ?: number;
 
 }
 
 export function isIntegerFieldModel (value: any) : value is IntegerFieldModel {
-    return value?.type === FormItemType.INTEGER_FIELD && isFormFieldModel(value);
+    return (
+        value?.type === FormItemType.INTEGER_FIELD
+        && isNumberOrUndefined(value?.minValue)
+        && isNumberOrUndefined(value?.maxValue)
+        && isFormFieldModel(value)
+    );
 }
 
 export function stringifyIntegerFieldModel (value: IntegerFieldModel): string {
@@ -21,23 +29,6 @@ export function stringifyIntegerFieldModel (value: IntegerFieldModel): string {
 export function parseIntegerFieldModel (value: any): IntegerFieldModel | undefined {
     if ( isIntegerFieldModel(value) ) return value;
     return undefined;
-}
-
-// eslint-disable-next-line
-export namespace IntegerFieldModel {
-
-    export function test (value: any): value is IntegerFieldModel {
-        return isIntegerFieldModel(value);
-    }
-
-    export function stringify (value: IntegerFieldModel): string {
-        return stringifyIntegerFieldModel(value);
-    }
-
-    export function parse (value: any): IntegerFieldModel | undefined {
-        return parseIntegerFieldModel(value);
-    }
-
 }
 
 export default IntegerFieldModel;
