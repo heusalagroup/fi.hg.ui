@@ -4,9 +4,9 @@ import FormItemType from "../FormItemType";
 import FormFieldModel, { isFormFieldModel } from "../FormFieldModel";
 
 export interface TextFieldModel extends FormFieldModel {
-
-    type         : FormItemType.TEXT_FIELD;
-
+    readonly type         : FormItemType.TEXT_FIELD;
+    readonly minLength   ?: number;
+    readonly maxLength   ?: number;
 }
 
 export function isTextFieldModel (value: any) : value is TextFieldModel {
@@ -21,23 +21,6 @@ export function stringifyTextFieldModel (value: TextFieldModel): string {
 export function parseTextFieldModel (value: any): TextFieldModel | undefined {
     if ( isTextFieldModel(value) ) return value;
     return undefined;
-}
-
-// eslint-disable-next-line
-export namespace TextFieldModel {
-
-    export function test (value: any): value is TextFieldModel {
-        return isTextFieldModel(value);
-    }
-
-    export function stringify (value: TextFieldModel): string {
-        return stringifyTextFieldModel(value);
-    }
-
-    export function parse (value: any): TextFieldModel | undefined {
-        return parseTextFieldModel(value);
-    }
-
 }
 
 export default TextFieldModel;

@@ -8,16 +8,16 @@ import FieldProps from '../FieldProps';
 import LogService from "../../../../ts/LogService";
 import {find, map} from "../../../../ts/modules/lodash";
 import {EventCallback} from "../../../interfaces/callbacks";
+import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
 
 const AUTOMATIC_FIELD_NAME_PREFIX = 'slider-field-';
 
 const LOG = LogService.createLogger('SliderField');
 
 export interface SliderFieldState {
-
+    readonly fieldState : FormFieldState;
     readonly currentItem : number;
     readonly name        : string;
-
 }
 
 export interface SliderFieldProps<T> extends FieldProps<SelectFieldModel<T>, T> {
@@ -31,39 +31,59 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
 
     private static _idSequence : number = 0;
 
+    private _fieldState : FormFieldState;
     private readonly _id                  : number;
     private readonly _radioChangeCallback : EventCallback<React.ChangeEvent<HTMLInputElement>>;
 
 
     public constructor(props: SliderFieldProps<any>) {
-
         super(props);
-
+        this._fieldState = FormFieldState.CONSTRUCTED;
         SliderField._idSequence += 1;
-
         this._id = SliderField._getNextId();
-
         const initialName = this._getInitialName();
-
         this.state = {
             name: initialName,
-            currentItem: 0
+            currentItem: 0,
+            fieldState: this._fieldState
         };
-
         this._radioChangeCallback = this._onRadioChange.bind(this);
+    }
 
+    public getKey () : string {
+        return this.props?.model?.key ?? '';
+    }
+
+    public getLabel () : string {
+        return this.props?.label ?? this.props.model?.label ?? '';
+    }
+
+    public getIdentifier () : string {
+        return `#${this.getKey()}: "${this.getLabel()}"`;
     }
 
     public componentDidMount() {
-
         this._updateNameToStateIfChanged();
-
+        this._setFieldState(FormFieldState.MOUNTED);
+        this._updateFieldState();
     }
 
-    public componentDidUpdate(prevProps: Readonly<SliderFieldProps<any>>, prevState: Readonly<SliderFieldState>, snapshot?: any) {
-
+    public componentDidUpdate(
+        prevProps: Readonly<SliderFieldProps<any>>,
+        prevState: Readonly<SliderFieldState>,
+        snapshot?: any
+    ) {
         this._updateNameToStateIfChanged();
+        if (prevProps.value !== this.props.value
+            || prevProps.values !== this.props.values
+            || prevProps.model !== this.props.model
+        ) {
+            this._updateFieldState();
+        }
+    }
 
+    public componentWillUnmount (): void {
+        this._setFieldState(FormFieldState.UNMOUNTED);
     }
 
     public render () {
@@ -86,12 +106,14 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
         // const selectedItemLabel : string = selectedItem?.label ?? '';
 
         const itemCount = selectItems.length;
+        const fieldState  = stringifyFormFieldState( this._fieldState );
 
         return (
             <div className={
                 UserInterfaceClassName.SLIDER_FIELD
                 + ' ' + (this.props.className ?? '')
                 + ' ' + UserInterfaceClassName.FIELD
+                + ` ${UserInterfaceClassName.FIELD}-state-${fieldState}`
             }>
 
                 {label ? (
@@ -156,6 +178,88 @@ export class SliderField extends React.Component<SliderFieldProps<any>, SliderFi
 
     }
 
+
+    private _setFieldState (value : FormFieldState) {
+
+        this._fieldState = value;
+
+        if (this.state.fieldState !== value) {
+            this.setState({fieldState: value});
+            LOG.debug(`Changed state as `, value);
+        }
+
+        if (this.props?.changeState) {
+            this.props.changeState(value);
+        }
+
+    }
+
+    private _updateFieldState () {
+
+        LOG.debug(`_updateFieldState: state: `, this._fieldState);
+
+        if (this._fieldState < FormFieldState.MOUNTED) return;
+        if (this._fieldState >= FormFieldState.UNMOUNTED) return;
+
+        const currentItem : number = this.state?.currentItem ?? -1;
+        const items       : SelectFieldItem<any>[] = this.props?.values ?? [];
+        const item : SelectFieldItem<any> | undefined = ( currentItem >= 0 && currentItem < items.length ) ? items[currentItem] : undefined;
+
+        const isValid = this._validateWithStateValue(
+            item,
+            this.props.value,
+            this.props?.model?.required ?? false
+        );
+        LOG.debug(`_updateFieldState: isValid`);
+
+        this._setFieldState( isValid ? FormFieldState.VALID : FormFieldState.INVALID );
+
+    }
+
+    private _validateWithStateValue (
+        stateValue : any,
+        propValue  : number | undefined,
+        required   : boolean
+    ) : boolean {
+
+        LOG.debug(`validateWithStateValue: stateValue = `, stateValue);
+
+        if ( !this._validateValue(propValue, required) ) {
+            LOG.debug(`validateWithStateValue: propValue = `, propValue);
+            return false;
+        }
+
+        const parsedStateValue : any | undefined = stateValue;
+        LOG.debug(`validateWithStateValue: parsedStateValue = `, parsedStateValue);
+
+        if ( parsedStateValue === undefined && !!stateValue ) {
+            return false;
+        }
+
+        if ( !this._validateValue(parsedStateValue, required) ) {
+            return false;
+        }
+
+        LOG.debug(`validateWithStateValue: propValue = `, propValue);
+        return parsedStateValue === propValue;
+
+    }
+
+    private _validateValue (
+        internalValue : any | undefined,
+        required      : boolean
+    ) : boolean {
+
+        LOG.debug(`validateValue: internalValue = `, internalValue);
+
+        if ( internalValue === undefined ) {
+            LOG.debug(`validateValue: required = `, required);
+            return !required;
+        }
+
+        return true;
+
+    }
 
     private _getInitialName () : string {
         return this.props?.name ?? `${AUTOMATIC_FIELD_NAME_PREFIX}${this._id}`;

@@ -5,10 +5,10 @@ import { isArrayOf, isString, isStringOrUndefined } from "../../ts/modules/lodas
 
 export interface FormModel {
 
-    title        : string;
-    cancelLabel ?: string;
-    submitLabel ?: string;
-    items        : FormItem[];
+    readonly title        : string;
+    readonly cancelLabel ?: string;
+    readonly submitLabel ?: string;
+    readonly items        : FormItem[];
 
 }
 

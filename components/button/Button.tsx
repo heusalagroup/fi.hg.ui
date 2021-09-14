@@ -20,17 +20,14 @@ export interface ButtonClickCallback {
 
 export interface ButtonProps {
 
-    className ?: string;
-
-    type : ButtonType;
-
-    click: ButtonClickCallback;
-
-    focus ?: VoidCallback;
-    blur  ?: VoidCallback;
-    keyDown ?: EventCallback<React.KeyboardEvent>;
-
-    buttonRef ?: React.RefObject<HTMLButtonElement>;
+    readonly className  ?: string;
+    readonly type        : ButtonType;
+    readonly click       : ButtonClickCallback;
+    readonly focus      ?: VoidCallback;
+    readonly blur       ?: VoidCallback;
+    readonly keyDown    ?: EventCallback<React.KeyboardEvent>;
+    readonly buttonRef  ?: React.RefObject<HTMLButtonElement>;
+    readonly enabled    ?: boolean;
 
 }
 
@@ -40,13 +37,14 @@ export interface OnClickCallback<T> {
 
 export class Button extends React.Component<ButtonProps, ButtonState> {
 
-    static defaultProps : Partial<ButtonProps> = {
+    public static defaultProps : Partial<ButtonProps> = {
         type: ButtonType.DEFAULT
     };
 
     private readonly _handleClickCallback : OnClickCallback<HTMLButtonElement>;
 
-    constructor(props: ButtonProps) {
+
+    public constructor(props: ButtonProps) {
 
         super(props);
 
@@ -56,24 +54,7 @@ export class Button extends React.Component<ButtonProps, ButtonState> {
 
     }
 
-    private _onClick (event: React.MouseEvent<HTMLButtonElement>) {
-
-        if (event) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-
-        if (this.props.click) {
-            try {
-                this.props.click();
-            } catch (err) {
-                console.error('Error in click callback: ', err);
-            }
-        }
-
-    }
-
-    render () {
+    public render () {
 
         const childCount = Children.count(this.props.children);
 
@@ -81,7 +62,8 @@ export class Button extends React.Component<ButtonProps, ButtonState> {
             onBlur?: any,
             onFocus?: any,
             onKeyDown?: any,
-            ref?: any
+            ref?: any,
+            disabled?: any
         } = {};
 
         const blurCallback = this.props?.blur;
@@ -104,18 +86,42 @@ export class Button extends React.Component<ButtonProps, ButtonState> {
             buttonProps.onKeyDown = keyDownCallback;
         }
 
+        const enabled = this.props?.enabled ?? true;
+        if (!enabled) {
+            buttonProps.disabled = true;
+        }
+
         return (
             <button
                 className={
-                    UserInterfaceClassName.BUTTON + ' '
-                    + UserInterfaceClassName.BUTTON + `-count-${childCount}`
-                    + (this.props.className ? ' ' + this.props.className : '')
+                    UserInterfaceClassName.BUTTON
+                    + ` ${UserInterfaceClassName.BUTTON}-count-${childCount}`
+                    + ` ${UserInterfaceClassName.BUTTON}-${enabled ? 'enabled' : 'disabled'}`
+                    + (this.props.className ? ` ${this.props.className}` : '')
                 }
                 type={this.props.type}
                 onClick={this._handleClickCallback}
                 {...buttonProps}
             >{this.props.children}</button>
         );
+    }
+
+
+    private _onClick (event: React.MouseEvent<HTMLButtonElement>) {
+
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        if (this.props.click) {
+            try {
+                this.props.click();
+            } catch (err) {
+                console.error('Error in click callback: ', err);
+            }
+        }
+
     }
 
 }

@@ -32,4 +32,8 @@
     min-width: 0;
   }
 
+  &.field-state-invalid {
+    border            : $field-border-invalid;
+  }
+
 }

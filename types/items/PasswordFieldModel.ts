@@ -5,7 +5,9 @@ import FormFieldModel, { isFormFieldModel } from "../FormFieldModel";
 
 export interface PasswordFieldModel extends FormFieldModel {
 
-    type         : FormItemType.PASSWORD_FIELD;
+    readonly type         : FormItemType.PASSWORD_FIELD;
+    readonly minLength   ?: number;
+    readonly maxLength   ?: number;
 
 }
 
@@ -21,23 +23,6 @@ export function stringifyPasswordFieldModel (value: PasswordFieldModel): string 
 export function parsePasswordFieldModel (value: any): PasswordFieldModel | undefined {
     if ( isPasswordFieldModel(value) ) return value;
     return undefined;
-}
-
-// eslint-disable-next-line
-export namespace PasswordFieldModel {
-
-    export function test (value: any): value is PasswordFieldModel {
-        return isPasswordFieldModel(value);
-    }
-
-    export function stringify (value: PasswordFieldModel): string {
-        return stringifyPasswordFieldModel(value);
-    }
-
-    export function parse (value: any): PasswordFieldModel | undefined {
-        return parsePasswordFieldModel(value);
-    }
-
 }
 
 export default PasswordFieldModel;

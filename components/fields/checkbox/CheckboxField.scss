@@ -32,4 +32,8 @@
 
   }
 
+  &.field-state-invalid {
+    border            : $field-border-invalid;
+  }
+
 }

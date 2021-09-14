@@ -4,35 +4,39 @@ import React from 'react';
 import './Form.scss';
 import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
 import FormModel from "../../types/FormModel";
-import FormFieldModel from "../../types/FormFieldModel";
+import FormFieldModel, { isFormFieldModel } from "../../types/FormFieldModel";
 import map from 'lodash/map';
-import Button, {ButtonClickCallback, ButtonType} from "../button/Button";
+import Button, { ButtonClickCallback, ButtonType } from "../button/Button";
 import FormUtils from "../fields/FormUtils";
-import {FieldChangeCallback} from "../fields/FieldProps";
-import {get, set} from "../../../ts/modules/lodash";
+import { FieldChangeCallback } from "../fields/FieldProps";
+import { every, filter, get, keys, set } from "../../../ts/modules/lodash";
 import LogService from "../../../ts/LogService";
 import FormItem from "../../types/FormItem";
 import PageBreakModel from "../../types/items/PageBreakModel";
-import {VoidCallback} from "../../interfaces/callbacks";
+import { VoidCallback } from "../../interfaces/callbacks";
+import FormFieldState from "../../types/FormFieldState";
 
 const LOG = LogService.createLogger('Form');
 
+export interface FormFieldStateObject {
+    readonly [key: string]: FormFieldState;
+}
+
 export interface FormState {
 
-    page : number;
+    readonly page        : number;
+    readonly fieldStates : FormFieldStateObject;
 
 }
 
 export interface FormProps<ValueT> {
 
-    className ?: string;
-
-    model   : FormModel;
-    value   : ValueT;
-    change ?: FieldChangeCallback<ValueT>;
-
-    cancel ?: VoidCallback;
-    submit ?: VoidCallback;
+    readonly className ?: string;
+    readonly model      : FormModel;
+    readonly value      : ValueT;
+    readonly change    ?: FieldChangeCallback<ValueT>;
+    readonly cancel    ?: VoidCallback;
+    readonly submit    ?: VoidCallback;
 
 }
 
@@ -43,12 +47,14 @@ export class Form extends React.Component<FormProps<any>, FormState> {
     private readonly _backPageCallback  : ButtonClickCallback;
     private readonly _nextPageCallback  : ButtonClickCallback;
 
+
     public constructor(props: FormProps<any>) {
 
         super(props);
 
         this.state = {
-            page: 0
+            page: 0,
+            fieldStates: {}
         };
 
         this._cancelCallback   = this._onCancelButton.bind(this);
@@ -87,6 +93,11 @@ export class Form extends React.Component<FormProps<any>, FormState> {
         const submitLabel   : string  = isLastPage  ? (spec?.submitLabel ?? 'Submit') : (pageBreak?.nextLabel ?? 'Next page');
         const hasSubmitProp : boolean = isLastPage  ? !!this.props.submit             : true;
 
+        const fieldState : FormFieldState = Form.getCombinedFieldState(
+            this.state.fieldStates,
+            spec
+        );
+
         return (
             <div className={UserInterfaceClassName.FORM}>
 
@@ -103,6 +114,7 @@ export class Form extends React.Component<FormProps<any>, FormState> {
                         const Component   : any    = FormUtils.getComponentForModel(item);
 
                         if (Component) {
+
                             const valueModel : any = this.props.value;
                             const componentValue = get(valueModel, itemKey, undefined);
 
@@ -112,6 +124,7 @@ export class Form extends React.Component<FormProps<any>, FormState> {
                                     model={item}
                                     value={componentValue}
                                     change={(value: any) => this._setItemValue(itemKey, value)}
+                                    changeState={(value: FormFieldState) => this._setItemState(itemKey, value)}
                                 />
                             );
                         }
@@ -133,7 +146,11 @@ export class Form extends React.Component<FormProps<any>, FormState> {
                     ) : null}
 
                     {hasSubmitProp ? (
-                        <Button type={ButtonType.SUBMIT} click={submitCallback}>{submitLabel}</Button>
+                        <Button
+                            type={ButtonType.SUBMIT}
+                            enabled={ fieldState !== FormFieldState.INVALID }
+                            click={submitCallback}
+                        >{submitLabel}</Button>
                     ) : null}
 
                 </footer>
@@ -142,6 +159,7 @@ export class Form extends React.Component<FormProps<any>, FormState> {
         );
 
     }
+
 
     private _onCancelButton () {
 
@@ -223,6 +241,71 @@ export class Form extends React.Component<FormProps<any>, FormState> {
         } else {
             LOG.debug('The form value did not change: ', key, newValue, prevValue, valueModel);
         }
+
+    }
+
+    private _setItemState (key : string, newState: FormFieldState) {
+
+        LOG.debug('_setItemState: ', key, newState);
+
+        const prevStates : FormFieldStateObject = this.state.fieldStates;
+
+        if (prevStates[key] !== newState) {
+
+            LOG.info(`_setItemState: State for "${key}" changed as ${newState}`);
+
+            const newStates = {
+                ...prevStates,
+                [key]: newState
+            };
+
+            this.setState({
+                fieldStates: newStates
+            });
+
+
+
+        } else {
+            LOG.debug(`_setItemState: State for "${key}" was already ${newState}`);
+        }
+
+    }
+
+
+    public static getCombinedFieldState (
+        states : FormFieldStateObject,
+        model  : FormModel
+    ) : FormFieldState {
+
+        const modelKeys : string[] = map(
+            model.items,
+            (item : FormItem, index: number) : string => {
+                return isFormFieldModel(item) ? ( item?.key ?? `${index}` ) : `${index}`;
+            }
+        );
+        LOG.debug(`getCombinedFieldState: modelKeys = `, modelKeys);
+
+        const stateKeys : string[] = filter(
+            keys(states),
+            (key : string) => modelKeys.includes(key)
+        );
+        LOG.debug(`getCombinedFieldState: stateKeys = `, stateKeys);
+
+        const activeFieldStates : FormFieldState[] = map(
+            stateKeys,
+            (key: string) : FormFieldState => states[key]
+        );
+        LOG.debug(`getCombinedFieldState: activeFieldStates = `, activeFieldStates);
+
+        if ( activeFieldStates.includes(FormFieldState.INVALID) ) {
+            return FormFieldState.INVALID;
+        }
+
+        if ( every(activeFieldStates, (item : FormFieldState ) : boolean => item === FormFieldState.VALID) ) {
+            return FormFieldState.VALID;
+        }
+
+        return FormFieldState.CONSTRUCTED;
 
     }
 

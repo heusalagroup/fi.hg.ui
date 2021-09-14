@@ -6,9 +6,9 @@ import FormItemModel from "../FormItemModel";
 
 export interface PageBreakModel extends FormItemModel {
 
-    type        : FormItemType.PAGE_BREAK;
-    backLabel  ?: string;
-    nextLabel  ?: string;
+    readonly type        : FormItemType.PAGE_BREAK;
+    readonly backLabel  ?: string;
+    readonly nextLabel  ?: string;
 
 }
 
@@ -29,23 +29,6 @@ export function stringifyPageBreakModel (value: PageBreakModel): string {
 export function parsePageBreakModel (value: any): PageBreakModel | undefined {
     if ( isPageBreakModel(value) ) return value;
     return undefined;
-}
-
-// eslint-disable-next-line
-export namespace PageBreakModel {
-
-    export function test (value: any): value is PageBreakModel {
-        return isPageBreakModel(value);
-    }
-
-    export function stringify (value: PageBreakModel): string {
-        return stringifyPageBreakModel(value);
-    }
-
-    export function parse (value: any): PageBreakModel | undefined {
-        return parsePageBreakModel(value);
-    }
-
 }
 
 export default PageBreakModel;

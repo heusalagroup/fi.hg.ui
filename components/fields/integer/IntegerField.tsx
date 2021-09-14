@@ -9,15 +9,14 @@ import LogService from "../../../../ts/LogService";
 import { isSafeInteger, trim } from "../../../../ts/modules/lodash";
 import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
 
-const DEFAULT_PLACEHOLDER = '123';
-
 const LOG = LogService.createLogger('IntegerField');
+const DEFAULT_PLACEHOLDER = '123';
+const COMPONENT_CLASS_NAME = UserInterfaceClassName.INTEGER_FIELD;
+const COMPONENT_INPUT_TYPE = "text";
 
 export interface IntegerFieldState {
-
-    readonly fieldState : FormFieldState;
     readonly value      : string;
-
+    readonly fieldState : FormFieldState;
 }
 
 export interface IntegerFieldProps extends FieldProps<IntegerFieldModel, number> {
@@ -25,7 +24,7 @@ export interface IntegerFieldProps extends FieldProps<IntegerFieldModel, number>
 }
 
 export interface OnChangeCallback<T> {
-    (event: React.ChangeEvent<T>) : void;
+    (event: React.ChangeEvent<T>): void;
 }
 
 export class IntegerField extends React.Component<IntegerFieldProps, IntegerFieldState> {
@@ -35,62 +34,79 @@ export class IntegerField extends React.Component<IntegerFieldProps, IntegerFiel
     private _fieldState : FormFieldState;
 
 
-    public constructor(props: IntegerFieldProps) {
-
+    public constructor (props: IntegerFieldProps) {
         super(props);
-
         this._fieldState = FormFieldState.CONSTRUCTED;
-
         this.state = {
             value      : IntegerField.stringifyValue(props.value),
             fieldState : this._fieldState
         };
-
         this._handleChangeCallback = this._onChange.bind(this);
-
     }
 
-    public componentDidMount() {
+    public getKey () : string {
+        return this.props?.model?.key ?? '';
+    }
 
+    public getLabel () : string {
+        return this.props?.label ?? this.props.model?.label ?? '';
+    }
+
+    public getIdentifier () : string {
+        return `#${this.getKey()}: "${this.getLabel()}"`;
+    }
+
+    public componentDidMount () {
         this._updateValueState();
         this._setFieldState(FormFieldState.MOUNTED);
         this._updateFieldState();
-
     }
 
-    public componentDidUpdate(prevProps: Readonly<IntegerFieldProps>, prevState: Readonly<IntegerFieldState>, snapshot?: any) {
-
-        if (prevProps.value !== this.props.value) {
+    public componentDidUpdate (
+        prevProps: Readonly<IntegerFieldProps>,
+        prevState: Readonly<IntegerFieldState>,
+        snapshot?: any
+    ) {
+        const valueChanged : boolean = prevProps.value !== this.props.value;
+        if (valueChanged) {
             this._updateValueState();
-            this._updateFieldState();
-        } else if (prevProps.model !== this.props.model) {
+        }
+        if (valueChanged
+            || prevProps.model !== this.props.model
+        ) {
             this._updateFieldState();
         }
+    }
 
+    public componentWillUnmount (): void {
+        this._setFieldState(FormFieldState.UNMOUNTED);
     }
 
     public render () {
 
         const label       = this.props.label       ?? this.props.model?.label;
         const placeholder = this.props.placeholder ?? this.props.model?.placeholder ?? DEFAULT_PLACEHOLDER;
-        const fieldState  = stringifyFormFieldState( this._fieldState );
+        const fieldState  = stringifyFormFieldState(this._fieldState);
 
         return (
-            <label className={
-                UserInterfaceClassName.INTEGER_FIELD
-                + ' ' + UserInterfaceClassName.FIELD
-                + ` ${UserInterfaceClassName.FIELD}-state-${fieldState}`
-            }>
+            <label
+                className={
+                    `${COMPONENT_CLASS_NAME} ${UserInterfaceClassName.FIELD}`
+                    + ' ' + (this.props.className ?? '')
+                    + ` ${UserInterfaceClassName.FIELD}-state-${fieldState}`
+                }
+            >
                 {label ? (
-                    <span className={UserInterfaceClassName.INTEGER_FIELD+'-label'}>{label}</span>
+                    <span className={COMPONENT_CLASS_NAME+'-label'}>{label}</span>
                 ) : null}
                 <input
-                    className={UserInterfaceClassName.INTEGER_FIELD+'-input'}
-                    type="text"
+                    className={COMPONENT_CLASS_NAME+'-input'}
+                    type={COMPONENT_INPUT_TYPE}
                     autoComplete="off"
                     placeholder={placeholder}
                     value={this.state.value}
                     onChange={this._handleChangeCallback}
+                    readOnly={ this.props?.change === undefined }
                 />
                 {this.props.children}
             </label>
@@ -100,49 +116,106 @@ export class IntegerField extends React.Component<IntegerFieldProps, IntegerFiel
 
 
     private _setFieldState (value : FormFieldState) {
+
         this._fieldState = value;
-        if (this.state.fieldState !== value) {
+
+        if ( this.state.fieldState !== value ) {
             this.setState({fieldState: value});
-            LOG.debug(`Changed state as `, value);
+            LOG.debug(`${this.getIdentifier()}: Changed state as `, stringifyFormFieldState(value));
         }
-    }
 
-    private _updateValueState () {
-
-        const value : string = IntegerField.stringifyValue(this.props?.value);
-
-        this._setStateValue(value);
+        if ( this.props?.changeState ) {
+            this.props.changeState(value);
+        }
 
     }
 
     private _updateFieldState () {
 
-        LOG.debug(`_updateFieldState: state: `, this._fieldState);
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: state: `, stringifyFormFieldState(this._fieldState));
 
-        if (this._fieldState < FormFieldState.MOUNTED) return;
-        if (this._fieldState >= FormFieldState.UNMOUNTED) return;
+        if ( this._fieldState < FormFieldState.MOUNTED ) return;
+        if ( this._fieldState >= FormFieldState.UNMOUNTED ) return;
 
-        const isValid = IntegerField.validateWithStateValue(
+        const isValid = this._validateWithStateValue(
             this.state.value,
             this.props.value,
             this.props?.model?.required ?? false,
             this.props?.model?.minValue,
             this.props?.model?.maxValue
         );
-        LOG.debug(`_updateFieldState: isValid`);
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: isValid: `, isValid);
 
         this._setFieldState( isValid ? FormFieldState.VALID : FormFieldState.INVALID );
 
     }
 
-    private _setStateValue (value: string) {
+    private _updateValueState () {
+        const value : string = IntegerField.stringifyValue(this.props?.value);
+        this._setStateValue(value);
+    }
 
-        if (value !== this.state.value) {
+    private _validateWithStateValue (
+        stateValueString : string,
+        propValue        : number | undefined,
+        required         : boolean,
+        minValue         : number | undefined,
+        maxValue         : number | undefined
+    ) : boolean {
+
+        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: stateValueString = `, stateValueString);
+
+        if ( !this._validateValue(propValue, required, minValue, maxValue) ) {
+            LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: propValue = `, propValue);
+            return false;
+        }
+
+        const parsedStateValue : number | undefined = IntegerField.toInteger(stateValueString);
+        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: parsedStateValue = `, parsedStateValue);
+
+        if ( parsedStateValue === undefined && stateValueString.length >= 1 ) {
+            return false;
+        }
+
+        if ( !this._validateValue(parsedStateValue, required, minValue, maxValue) ) {
+            return false;
+        }
+
+        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: propValue = `, propValue);
+        return parsedStateValue === propValue && (`${propValue ?? ''}` === stateValueString);
+
+    }
+
+    private _validateValue (
+        internalValue : number | undefined,
+        required      : boolean,
+        minValue      : number | undefined,
+        maxValue      : number | undefined
+    ) : boolean {
+
+        LOG.debug(`${this.getIdentifier()}: _validateValue: internalValue = `, internalValue);
+
+        if ( internalValue === undefined ) {
+            LOG.debug(`${this.getIdentifier()}: _validateValue: required = `, required);
+            return !required;
+        }
+
+        LOG.debug(`${this.getIdentifier()}: _validateValue: minValue = `, minValue);
+        LOG.debug(`${this.getIdentifier()}: _validateValue: maxValue = `, maxValue );
+
+        if (minValue !== undefined && internalValue < minValue) {
+            return false;
+        }
+        return !(maxValue !== undefined && internalValue > maxValue);
+
+    }
+
+    private _setStateValue (value: string) {
+        if ( value !== this.state.value ) {
             this.setState({value}, () => {
                 this._updateFieldState();
             });
         }
-
     }
 
     private _onChange (event: React.ChangeEvent<HTMLInputElement>) {
@@ -160,68 +233,12 @@ export class IntegerField extends React.Component<IntegerFieldProps, IntegerFiel
             try {
                 this.props.change(IntegerField.toInteger(value));
             } catch (err) {
-                console.error('Error: ', err);
+                LOG.error(`${this.getIdentifier()}: Error: `, err);
             }
         }
 
     }
 
-
-    public static validateWithStateValue (
-        stateValueString : string,
-        propValue        : number | undefined,
-        required         : boolean,
-        minValue         : number | undefined,
-        maxValue         : number | undefined
-    ) : boolean {
-
-        LOG.debug(`validateWithStateValue: stateValueString = `, stateValueString);
-
-        if ( !IntegerField.validateValue(propValue, required, minValue, maxValue) ) {
-            LOG.debug(`validateWithStateValue: propValue = `, propValue);
-            return false;
-        }
-
-        const parsedStateValue : number | undefined = IntegerField.toInteger(stateValueString);
-        LOG.debug(`validateWithStateValue: parsedStateValue = `, parsedStateValue);
-
-        if ( parsedStateValue === undefined && stateValueString.length >= 1 && !required ) {
-            LOG.debug(`validateWithStateValue: required = `, required);
-            return false;
-        }
-
-        if ( !IntegerField.validateValue(parsedStateValue, required, minValue, maxValue) ) {
-            return false;
-        }
-
-        LOG.debug(`validateWithStateValue: propValue = `, propValue);
-        return parsedStateValue === propValue && (`${propValue ?? ''}` === stateValueString);
-
-    }
-
-    public static validateValue (
-        internalValue : number | undefined,
-        required      : boolean,
-        minValue      : number | undefined,
-        maxValue      : number | undefined
-    ) : boolean {
-
-        LOG.debug(`validateValue: internalValue = `, internalValue);
-
-        if ( internalValue === undefined ) {
-            LOG.debug(`validateValue: required = `, required);
-            return !required;
-        }
-
-        LOG.debug(`validateValue: minValue = `, minValue);
-        if (minValue !== undefined && internalValue < minValue) {
-            return false;
-        }
-
-        LOG.debug(`validateValue: maxValue = `, maxValue );
-        return !(maxValue !== undefined && internalValue > maxValue);
-
-    }
 
     public static toInteger (value : string) : number | undefined {
         try {

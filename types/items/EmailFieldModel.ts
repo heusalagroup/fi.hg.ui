@@ -5,7 +5,9 @@ import FormFieldModel, { isFormFieldModel } from "../FormFieldModel";
 
 export interface EmailFieldModel extends FormFieldModel {
 
-    type         : FormItemType.EMAIL_FIELD;
+    readonly type         : FormItemType.EMAIL_FIELD;
+    readonly minLength   ?: number;
+    readonly maxLength   ?: number;
 
 }
 
@@ -21,23 +23,6 @@ export function stringifyEmailFieldModel (value: EmailFieldModel): string {
 export function parseEmailFieldModel (value: any): EmailFieldModel | undefined {
     if ( isEmailFieldModel(value) ) return value;
     return undefined;
-}
-
-// eslint-disable-next-line
-export namespace EmailFieldModel {
-
-    export function test (value: any): value is EmailFieldModel {
-        return isEmailFieldModel(value);
-    }
-
-    export function stringify (value: EmailFieldModel): string {
-        return stringifyEmailFieldModel(value);
-    }
-
-    export function parse (value: any): EmailFieldModel | undefined {
-        return parseEmailFieldModel(value);
-    }
-
 }
 
 export default EmailFieldModel;

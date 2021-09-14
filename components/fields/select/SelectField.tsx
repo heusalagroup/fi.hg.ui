@@ -10,24 +10,21 @@ import {find, findIndex, map, some} from "../../../../ts/modules/lodash";
 import Popup from "../../popup/Popup";
 import {EventCallback, VoidCallback} from "../../../interfaces/callbacks";
 import Button from "../../button/Button";
+import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
 
 const LOG = LogService.createLogger('SelectField');
-
+const COMPONENT_CLASS_NAME = UserInterfaceClassName.SELECT_FIELD;
 const CLOSE_DROPDOWN_TIMEOUT_ON_BLUR = 100;
 const MOVE_TO_ITEM_ON_OPEN_DROPDOWN_TIMEOUT = 100;
 
 export interface SelectFieldState {
-
-    dropdownOpen : boolean;
-
-    currentItem : number;
-
+    readonly fieldState   : FormFieldState;
+    readonly dropdownOpen : boolean;
+    readonly currentItem  : number;
 }
 
 export interface SelectFieldProps<T> extends FieldProps<SelectFieldModel<T>, T> {
-
     readonly values : SelectFieldItem<T>[];
-
 }
 
 export class SelectField extends React.Component<SelectFieldProps<any>, SelectFieldState> {
@@ -37,84 +34,104 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
     private readonly _blurCallback    : VoidCallback;
     private readonly _keyDownCallback : EventCallback<React.KeyboardEvent>;
 
-    private _buttonRefs : React.RefObject<HTMLButtonElement>[];
-
+    private _fieldState : FormFieldState;
+    private _buttonRefs           : React.RefObject<HTMLButtonElement>[];
     private _closeDropdownTimeout : any;
     private _openDropdownTimeout  : any;
 
-    constructor(props: SelectFieldProps<any>) {
 
+    public constructor(props: SelectFieldProps<any>) {
         super(props);
-
+        this._fieldState = FormFieldState.CONSTRUCTED;
         this.state = {
-            dropdownOpen: false,
-            currentItem: 0
+            dropdownOpen : false,
+            currentItem  : 0,
+            fieldState   : this._fieldState
         };
-
         this._buttonRefs = [];
-
         this._inputRef = React.createRef();
         this._focusCallback = this._onFocus.bind(this);
         this._blurCallback  = this._onBlur.bind(this);
         this._keyDownCallback = this._onKeyDown.bind(this);
-
     }
 
-    componentDidMount() {
+    public getKey () : string {
+        return this.props?.model?.key ?? '';
+    }
 
+    public getLabel () : string {
+        return this.props?.label ?? this.props.model?.label ?? '';
+    }
+
+    public getIdentifier () : string {
+        return `#${this.getKey()}: "${this.getLabel()}"`;
+    }
+
+    public componentDidMount () {
         if ( this._inputHasFocus() ) {
             this._openDropdown();
             this._delayedMoveToFirstItem();
         }
-
+        this._setFieldState(FormFieldState.MOUNTED);
+        this._updateFieldState();
     }
 
-    componentWillUnmount() {
+    public componentDidUpdate (
+        prevProps: Readonly<SelectFieldProps<any>>,
+        prevState: Readonly<SelectFieldState>,
+        snapshot?: any
+    ): void {
+        if (prevProps.value !== this.props.value
+            || prevProps.values !== this.props.values
+            || prevProps.model !== this.props.model
+        ) {
+            this._updateFieldState();
+        }
+    }
 
+    public componentWillUnmount () {
         if (this._closeDropdownTimeout) {
             clearTimeout(this._closeDropdownTimeout);
             this._closeDropdownTimeout = undefined;
         }
-
         if (this._openDropdownTimeout) {
             clearTimeout(this._openDropdownTimeout);
             this._openDropdownTimeout = undefined;
         }
-
+        this._setFieldState(FormFieldState.UNMOUNTED);
     }
 
-    render () {
+    public render () {
 
         const label       = this.props?.label          ?? this.props.model?.label;
         const placeholder = this.props?.placeholder    ?? this.props.model?.placeholder;
         const value       : any = this.props?.value    ?? undefined;
-
         const selectItems : SelectFieldItem<any>[] = this.props?.values ?? this.props?.model?.values ?? [];
-
         const selectedItem : SelectFieldItem<any> | undefined = find(selectItems, (item : SelectFieldItem<any>) : boolean => {
             return item?.value === value;
         });
-
         const selectedItemLabel : string = selectedItem?.label ?? '';
-
         const currentItemIndex : number = this.state.currentItem;
+        const fieldState  = stringifyFormFieldState( this._fieldState );
 
         return (
-            <div className={
-                UserInterfaceClassName.SELECT_FIELD
-                + ' ' + (this.props.className ?? '')
-                + ' ' + UserInterfaceClassName.FIELD
-            }>
+            <div
+                className={
+                    `${COMPONENT_CLASS_NAME} ${UserInterfaceClassName.FIELD}`
+                    + ' ' + (this.props.className ?? '')
+                    + ` ${UserInterfaceClassName.FIELD}-state-${fieldState}`
+                }
+            >
 
-                <label className={UserInterfaceClassName.SELECT_FIELD + '-label'}>
+                <label className={COMPONENT_CLASS_NAME + '-label'}>
 
                     {label ? (
-                        <span className={UserInterfaceClassName.SELECT_FIELD+'-label'}>{label}</span>
+                        <span className={COMPONENT_CLASS_NAME+'-label'}>{label}</span>
                     ) : null}
 
                     <input
                        ref={this._inputRef}
-                       className={UserInterfaceClassName.SELECT_FIELD+'-input'}
+                       className={COMPONENT_CLASS_NAME+'-input'}
                        type="text"
                        autoComplete="off"
                        placeholder={placeholder}
@@ -132,7 +149,7 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
                 </label>
 
                 <Popup open={this.state.dropdownOpen}>
-                    <div className={UserInterfaceClassName.SELECT_FIELD + '-dropdown'}>
+                    <div className={COMPONENT_CLASS_NAME + '-dropdown'}>
                         {map(selectItems, (selectItem : SelectFieldItem<any>, itemIndex: number) : any => {
 
                             const isCurrentButton = itemIndex === currentItemIndex;
@@ -150,8 +167,8 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
                                     key={`dropdown-item-${itemIndex}-value-${selectItem.value}`}
                                     buttonRef={itemButtonRef}
                                     className={
-                                        UserInterfaceClassName.SELECT_FIELD + '-dropdown-item'
-                                        + ' ' + (isCurrentButton ? UserInterfaceClassName.SELECT_FIELD + '-dropdown-item-current' : '')
+                                        COMPONENT_CLASS_NAME + '-dropdown-item'
+                                        + ' ' + (isCurrentButton ? COMPONENT_CLASS_NAME + '-dropdown-item-current' : '')
                                     }
                                     focus={this._focusCallback}
                                     blur={this._blurCallback}
@@ -169,6 +186,105 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
 
     }
 
+
+    private _setFieldState (value : FormFieldState) {
+
+        this._fieldState = value;
+
+        if (this.state.fieldState !== value) {
+            this.setState({fieldState: value});
+            LOG.debug(`${this.getIdentifier()}: Changed state as `, stringifyFormFieldState(value));
+        }
+
+        if (this.props?.changeState) {
+            this.props.changeState(value);
+        }
+
+    }
+
+    private _updateFieldState () {
+
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: state: `, stringifyFormFieldState(this._fieldState));
+
+        if ( this._fieldState < FormFieldState.MOUNTED ) return;
+        if ( this._fieldState >= FormFieldState.UNMOUNTED ) return;
+
+        const currentItem : number = this.state?.currentItem ?? -1;
+        const items       : SelectFieldItem<any>[] = this.props?.values ?? [];
+        const item : SelectFieldItem<any> | undefined = ( currentItem >= 0 && currentItem < items.length ) ? items[currentItem] : undefined;
+
+        const isValid = this._validateWithStateValue(
+            item?.value,
+            this.props.value,
+            this.props?.model?.required ?? false
+        );
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: isValid`);
+
+        this._setFieldState( isValid ? FormFieldState.VALID : FormFieldState.INVALID );
+
+    }
+
+    private _validateWithStateValue (
+        stateValue : any,
+        propValue  : number | undefined,
+        required   : boolean
+    ) : boolean {
+
+        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: stateValue = `, stateValue);
+
+        if ( !this._validateValue(propValue, required) ) {
+            LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: propValue = `, propValue);
+            return false;
+        }
+
+        const parsedStateValue : any | undefined = stateValue;
+        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: parsedStateValue = `, parsedStateValue);
+
+        if ( parsedStateValue === undefined && !!stateValue ) {
+            return false;
+        }
+
+        if ( !this._validateValue(parsedStateValue, required) ) {
+            return false;
+        }
+
+        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: propValue = `, propValue);
+        return parsedStateValue === propValue;
+
+    }
+
+    private _validateValue (
+        internalValue : any | undefined,
+        required      : boolean
+    ) : boolean {
+
+        LOG.debug(`${this.getIdentifier()}: _validateValue: internalValue = `, internalValue);
+
+        if ( internalValue === undefined ) {
+            LOG.debug(`${this.getIdentifier()}: _validateValue: required = `, required);
+            return !required;
+        }
+
+        return true;
+
+    }
+
+    private _change (value: any) {
+
+        LOG.debug(`${this.getIdentifier()}: _change: value = `, value);
+
+        if (this.props.change) {
+            try {
+                this.props.change(value);
+            } catch (err) {
+                LOG.error('Error in change prop: ', err);
+            }
+        } else {
+            LOG.warn('No change prop defined!');
+        }
+
+    }
+
     private _inputHasFocus () : boolean {
 
         if (!document.hasFocus()) {
@@ -183,26 +299,6 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
             const currentElement : HTMLButtonElement | null | undefined = item?.current;
             return currentElement ? SelectField._elementHasFocus(currentElement) : false;
         });
-
-    }
-
-    private static _elementHasFocus (el : HTMLInputElement | HTMLButtonElement) : boolean {
-        return el.contains(document.activeElement);
-    }
-
-    private _change (value: any) {
-
-        LOG.debug('_change: value = ', value);
-
-        if (this.props.change) {
-            try {
-                this.props.change(value);
-            } catch (err) {
-                LOG.error('Error in change prop: ', err);
-            }
-        } else {
-            LOG.warn('No change prop defined!');
-        }
 
     }
 
@@ -238,7 +334,7 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
     private _onBlur () {
 
         if (!this.state.dropdownOpen) {
-            LOG.debug('_onBlur: Dropdown not open');
+            LOG.debug(`${this.getIdentifier()}:_onBlur: Dropdown not open`);
             return;
         }
 
@@ -250,13 +346,13 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
 
             if (this.state.dropdownOpen) {
                 if (!this._inputHasFocus()) {
-                    LOG.debug('_onBlur: Closing dropdown after timeout');
+                    LOG.debug(`${this.getIdentifier()}:_onBlur: Closing dropdown after timeout`);
                     this._closeDropdown();
                 } else {
-                    LOG.debug('_onBlur: Select has focus still; not closing dropdown.');
+                    LOG.debug(`${this.getIdentifier()}: _onBlur: Select has focus still; not closing dropdown.`);
                 }
             } else {
-                LOG.debug('_onBlur: Dropdown is not open anymore');
+                LOG.debug(`${this.getIdentifier()}: _onBlur: Dropdown is not open anymore`);
             }
         }, CLOSE_DROPDOWN_TIMEOUT_ON_BLUR);
 
@@ -264,7 +360,7 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
 
     private _selectItem (index: number) {
 
-        LOG.debug('_selectItem: Click on index ', index);
+        LOG.debug(`${this.getIdentifier()}: _selectItem: Click on index `, index);
 
         const selectItems : SelectFieldItem<any>[] = this.props?.values ?? this.props?.model?.values ?? [];
 
@@ -297,18 +393,9 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
         this.setState({dropdownOpen: true});
     }
 
-    private static _cancelKeyEvent (event : React.KeyboardEvent | React.ChangeEvent) {
-
-        if (event) {
-            event.stopPropagation();
-            event.preventDefault();
-        }
-
-    }
-
     private _onKeyDown (event : React.KeyboardEvent) {
 
-        LOG.debug('_onKeyDown: Keycode set: ', event?.code);
+        LOG.debug(`${this.getIdentifier()}: _onKeyDown: Keycode set: `, event?.code);
         switch(event?.code) {
 
             case 'Enter':
@@ -337,7 +424,7 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
 
         }
 
-        LOG.debug('No keycode set: ', event?.code);
+        LOG.debug(`${this.getIdentifier()}: No keycode set: `, event?.code);
         SelectField._cancelKeyEvent(event);
 
         if (!this.state.dropdownOpen) {
@@ -447,7 +534,7 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
     private _updateCurrentItemFromFocus () {
 
         if (!document.hasFocus()) {
-            LOG.debug('_updateCurrentItemFromFocus: Document has no focus');
+            LOG.debug(`${this.getIdentifier()}: _updateCurrentItemFromFocus: Document has no focus`);
             return;
         }
 
@@ -457,15 +544,29 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
         });
 
         if (this.state.currentItem === buttonIndex) {
-            LOG.debug('_updateCurrentItemFromFocus: Focus already on current item');
+            LOG.debug(`${this.getIdentifier()}: _updateCurrentItemFromFocus: Focus already on current item`);
             return;
         }
 
-        LOG.debug('_updateCurrentItemFromFocus: Selecting item: ', buttonIndex);
+        LOG.debug(`${this.getIdentifier()}: _updateCurrentItemFromFocus: Selecting item: `, buttonIndex);
 
         this.setState({
             currentItem: buttonIndex
         });
+
+    }
+
+
+    private static _elementHasFocus (el : HTMLInputElement | HTMLButtonElement) : boolean {
+        return el.contains(document.activeElement);
+    }
+
+    private static _cancelKeyEvent (event : React.KeyboardEvent | React.ChangeEvent) {
+
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
 
     }
 
