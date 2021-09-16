@@ -2,18 +2,30 @@
 
 import {
     hasNoOtherKeys,
+    isArrayOrUndefinedOf,
     isBooleanOrUndefined,
     isRegularObject,
     isSafeInteger,
     isString,
     TestCallbackNonStandard
 } from "../../ts/modules/lodash";
+import {
+    isRepositoryMember,
+    RepositoryMember
+} from "../../ts/simpleRepository/types/RepositoryMember";
 
 export interface ResponseDTO<T> {
+
     readonly id       : string;
     readonly version  : number;
     readonly payload  : T;
     readonly deleted ?: boolean;
+
+    /**
+     * Users who have active access to the resource (eg. joined in the Matrix room)
+     */
+    readonly members ?: RepositoryMember[];
+
 }
 
 export function isResponseDTO<T> (
@@ -26,11 +38,13 @@ export function isResponseDTO<T> (
             'id',
             'version',
             'payload',
-            'deleted'
+            'deleted',
+            'members'
         ])
         && isString(value?.id)
         && isBooleanOrUndefined(value?.deleted)
         && isSafeInteger(value?.version)
+        && isArrayOrUndefinedOf<RepositoryMember>(value?.members, isRepositoryMember)
         && isT(value?.payload)
     );
 }

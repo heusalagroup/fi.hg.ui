@@ -24,14 +24,16 @@ export class ResponseUtils {
             data,
             id,
             version,
-            deleted
+            deleted,
+            members
         } = item;
 
         return {
             id,
             version,
             payload: data,
-            deleted
+            deleted,
+            members
         };
 
     }
