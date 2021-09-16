@@ -34,11 +34,19 @@ export class MemberList extends React.Component<MemberListProps, MemberListState
 
         return (
             <div className={UserInterfaceClassName.MEMBER_LIST + ' ' + (this.props.className ?? '')}>{
-                map(list, (item : RepositoryMember) : any => {
+                map(list, (item : RepositoryMember, index: number) : any => {
                     const id = item.id;
                     const displayName = item?.displayName ?? id;
                     return (
-                        <div key={`member-${id}`}>{displayName} ({id})</div>
+                        <div key={`member-${id}`}
+                             className={
+                                 UserInterfaceClassName.MEMBER_LIST + '-member'
+                                 + ' ' + UserInterfaceClassName.MEMBER_LIST + `-member-${ index %2 === 1 ? 'even' : 'odd' }`
+                             }
+                        >
+                            <div className={UserInterfaceClassName.MEMBER_LIST + '-member-name'}>{displayName}</div>
+                            <div className={UserInterfaceClassName.MEMBER_LIST + '-member-id'}>{id}</div>
+                        </div>
                     );
                 })
             }</div>
