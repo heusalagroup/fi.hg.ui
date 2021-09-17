@@ -13,7 +13,7 @@ import { every, filter, get, keys, set } from "../../../ts/modules/lodash";
 import LogService from "../../../ts/LogService";
 import FormItem from "../../types/FormItem";
 import PageBreakModel from "../../types/items/PageBreakModel";
-import { VoidCallback } from "../../interfaces/callbacks";
+import { VoidCallback } from "../../../ts/interfaces/callbacks";
 import FormFieldState from "../../types/FormFieldState";
 
 const LOG = LogService.createLogger('Form');

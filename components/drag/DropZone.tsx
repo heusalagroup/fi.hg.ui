@@ -5,7 +5,7 @@ import './DropZone.scss';
 import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
 import LogService from "../../../ts/LogService";
 import {DropEffect} from "../../managers/DragManager";
-import {DropCallback, EventCallback} from "../../interfaces/callbacks";
+import {DropCallback, EventCallback} from "../../../ts/interfaces/callbacks";
 import {isArray} from "../../../ts/modules/lodash";
 
 const LOG = LogService.createLogger('DropZone');

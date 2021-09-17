@@ -7,7 +7,7 @@ import SelectFieldModel, {SelectFieldItem} from "../../../types/items/SelectFiel
 import FieldProps from '../FieldProps';
 import LogService from "../../../../ts/LogService";
 import {find, map} from "../../../../ts/modules/lodash";
-import {EventCallback} from "../../../interfaces/callbacks";
+import {EventCallback} from "../../../../ts/interfaces/callbacks";
 import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
 
 const LOG = LogService.createLogger('SliderField');

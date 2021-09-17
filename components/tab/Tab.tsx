@@ -6,7 +6,7 @@ import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
 import {SelectFieldItem} from "../../types/items/SelectFieldModel";
 import Button from "../button/Button";
 import {map} from "../../../ts/modules/lodash";
-import {ChangeCallback} from "../../interfaces/callbacks";
+import {ChangeCallback} from "../../../ts/interfaces/callbacks";
 import LogService from "../../../ts/LogService";
 
 const LOG = LogService.createLogger('Tab');

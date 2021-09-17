@@ -8,7 +8,7 @@ import FieldProps from '../FieldProps';
 import LogService from "../../../../ts/LogService";
 import {find, findIndex, map, some} from "../../../../ts/modules/lodash";
 import Popup from "../../popup/Popup";
-import {EventCallback, VoidCallback} from "../../../interfaces/callbacks";
+import {EventCallback, VoidCallback} from "../../../../ts/interfaces/callbacks";
 import Button from "../../button/Button";
 import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
 

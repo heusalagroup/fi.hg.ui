@@ -6,7 +6,7 @@ import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
 import Modal from "../../services/types/Modal";
 import ModalService from "../../services/ModalService";
 import { stringifyModalType } from "../../services/types/ModalType";
-import { ChangeCallback, EventCallback, VoidCallback } from "../../interfaces/callbacks";
+import { ChangeCallback, EventCallback, VoidCallback } from "../../../ts/interfaces/callbacks";
 import LogService from "../../../ts/LogService";
 
 const LOG = LogService.createLogger('ModalContainer');

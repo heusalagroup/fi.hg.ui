@@ -12,7 +12,7 @@ import ModalService, {
 import LogService from "../../../ts/LogService";
 import { map } from "../../../ts/modules/lodash";
 import ModalContainer from "./ModalContainer";
-import { ChangeCallback } from "../../interfaces/callbacks";
+import { ChangeCallback } from "../../../ts/interfaces/callbacks";
 
 const LOG = LogService.createLogger('ModalGroupContainer');
 
