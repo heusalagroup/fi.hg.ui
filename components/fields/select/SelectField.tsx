@@ -6,7 +6,7 @@ import UserInterfaceClassName from "../../../constants/UserInterfaceClassName";
 import SelectFieldModel, {SelectFieldItem} from "../../../types/items/SelectFieldModel";
 import FieldProps from '../FieldProps';
 import LogService from "../../../../ts/LogService";
-import {find, findIndex, map, some} from "../../../../ts/modules/lodash";
+import {findIndex, map, some} from "../../../../ts/modules/lodash";
 import Popup from "../../popup/Popup";
 import {EventCallback, VoidCallback} from "../../../../ts/interfaces/callbacks";
 import Button from "../../button/Button";
@@ -20,7 +20,6 @@ const MOVE_TO_ITEM_ON_OPEN_DROPDOWN_TIMEOUT = 100;
 export interface SelectFieldState {
     readonly fieldState   : FormFieldState;
     readonly dropdownOpen : boolean;
-    readonly currentItem  : number;
 }
 
 export interface SelectFieldProps<T> extends FieldProps<SelectFieldModel<T>, T> {
@@ -33,9 +32,9 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
     private readonly _focusCallback   : VoidCallback;
     private readonly _blurCallback    : VoidCallback;
     private readonly _keyDownCallback : EventCallback<React.KeyboardEvent>;
+    private readonly _buttonRefs      : React.RefObject<HTMLButtonElement>[];
 
-    private _fieldState : FormFieldState;
-    private _buttonRefs           : React.RefObject<HTMLButtonElement>[];
+    private _fieldState           : FormFieldState;
     private _closeDropdownTimeout : any;
     private _openDropdownTimeout  : any;
 
@@ -45,7 +44,6 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
         this._fieldState = FormFieldState.CONSTRUCTED;
         this.state = {
             dropdownOpen : false,
-            currentItem  : 0,
             fieldState   : this._fieldState
         };
         this._buttonRefs = [];
@@ -72,7 +70,6 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
             this._openDropdown();
             this._delayedMoveToFirstItem();
         }
-        this._updateCurrentItemFromProps();
         this._setFieldState(FormFieldState.MOUNTED);
         this._updateFieldState();
     }
@@ -82,12 +79,14 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
         prevState: Readonly<SelectFieldState>,
         snapshot?: any
     ): void {
-        if (prevProps.value !== this.props.value
+        if (   prevProps.value  !== this.props.value
             || prevProps.values !== this.props.values
-            || prevProps.model !== this.props.model
+            || prevProps.model  !== this.props.model
         ) {
-            this._updateCurrentItemFromProps();
+            LOG.debug(`${this.getIdentifier()}: componentDidUpdate: `, this.props);
             this._updateFieldState();
+        } else {
+            LOG.debug(`${this.getIdentifier()}: componentDidUpdate: but we didn't need anything: `, this.props);
         }
     }
 
@@ -105,16 +104,17 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
 
     public render () {
 
-        const label       = this.props?.label          ?? this.props.model?.label;
-        const placeholder = this.props?.placeholder    ?? this.props.model?.placeholder;
-        const value       : any = this.props?.value    ?? undefined;
-        const selectItems : SelectFieldItem<any>[] = this.props?.values ?? this.props?.model?.values ?? [];
-        const selectedItem : SelectFieldItem<any> | undefined = find(selectItems, (item : SelectFieldItem<any>) : boolean => {
-            return item?.value === value;
-        });
+        const label        : string = this.props?.label          ?? this.props.model?.label       ?? '';
+        const placeholder  : string = this.props?.placeholder    ?? this.props.model?.placeholder ?? '';
+
+        const selectItems       : SelectFieldItem<any>[] = this._getValues();
+        const currentItemIndex  : number | undefined = this._getCurrentIndex();
+        const selectedItem      : SelectFieldItem<any> | undefined = currentItemIndex !== undefined ? selectItems[currentItemIndex] : undefined;
         const selectedItemLabel : string = selectedItem?.label ?? '';
-        const currentItemIndex : number = this.state.currentItem;
-        const fieldState  = stringifyFormFieldState( this._fieldState );
+
+        const fieldState        : string = stringifyFormFieldState( this._fieldState );
+
+        LOG.debug(`${this.getIdentifier()}: render: selectedItem = `, selectedItem, selectedItemLabel);
 
         return (
             <div
@@ -154,7 +154,7 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
                     <div className={COMPONENT_CLASS_NAME + '-dropdown'}>
                         {map(selectItems, (selectItem : SelectFieldItem<any>, itemIndex: number) : any => {
 
-                            const isCurrentButton = itemIndex === currentItemIndex;
+                            const isCurrentButton = currentItemIndex !== undefined && itemIndex === currentItemIndex;
 
                             const itemClickCallback = () => this._selectItem(itemIndex);
 
@@ -189,6 +189,37 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
     }
 
 
+    private _getCurrentIndex () : number | undefined {
+        return this.props.value !== undefined ? this._findValueIndex(this.props.value) : undefined;
+    }
+
+    /**
+     * Search the index of the value in all items
+     *
+     * @private
+     */
+    private _findValueIndex (value : any) : number | undefined {
+
+        LOG.debug(`${this.getIdentifier()}: _findValueIndex: value: `, value);
+
+        const items : SelectFieldItem<any>[] = this._getValues();
+        LOG.debug(`${this.getIdentifier()}: _findValueIndex: items: `, items);
+
+        const index : number = findIndex(
+            items,
+            (item : SelectFieldItem<any>) : boolean => item.value === value
+        );
+
+        if (index >= 0 && index < items.length) {
+            LOG.debug(`${this.getIdentifier()}: _findValueIndex: found: `, index);
+            return index;
+        }
+
+        LOG.debug(`${this.getIdentifier()}: _findValueIndex: not found`);
+        return undefined;
+
+    }
+
     private _setFieldState (value : FormFieldState) {
 
         this._fieldState = value;
@@ -211,52 +242,16 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
         if ( this._fieldState < FormFieldState.MOUNTED ) return;
         if ( this._fieldState >= FormFieldState.UNMOUNTED ) return;
 
-        const currentItem : number = this.state?.currentItem ?? -1;
-        LOG.debug(`${this.getIdentifier()}: _updateFieldState: currentItem: `, currentItem);
+        let itemValue : any | undefined = this.props.value;
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: item: `, itemValue);
 
-        const items       : SelectFieldItem<any>[] = this._getValues();
-        LOG.debug(`${this.getIdentifier()}: _updateFieldState: items: `, items);
-
-        const item        : SelectFieldItem<any> | undefined = ( currentItem >= 0 && currentItem < items.length ) ? items[currentItem] : undefined;
-        LOG.debug(`${this.getIdentifier()}: _updateFieldState: item: `, item);
-
-        const isValid = this._validateWithStateValue(
-            item?.value,
-            this.props.value,
+        const isValid = this._validateValue(
+            itemValue,
             this.props?.model?.required ?? false
         );
         LOG.debug(`${this.getIdentifier()}: _updateFieldState: isValid: `, isValid);
 
         this._setFieldState( isValid ? FormFieldState.VALID : FormFieldState.INVALID );
-
-    }
-
-    private _validateWithStateValue (
-        stateValue : any,
-        propValue  : number | undefined,
-        required   : boolean
-    ) : boolean {
-
-        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: stateValue = `, stateValue);
-
-        if ( !this._validateValue(propValue, required) ) {
-            LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: propValue = `, propValue);
-            return false;
-        }
-
-        const parsedStateValue : any | undefined = stateValue;
-        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: parsedStateValue = `, parsedStateValue);
-
-        if ( parsedStateValue === undefined && !!stateValue ) {
-            return false;
-        }
-
-        if ( !this._validateValue(parsedStateValue, required) ) {
-            return false;
-        }
-
-        LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: propValue = `, propValue);
-        return parsedStateValue === propValue;
 
     }
 
@@ -272,7 +267,10 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
             return !required;
         }
 
-        return true;
+        return map(
+            this.props.values,
+            (item : SelectFieldItem<any>) : any => item.value
+        ).includes(internalValue);
 
     }
 
@@ -287,27 +285,21 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
                 LOG.error('Error in change prop: ', err);
             }
         } else {
-            LOG.warn(`${this.getIdentifier()}: No change prop defined!`);
+            LOG.warn(`${this.getIdentifier()}: Warning! No change prop defined!`);
         }
 
     }
 
     private _selectItem (index: number) {
 
-        LOG.debug(`${this.getIdentifier()}: _selectItem: Click on index `, index);
+        LOG.debug(`${this.getIdentifier()}: _selectItem: Selecting index `, index);
 
         const selectItems : SelectFieldItem<any>[] = this._getValues();
-
-        if (index < selectItems.length) {
-
-            const value = selectItems[index]?.value;
-
-            this._change(value);
-
+        if ( index >= 0 && index < selectItems.length ) {
+            this._change(selectItems[index].value);
             this._closeDropdown();
-
         } else {
-            LOG.error('_selectItem: No item on index ', index);
+            LOG.error('_selectItem: Index out of range:', index);
         }
 
     }
@@ -447,8 +439,11 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
 
     private _onEnter () {
 
-        if (this.state.dropdownOpen) {
-            return this._selectItem(this.state.currentItem);
+        if ( this.state.dropdownOpen ) {
+            const currentItem = this._getCurrentIndex();
+            if (currentItem !== undefined) {
+                this._selectItem(currentItem);
+            }
         } else {
             this._openDropdown();
             this._delayedMoveToFirstItem();
@@ -456,122 +451,92 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
 
     }
 
-    private _updateCurrentItemFromProps () {
+    private _setButtonFocus (index: number) {
 
-        const currentValue : any | undefined = this.props?.value;
-        if (currentValue === undefined) {
-            return;
+        if (index < this._buttonRefs.length) {
+            const el = this._buttonRefs[index]?.current;
+            if (el) {
+                el.focus();
+            } else {
+                LOG.warn(`_setButtonFocus: No button element found for index ${index}`);
+            }
+        } else {
+            LOG.warn(`_setButtonFocus: No button ref found for index ${index}`);
         }
 
-        const prevItem : number = this.state?.currentItem ?? -1;
-        LOG.debug(`${this.getIdentifier()}: _updateCurrentItemFromProps: prevItem: `, prevItem);
+    }
 
-        const items       : SelectFieldItem<any>[] = this._getValues();
-        LOG.debug(`${this.getIdentifier()}: _updateCurrentItemFromProps: items: `, items);
+    private _openDropdownIfNotOpen () {
 
-        const currentItem = findIndex(items, (item : SelectFieldItem<any>) : boolean => {
-            return item.value === currentValue;
-        });
-
-        if ( currentItem >= 0 && currentItem !== prevItem ) {
+        if (!this.state.dropdownOpen) {
             this.setState({
-                currentItem: currentItem
-            }, () => {
-                this._updateFieldState();
+                dropdownOpen: true
             });
+        } else {
+            LOG.warn(`_openDropdownIfNotOpen: Dropdown was already open`);
         }
 
     }
 
     private _moveCurrentItemTo (nextItem: number) {
 
-        this.setState( (state : SelectFieldState) => {
+        const items      : SelectFieldItem<any>[] = this._getValues();
+        const totalItems : number                 = items.length;
 
-            const selectItems : SelectFieldItem<any>[] = this.props?.values ?? this.props?.model?.values ?? [];
+        if ( !(nextItem >= 0 && nextItem < totalItems) ) {
+            LOG.warn(`Could not change to out of range index ${nextItem}`);
+            return;
+        }
 
-            const totalItems = selectItems.length;
+        LOG.debug(`${this.getIdentifier()}: _moveCurrentItemTo: Selecting ${nextItem}`);
 
-            const nextCurrentIndex = nextItem >= 0 && nextItem < totalItems ? nextItem : state.currentItem;
-
-            if (nextCurrentIndex < this._buttonRefs.length) {
-                const el = this._buttonRefs[nextCurrentIndex]?.current;
-                if (el) {
-                    el.focus();
-                }
-            }
-
-            return {
-                currentItem: nextCurrentIndex,
-                dropdownOpen: true
-            };
-
-        }, () => {
-            this._updateFieldState();
-        });
+        this._setButtonFocus(nextItem);
+        this._change(items[nextItem].value);
+        this._openDropdownIfNotOpen();
 
     }
 
     private _movePrevItem () {
 
-        this.setState( (state : SelectFieldState) => {
+        const items            : SelectFieldItem<any>[] = this._getValues();
+        const totalItems       : number                 = items.length;
+        const currentItem      : number | undefined     = this._getCurrentIndex();
+        const nextItem         : number = currentItem !== undefined ? currentItem - 1 : totalItems - 1;
+        const nextCurrentIndex : number = nextItem >= 0             ? nextItem        : totalItems - 1;
 
-            const selectItems : SelectFieldItem<any>[] = this.props?.values ?? this.props?.model?.values ?? [];
+        if ( !(nextCurrentIndex >= 0 && nextCurrentIndex < items.length) ) {
+            LOG.warn(`${this.getIdentifier()}: _movePrevItem: Could not change to out of range index ${nextCurrentIndex}`);
+            return;
+        }
 
-            const totalItems = selectItems.length;
+        LOG.debug(`${this.getIdentifier()}: _movePrevItem: Selecting ${nextCurrentIndex}`);
 
-            const currentItem = state.currentItem;
-
-            const nextItem = currentItem - 1;
-
-            const nextCurrentIndex = nextItem >= 0 ? nextItem : totalItems - 1;
-
-            if (nextCurrentIndex < this._buttonRefs.length) {
-                const el = this._buttonRefs[nextCurrentIndex]?.current;
-                if (el) {
-                    el.focus();
-                }
-            }
-
-            return {
-                currentItem: nextCurrentIndex,
-                dropdownOpen: true
-            };
-
-        }, () => {
-            this._updateFieldState();
-        });
+        this._setButtonFocus(nextCurrentIndex);
+        this._change(items[nextCurrentIndex].value);
+        this._openDropdownIfNotOpen();
 
     }
 
     private _moveNextItem () {
 
-        this.setState( (state : SelectFieldState) => {
+        const items            : SelectFieldItem<any>[] = this._getValues();
+        const totalItems       : number                 = items.length;
+        const currentItem      : number | undefined     = this._getCurrentIndex();
 
-            const selectItems : SelectFieldItem<any>[] = this.props?.values ?? this.props?.model?.values ?? [];
+        const nextItem         : number = currentItem !== undefined ? currentItem + 1 : 0;
+        const nextCurrentIndex : number = nextItem < totalItems ? nextItem : 0;
 
-            const totalItems = selectItems.length;
+        if ( !(nextCurrentIndex >= 0 && nextCurrentIndex < items.length) ) {
+            LOG.warn(`_moveNextItem: Could not change to out of range index ${nextCurrentIndex}`);
+            return;
+        }
 
-            const currentItem = state.currentItem;
+        const itemValue = items[nextCurrentIndex].value;
+        LOG.debug(`${this.getIdentifier()}: _moveNextItem: Selecting ${nextCurrentIndex}: `, itemValue);
 
-            const nextItem = currentItem + 1;
-
-            const nextCurrentIndex = nextItem < totalItems ? nextItem : 0;
-
-            if (nextCurrentIndex < this._buttonRefs.length) {
-                const el = this._buttonRefs[nextCurrentIndex]?.current;
-                if (el) {
-                    el.focus();
-                }
-            }
-
-            return {
-                currentItem: nextCurrentIndex,
-                dropdownOpen: true
-            };
-
-        }, () => {
-            this._updateFieldState();
-        });
+        this._change(itemValue);
+        this._setButtonFocus(nextCurrentIndex);
+        this._openDropdownIfNotOpen();
 
     }
 
@@ -582,23 +547,33 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
             return;
         }
 
-        const buttonIndex = findIndex(this._buttonRefs, (item: React.RefObject<HTMLButtonElement>) : boolean => {
+        const items : SelectFieldItem<any>[] = this._getValues();
+
+        const currentItem : number | undefined = this._getCurrentIndex();
+
+        const buttonIndex : number = findIndex(this._buttonRefs, (item: React.RefObject<HTMLButtonElement>) : boolean => {
             const currentElement : HTMLButtonElement | null | undefined = item?.current;
             return currentElement ? SelectField._elementHasFocus(currentElement) : false;
         });
 
-        if (this.state.currentItem === buttonIndex) {
+        if (buttonIndex < 0) {
+            LOG.debug(`${this.getIdentifier()}: _updateCurrentItemFromFocus: No element found`);
+            return;
+        }
+
+        if ( currentItem === buttonIndex ) {
             LOG.debug(`${this.getIdentifier()}: _updateCurrentItemFromFocus: Focus already on current item`);
+            return;
+        }
+
+        if ( !(buttonIndex >= 0 && buttonIndex < items.length) ) {
+            LOG.warn(`${this.getIdentifier()}: _updateCurrentItemFromFocus: Could not change to out of range index ${buttonIndex}`);
             return;
         }
 
         LOG.debug(`${this.getIdentifier()}: _updateCurrentItemFromFocus: Selecting item: `, buttonIndex);
 
-        this.setState({
-            currentItem: buttonIndex
-        }, () => {
-            this._updateFieldState();
-        });
+        this._change(items[buttonIndex].value);
 
     }
 
