@@ -1,11 +1,19 @@
 // Copyright (c) 2020-2021. Sendanor <info@sendanor.fi>. All rights reserved.
 
-import { hasNoOtherKeys, isNumber, isRegularObject, isString } from "../../ts/modules/lodash";
+import {
+    hasNoOtherKeys,
+    isNumber,
+    isRegularObject,
+    isString,
+    isUndefined
+} from "../../ts/modules/lodash";
+import PublicPipelineRunDTO, { isPublicPipelineRunDTO } from "../../pipeline/dto/PublicPipelineRunDTO";
 
 export interface FormSubmitResponseDTO {
-    readonly id          : string;
-    readonly formId      : string;
-    readonly formVersion : number;
+    readonly id           : string;
+    readonly formId       : string;
+    readonly formVersion  : number;
+    readonly run         ?: PublicPipelineRunDTO;
 }
 
 export function isFormSubmitResponseDTO (
@@ -13,10 +21,16 @@ export function isFormSubmitResponseDTO (
 ): value is FormSubmitResponseDTO {
     return (
         isRegularObject(value)
-        && hasNoOtherKeys(value, ['id', 'formId', 'formVersion'])
+        && hasNoOtherKeys(value, [
+            'id',
+            'formId',
+            'formVersion',
+            'run'
+        ])
         && isString(value?.id)
         && isString(value?.formId)
         && isNumber(value?.formVersion)
+        && ( isUndefined(value?.run) || isPublicPipelineRunDTO(value?.run) )
     );
 }
 
