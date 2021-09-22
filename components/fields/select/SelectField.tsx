@@ -249,7 +249,7 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
             itemValue,
             this.props?.model?.required ?? false
         );
-        LOG.debug(`${this.getIdentifier()}: _updateFieldState: isValid: `, isValid);
+        LOG.debug(`${this.getIdentifier()}: _updateFieldState: isValid "${itemValue}": `, isValid);
 
         this._setFieldState( isValid ? FormFieldState.VALID : FormFieldState.INVALID );
 
@@ -263,14 +263,20 @@ export class SelectField extends React.Component<SelectFieldProps<any>, SelectFi
         LOG.debug(`${this.getIdentifier()}: _validateValue: internalValue = `, internalValue);
 
         if ( internalValue === undefined ) {
-            LOG.debug(`${this.getIdentifier()}: _validateValue: required = `, required);
+            LOG.debug(`${this.getIdentifier()}: _validateValue: "${internalValue}": required = `, required);
             return !required;
         }
 
-        return map(
-            this.props.values,
+        const values = map(
+            this._getValues(),
             (item : SelectFieldItem<any>) : any => item.value
-        ).includes(internalValue);
+        );
+
+        const matches : boolean = values.includes(internalValue);
+
+        LOG.debug(`${this.getIdentifier()}: _validateValue: "${internalValue}": matches= `, matches, values);
+
+        return matches;
 
     }
 
