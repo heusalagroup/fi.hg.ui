@@ -21,6 +21,8 @@ import EmailField from "./email/EmailField";
 import {isEmailFieldModel} from "../../types/items/EmailFieldModel";
 import { isSliderFieldModel } from "../../types/items/SliderFieldModel";
 import SliderField from "./slider/SliderField";
+import { isJsonFieldModel } from "../../types/items/JsonFieldModel";
+import JsonField from "./json/JsonField";
 
 export class FormUtils {
 
@@ -36,6 +38,10 @@ export class FormUtils {
 
         if (isCheckboxFieldModel(item)) {
             return CheckboxField;
+        }
+
+        if (isJsonFieldModel(item)) {
+            return JsonField;
         }
 
         if (isTextAreaFieldModel(item)) {

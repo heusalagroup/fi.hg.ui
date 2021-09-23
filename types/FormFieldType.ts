@@ -5,6 +5,7 @@ import {isString} from "../../ts/modules/lodash";
 
 export type FormFieldType = (
     FormItemType.TEXT_FIELD
+    | FormItemType.JSON_FIELD
     | FormItemType.CHECKBOX_FIELD
     | FormItemType.INTEGER_FIELD
     | FormItemType.TEXT_AREA_FIELD
@@ -21,6 +22,7 @@ export function isFormFieldType (value: any): value is FormFieldType {
     switch (value) {
 
         case FormItemType.TEXT_FIELD:
+        case FormItemType.JSON_FIELD:
         case FormItemType.CHECKBOX_FIELD:
         case FormItemType.TEXT_AREA_FIELD:
         case FormItemType.PASSWORD_FIELD:

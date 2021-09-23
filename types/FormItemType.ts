@@ -15,6 +15,7 @@ export enum FormItemType {
     SLIDER_FIELD     = "slider-field",
     CHECKBOX_FIELD   = "checkbox-field",
     TEXT_AREA_FIELD  = "text-area-field",
+    JSON_FIELD       = "json-field",
     INTEGER_FIELD    = "integer-field",
 
     // Non-fields

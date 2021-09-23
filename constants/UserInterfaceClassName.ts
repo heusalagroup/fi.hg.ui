@@ -13,6 +13,7 @@ export enum UserInterfaceClassName {
     TEXT_FIELD         = "text-field",
     PASSWORD_FIELD     = "password-field",
     EMAIL_FIELD        = "email-field",
+    JSON_FIELD         = "json-field",
     TEXT_AREA_FIELD    = "text-area-field",
     INTEGER_FIELD      = "integer-field",
     BUTTON             = "button",
