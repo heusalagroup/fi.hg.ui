@@ -2,11 +2,13 @@
 
 $icon-height: 1em;
 
+$ux-black-color: #000000;
+
 // Loader
 
 $loader-background-color   : #00000011;
 $loader-background-opacity : 0.5;
-$loader-icon-color         : #000000;
+$loader-icon-color         : $ux-black-color;
 $loader-icon-opacity       : 0.7;
 
 // Fields

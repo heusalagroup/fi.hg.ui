@@ -154,12 +154,21 @@ export class TextField extends React.Component<TextFieldProps, TextFieldState> {
         this._setStateValue(value);
     }
 
+    /**
+     *
+     * @param stateValueString
+     * @param propValue
+     * @param required
+     * @param minLength
+     * @param maxLength
+     * @private
+     */
     private _validateWithStateValue (
-        stateValueString : string,
-        propValue        : string | undefined,
-        required         : boolean,
-        minLength        : number,
-        maxLength        : number | undefined
+        stateValueString  : string,
+        propValue         : string | undefined,
+        required          : boolean,
+        minLength         : number,
+        maxLength         : number | undefined
     ) : boolean {
 
         LOG.debug(`${this.getIdentifier()}: _validateWithStateValue: stateValueString = `, stateValueString);

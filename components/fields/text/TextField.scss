@@ -23,13 +23,13 @@
   }
 
   & > .text-field-input {
-    flex-grow: 1;
-    padding: 0.5em;
-    border: 0;
-    font-size: 1.25em;
-    border-radius: 0.25em;
-    max-width: 100%;
-    min-width: 0;
+    flex-grow     : 1;
+    padding       : 0.5em;
+    border        : 0;
+    font-size     : 1.25em;
+    border-radius : 0.25em;
+    max-width     : 100%;
+    min-width     : 0;
   }
 
   &.field-state-invalid {
