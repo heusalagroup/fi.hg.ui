@@ -2,13 +2,13 @@
 
 import React from 'react';
 import './SliderField.scss';
-import UserInterfaceClassName from "../../../constants/UserInterfaceClassName";
-import SelectFieldModel, {SelectFieldItem} from "../../../types/items/SelectFieldModel";
+import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import SelectFieldModel, {SelectFieldItem} from "../../types/items/SelectFieldModel";
 import FieldProps from '../FieldProps';
 import LogService from "../../../../ts/LogService";
 import {find, map} from "../../../../ts/modules/lodash";
 import {EventCallback} from "../../../../ts/interfaces/callbacks";
-import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
+import FormFieldState, { stringifyFormFieldState } from "../../types/FormFieldState";
 
 const LOG = LogService.createLogger('SliderField');
 const COMPONENT_CLASS_NAME = UserInterfaceClassName.SLIDER_FIELD;

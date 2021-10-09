@@ -1,6 +1,6 @@
 import * as React from "react";
 import "./MemberList.scss";
-import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import UserInterfaceClassName from "../constants/UserInterfaceClassName";
 import RepositoryMember from "../../../ts/simpleRepository/types/RepositoryMember";
 import { map } from "../../../ts/modules/lodash";
 

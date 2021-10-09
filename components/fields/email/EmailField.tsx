@@ -2,10 +2,10 @@
 
 import React from 'react';
 import './EmailField.scss';
-import UserInterfaceClassName from "../../../constants/UserInterfaceClassName";
-import EmailFieldModel from "../../../types/items/EmailFieldModel";
+import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import EmailFieldModel from "../../types/items/EmailFieldModel";
 import FieldProps from '../FieldProps';
-import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
+import FormFieldState, { stringifyFormFieldState } from "../../types/FormFieldState";
 import LogService from "../../../../ts/LogService";
 import { trim } from "../../../../ts/modules/lodash";
 

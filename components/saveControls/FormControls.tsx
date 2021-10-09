@@ -1,6 +1,6 @@
 import * as React from "react";
 import "./FormControls.scss";
-import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import UserInterfaceClassName from "../constants/UserInterfaceClassName";
 import { VoidCallback } from "../../../ts/interfaces/callbacks";
 import Button from "../button/Button";
 import LogService from "../../../ts/LogService";

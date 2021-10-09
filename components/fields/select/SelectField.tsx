@@ -2,15 +2,15 @@
 
 import React from 'react';
 import './SelectField.scss';
-import UserInterfaceClassName from "../../../constants/UserInterfaceClassName";
-import SelectFieldModel, {SelectFieldItem} from "../../../types/items/SelectFieldModel";
+import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import SelectFieldModel, {SelectFieldItem} from "../../types/items/SelectFieldModel";
 import FieldProps from '../FieldProps';
 import LogService from "../../../../ts/LogService";
 import {findIndex, map, some} from "../../../../ts/modules/lodash";
 import Popup from "../../popup/Popup";
 import {EventCallback, VoidCallback} from "../../../../ts/interfaces/callbacks";
 import Button from "../../button/Button";
-import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
+import FormFieldState, { stringifyFormFieldState } from "../../types/FormFieldState";
 
 const LOG = LogService.createLogger('SelectField');
 const COMPONENT_CLASS_NAME = UserInterfaceClassName.SELECT_FIELD;

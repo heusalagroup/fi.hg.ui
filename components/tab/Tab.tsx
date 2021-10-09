@@ -2,8 +2,8 @@
 
 import React from 'react';
 import './Tab.scss';
-import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
-import {SelectFieldItem} from "../../types/items/SelectFieldModel";
+import UserInterfaceClassName from "../constants/UserInterfaceClassName";
+import {SelectFieldItem} from "../types/items/SelectFieldModel";
 import Button from "../button/Button";
 import {map} from "../../../ts/modules/lodash";
 import {ChangeCallback} from "../../../ts/interfaces/callbacks";

@@ -2,10 +2,10 @@
 
 import React from 'react';
 import './TextAreaField.scss';
-import UserInterfaceClassName from "../../../constants/UserInterfaceClassName";
-import TextAreaFieldModel from "../../../types/items/TextAreaFieldModel";
+import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import TextAreaFieldModel from "../../types/items/TextAreaFieldModel";
 import FieldProps from '../FieldProps';
-import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
+import FormFieldState, { stringifyFormFieldState } from "../../types/FormFieldState";
 import LogService from "../../../../ts/LogService";
 import { trim } from "../../../../ts/modules/lodash";
 

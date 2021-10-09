@@ -2,7 +2,7 @@
 
 import React, {Children} from 'react';
 import './Button.scss';
-import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import UserInterfaceClassName from "../constants/UserInterfaceClassName";
 import {EventCallback, VoidCallback} from "../../../ts/interfaces/callbacks";
 
 export enum ButtonType {

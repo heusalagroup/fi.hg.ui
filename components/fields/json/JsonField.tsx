@@ -2,10 +2,10 @@
 
 import React from 'react';
 import './JsonField.scss';
-import UserInterfaceClassName from "../../../constants/UserInterfaceClassName";
-import JsonFieldModel from "../../../types/items/JsonFieldModel";
+import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import JsonFieldModel from "../../types/items/JsonFieldModel";
 import FieldProps from '../FieldProps';
-import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
+import FormFieldState, { stringifyFormFieldState } from "../../types/FormFieldState";
 import LogService from "../../../../ts/LogService";
 import { isEqual, trim } from "../../../../ts/modules/lodash";
 import JsonAny, { parseJson, ReadonlyJsonAny } from "../../../../ts/Json";

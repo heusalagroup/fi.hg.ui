@@ -2,7 +2,7 @@
 
 import React from 'react';
 import './Icon.scss';
-import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import UserInterfaceClassName from "../constants/UserInterfaceClassName";
 
 export enum IconType {
 

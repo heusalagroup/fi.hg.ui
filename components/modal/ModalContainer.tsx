@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import "./ModalContainer.scss";
-import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import UserInterfaceClassName from "../constants/UserInterfaceClassName";
 import Modal from "../../services/types/Modal";
 import ModalService from "../../services/ModalService";
 import { stringifyModalType } from "../../services/types/ModalType";

@@ -2,19 +2,19 @@
 
 import React from 'react';
 import './Form.scss';
-import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
-import FormModel from "../../types/FormModel";
-import FormFieldModel, { isFormFieldModel } from "../../types/FormFieldModel";
+import UserInterfaceClassName from "../constants/UserInterfaceClassName";
+import FormModel from "../types/FormModel";
+import FormFieldModel, { isFormFieldModel } from "../types/FormFieldModel";
 import map from 'lodash/map';
 import Button, { ButtonClickCallback, ButtonType } from "../button/Button";
 import FormUtils from "../fields/FormUtils";
 import { FieldChangeCallback } from "../fields/FieldProps";
 import { every, filter, get, keys, set } from "../../../ts/modules/lodash";
 import LogService from "../../../ts/LogService";
-import FormItem from "../../types/FormItem";
-import PageBreakModel from "../../types/items/PageBreakModel";
+import FormItem from "../types/FormItem";
+import PageBreakModel from "../types/items/PageBreakModel";
 import { VoidCallback } from "../../../ts/interfaces/callbacks";
-import FormFieldState from "../../types/FormFieldState";
+import FormFieldState from "../types/FormFieldState";
 
 const LOG = LogService.createLogger('Form');
 

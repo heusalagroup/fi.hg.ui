@@ -1,7 +1,7 @@
 // Copyright (c) 2020-2021 Sendanor. All rights reserved.
 
 import React from "react";
-import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import UserInterfaceClassName from "../constants/UserInterfaceClassName";
 import "./Loader.scss";
 import {ReactComponent as LoadingIcon} from "./loading.svg";
 

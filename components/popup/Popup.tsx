@@ -2,7 +2,7 @@
 
 import React from 'react';
 import './Popup.scss';
-import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import UserInterfaceClassName from "../constants/UserInterfaceClassName";
 import LogService from "../../../ts/LogService";
 import ReactDOM from 'react-dom';
 

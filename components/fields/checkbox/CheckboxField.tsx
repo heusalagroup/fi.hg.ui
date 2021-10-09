@@ -2,11 +2,11 @@
 
 import React from 'react';
 import './CheckboxField.scss';
-import UserInterfaceClassName from "../../../constants/UserInterfaceClassName";
-import CheckboxFieldModel from "../../../types/items/CheckboxFieldModel";
+import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import CheckboxFieldModel from "../../types/items/CheckboxFieldModel";
 import FieldProps from '../FieldProps';
 import LogService from "../../../../ts/LogService";
-import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
+import FormFieldState, { stringifyFormFieldState } from "../../types/FormFieldState";
 
 const LOG = LogService.createLogger('CheckboxField');
 

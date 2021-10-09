@@ -2,12 +2,12 @@
 
 import React from 'react';
 import './IntegerField.scss';
-import UserInterfaceClassName from "../../../constants/UserInterfaceClassName";
-import IntegerFieldModel from "../../../types/items/IntegerFieldModel";
+import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import IntegerFieldModel from "../../types/items/IntegerFieldModel";
 import FieldProps from '../FieldProps';
 import LogService from "../../../../ts/LogService";
 import { isSafeInteger, trim } from "../../../../ts/modules/lodash";
-import FormFieldState, { stringifyFormFieldState } from "../../../types/FormFieldState";
+import FormFieldState, { stringifyFormFieldState } from "../../types/FormFieldState";
 
 const LOG = LogService.createLogger('IntegerField');
 const DEFAULT_PLACEHOLDER = '123';

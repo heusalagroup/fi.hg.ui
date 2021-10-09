@@ -2,9 +2,9 @@
 
 import React, {RefObject} from 'react';
 import './DropZone.scss';
-import UserInterfaceClassName from "../../constants/UserInterfaceClassName";
+import UserInterfaceClassName from "../constants/UserInterfaceClassName";
 import LogService from "../../../ts/LogService";
-import {DropEffect} from "../../managers/DragManager";
+import {DropEffect} from "./DragManager";
 import {DropCallback, EventCallback} from "../../../ts/interfaces/callbacks";
 import {isArray} from "../../../ts/modules/lodash";
 
