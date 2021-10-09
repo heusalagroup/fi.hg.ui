@@ -14,6 +14,8 @@ This is a meta package for related UI resources:
 
 We use this style so that you can opt-in which parts of the UI library you want to introduce to your project and/or fork and modify parts of them (like `ui-styles` for example).
 
+If you check out this repository, you can use `git submodule update --init --recursive` to initialize submodules defined in this repository.
+
 ### MIT Licensed
 
 ### Small dependency footprint
