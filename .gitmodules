@@ -1,0 +1,12 @@
+[submodule "form"]
+	path = form
+	url = git@github.com:sendanor/ui-form.git
+	branch = main
+[submodule "services"]
+	path = services
+	url = git@github.com:sendanor/ui-services.git
+	branch = main
+[submodule "components"]
+	path = components
+	url = git@github.com:sendanor/ui-components.git
+	branch = main
