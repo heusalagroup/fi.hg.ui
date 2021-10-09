@@ -10,3 +10,6 @@
 	path = components
 	url = git@github.com:sendanor/ui-components.git
 	branch = main
+[submodule "styles"]
+	path = styles
+	url = git@github.com:sendanor/ui-styles.git
