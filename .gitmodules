@@ -1,15 +1,20 @@
-[submodule "form"]
-	path = form
-	url = git@github.com:sendanor/ui-form.git
-	branch = main
 [submodule "services"]
 	path = services
-	url = git@github.com:sendanor/ui-services.git
+	url = git@github.com:heusalagroup/fi.hg.ui.services.git
 	branch = main
 [submodule "components"]
 	path = components
-	url = git@github.com:sendanor/ui-components.git
+	url = git@github.com:heusalagroup/fi.hg.ui.components.git
 	branch = main
 [submodule "styles"]
 	path = styles
-	url = git@github.com:sendanor/ui-styles.git
+	url = git@github.com:heusalagroup/fi.hg.ui.styles.git
+[submodule "constants"]
+	path = constants
+	url = git@github.com:heusalagroup/fi.hg.ui.constants.git
+[submodule "hooks"]
+	path = hooks
+	url = git@github.com:heusalagroup/fi.hg.ui.hooks.git
+[submodule "form"]
+	url = git@github.com:heusalagroup/fi.hg.ui.form.git
+	path = form
