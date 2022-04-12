@@ -16,11 +16,13 @@ We use this style so that you can opt-in which parts of the UI library you want 
 
 If you check out this repository, you can use `git submodule update --init --recursive` to initialize submodules defined in this repository.
 
-### MIT Licensed
-
 ### Small dependency footprint
 
 The only 3rd party dependency we have is for [Lodash library](https://lodash.com/).
+
+### License
+
+Copyright (c) Heusala Group. All rights reserved. Licensed under the MIT License (the "[License](./LICENSE)");
 
 ### Commercial support
 
