@@ -1,3 +1,9 @@
+# ***OBSOLETE! DEPRECATED!***
+
+See [fi.hg.frontend](https://github.com/heusalagroup/fi.hg.frontend)
+
+----------------
+
 # @sendanor/ui
 
 This is a meta package for related UI resources:
